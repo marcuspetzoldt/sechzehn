@@ -1,0 +1,5 @@
+== README
+
+A multiplayer online word game inspired by boggle.
+In a field of four by four letters, find as many german words as you can in three minutes.
+
