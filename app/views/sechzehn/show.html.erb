@@ -1,6 +1,20 @@
 <% @field.each do |row| %>
   <% row.each do |letter| %>
-    <div class="letter<%= letter[0] %>"><span class="vmiddle"><%= letter[1] %></span></div>
+    <div class="letter<%= letter[0] %>">
+      <% if letter[1] != 'qu' %>
+        <span class="vmiddle"><%= letter[1].upcase %></span>
+      <% else %>
+        <span class="vmiddle">Qu</span>
+      <% end %>
+    </div>
   <% end %>
   <div style="clear: left"></div>
 <% end %>
+<div>
+  <%= @word_count %> Wörter, <%= @word_points %> Punkte
+</div>
+<div>
+  <% @words.each do |word| %>
+    <span><%= word[0] %>, </span>
+  <% end %>
+</div>
