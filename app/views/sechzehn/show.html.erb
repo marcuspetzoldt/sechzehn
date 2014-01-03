@@ -1,0 +1,6 @@
+<% @field.each do |row| %>
+  <% row.each do |letter| %>
+    <div class="letter<%= letter[0] %>"><span class="vmiddle"><%= letter[1] %></span></div>
+  <% end %>
+  <div style="clear: left"></div>
+<% end %>
