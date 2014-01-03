@@ -5,7 +5,7 @@
       <driver-ref>postgresql</driver-ref>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql:sechzehn_development</jdbc-url>
-      <user-name>sechzehn</user-name>
+      <user-name>postgres</user-name>
       <user-password>dfcfdfe3dfc1dfcedfeddfd9dfd8df84dfe4dfcedffadf84df9fdf9ddfd9</user-password>
       <libraries>
         <library>
@@ -17,7 +17,7 @@
       <driver-ref>postgresql</driver-ref>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql:sechzehn_test</jdbc-url>
-      <user-name>sechzehn</user-name>
+      <user-name>postgres</user-name>
       <user-password>dfcfdfe3dfc1dfcedfeddfd9dfd8df84dfe4dfcedffadf84df9fdf9ddfd9</user-password>
       <libraries>
         <library>
@@ -28,8 +28,8 @@
     <data-source source="LOCAL" name="Rails sechzehn: production" uuid="92f15a5f-50b3-4b04-874b-68f26099dfae">
       <driver-ref>postgresql</driver-ref>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql:sechzehn_production</jdbc-url>
-      <user-name>sechzehn</user-name>
+      <jdbc-url>jdbc:postgresql:sechzehn</jdbc-url>
+      <user-name>postgres</user-name>
       <user-password>dfcfdfe3dfc1dfcedfeddfd9dfd8df84dfe4dfcedffadf84df9fdf9ddfd9</user-password>
       <libraries>
         <library>

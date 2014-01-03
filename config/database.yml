@@ -19,7 +19,7 @@ development:
   encoding: unicode
   database: sechzehn_development
   pool: 5
-  username: sechzehn
+  username: postgres
   password: eIkdGsr.NdP.57s
 
   # Connect on a TCP socket. Omitted by default since the client uses a
@@ -48,13 +48,13 @@ test:
   encoding: unicode
   database: sechzehn_test
   pool: 5
-  username: sechzehn
+  username: postgres
   password: eIkdGsr.NdP.57s
 
 production:
   adapter: postgresql
   encoding: unicode
-  database: sechzehn_production
+  database: sechzehn
   pool: 5
-  username: sechzehn
+  username: postgres
   password: eIkdGsr.NdP.57s
