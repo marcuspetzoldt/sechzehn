@@ -1,5 +1,7 @@
 Sechzehn::Application.routes.draw do
   root 'sechzehn#show'
+  post '/guess' => 'sechzehn#guess'
+  get '/solution' => 'sechzehn#solution'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

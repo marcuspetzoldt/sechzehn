@@ -1,20 +1,25 @@
+<% i=0 %>
 <% @field.each do |row| %>
   <% row.each do |letter| %>
-    <div class="letter<%= letter[0] %>">
+    <div id="<%= "l#{i}" %>" class="letter<%= letter[0] %>">
       <% if letter[1] != 'qu' %>
         <span class="vmiddle"><%= letter[1].upcase %></span>
       <% else %>
         <span class="vmiddle">Qu</span>
       <% end %>
+      <% i=i+1 %>
     </div>
   <% end %>
   <div style="clear: left"></div>
 <% end %>
+<div id="timer">3:00</div>
+<div>
+  <%= form_tag guess_path, remote: true do %>
+    <%= text_field_tag 'words', nil, id: 'words' %>
+  <% end %>
+</div>
+<div id="guesses"></div>
 <div>
   <%= @word_count %> Wörter, <%= @word_points %> Punkte
 </div>
-<div>
-  <% @words.each do |word| %>
-    <span><%= word[0] %>, </span>
-  <% end %>
-</div>
+<div id="solution"></div>

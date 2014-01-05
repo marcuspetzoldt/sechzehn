@@ -11,10 +11,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140103122904) do
+ActiveRecord::Schema.define(version: 20140105123841) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "games", force: true do |t|
+    t.string   "letters"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "guesses", force: true do |t|
+    t.integer "user_id"
+    t.integer "game_id"
+    t.string  "word"
+  end
+
+  add_index "guesses", ["game_id", "user_id", "word"], name: "index_guesses_on_game_id_and_user_id_and_word", unique: true, using: :btree
+
+  create_table "solutions", force: true do |t|
+    t.string  "word"
+    t.integer "game_id"
+  end
+
+  add_index "solutions", ["game_id", "word"], name: "index_solutions_on_game_id_and_word", unique: true, using: :btree
+
+  create_table "users", force: true do |t|
+    t.string  "name"
+    t.integer "salt"
+    t.string  "password_digest"
+  end
+
+  add_index "users", ["name", "salt"], name: "index_users_on_name_and_salt", unique: true, using: :btree
 
   create_table "words", force: true do |t|
     t.string "word"
