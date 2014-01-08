@@ -1,25 +1,84 @@
-<% i=0 %>
-<% @field.each do |row| %>
-  <% row.each do |letter| %>
-    <div id="<%= "l#{i}" %>" class="letter<%= letter[0] %>">
-      <% if letter[1] != 'qu' %>
-        <span class="vmiddle"><%= letter[1].upcase %></span>
-      <% else %>
-        <span class="vmiddle">Qu</span>
-      <% end %>
-      <% i=i+1 %>
+<div class="row">
+  <div class="col-md-4">
+    <div style="background-color: #e8f8f9">
+      <div id="field" style="padding-top: 32px; padding-bottom: 32px; margin: auto; width: 280px">
+
+        <% i=0 %>
+        <% @field.each do |row| %>
+          <% row.each do |letter| %>
+            <div id="<%= "l#{i}" %>" class="letter<%= letter[0] %>">
+              <% if letter[1] != 'qu' %>
+                <span class="vmiddle"><%= letter[1].upcase %></span>
+              <% else %>
+                <span class="vmiddle">Qu</span>
+              <% end %>
+              <% i=i+1 %>
+            </div>
+          <% end %>
+          <div style="clear: left"></div>
+        <% end %>
+
+      </div>
     </div>
-  <% end %>
-  <div style="clear: left"></div>
-<% end %>
-<div id="timer">3:00</div>
-<div>
-  <%= form_tag guess_path, remote: true do %>
-    <%= text_field_tag 'words', nil, id: 'words' %>
-  <% end %>
+    <%= form_tag guess_path, remote: true do %>
+      <div class="form-group">
+        <div class="input-group">
+          <%= text_field_tag 'words', nil, id: 'words', class: "form-control" %>
+          <span class="input-group-addon" id="timer">3:00</span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="col-md-4">
+    <table class="table">
+      <colgroup>
+        <col width="50%" />
+        <col />
+        <col />
+      </colgroup>
+      <tr>
+        <th></th>
+        <th>Wörter</th>
+        <th>Punkte</th>
+      </tr>
+      <tr>
+        <td>Wortspiel</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td colspan="3"></td>
+      </tr>
+    </table>
+    <div id="guesses"></div>
+    <div id="solution"></div>
+  </div>
+  <div class="col-md-4">
+    <table class="table">
+      <colgroup>
+        <col />
+        <col width="50%" />
+        <col />
+        <col />
+      </colgroup>
+      <tr>
+        <th></th>
+        <th></th>
+        <th>Wörter</th>
+        <th>Punkte</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>Wortspiel</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Hexe</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+    </table>
+  </div>
 </div>
-<div id="guesses"></div>
-<div>
-  <%= @word_count %> Wörter, <%= @word_points %> Punkte
-</div>
-<div id="solution"></div>

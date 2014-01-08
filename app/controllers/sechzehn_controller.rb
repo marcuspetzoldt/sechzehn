@@ -1,7 +1,13 @@
 class SechzehnController < ApplicationController
 
-    def show
+    def new
+      Guess.destroy(Guess.where(user_id: 1))
       session['game_id'] = Game.maximum(:id)
+      @field = init_field
+      render 'show'
+    end
+
+    def show
       @field = init_field
     end
 
@@ -24,16 +30,17 @@ class SechzehnController < ApplicationController
     end
 
     def guess
-      if Solution.find_by(game_id: session['game_id'], word: params['words']).nil?
-        @guess = [params['words'], 0]
+      word = params['words'].downcase
+      if Solution.find_by(game_id: session['game_id'], word: word).nil?
+        @guess = [word, 0]
       else
-        @guess = [params['words'], letter_score[params['words'].length]]
+        @guess = [word, letter_score[word.length]]
       end
-      if Guess.find_by(user_id: 1, game_id: session['game_id'], word: params['words']).nil?
-        @guess = nil
-      else
+      if Guess.find_by(user_id: 1, game_id: session['game_id'], word: word).nil?
         # TODO replace dummy user_id with correct user_id from database
-        Guess.create(user_id: 1, game_id: session['game_id'], word: params['words'])
+        Guess.create(user_id: 1, game_id: session['game_id'], word: word)
+      else
+        @guess = nil
       end
     end
 

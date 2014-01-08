@@ -2,9 +2,30 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+$muted-gray: #999999;
+
+body {
+  padding-top: 70px;
+}
+
+form {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
 .vmiddle {
   vertical-align: middle;
   display: inline-block;
+}
+
+.navbar {
+  background-color: #e8f8f9;
+}
+
+.navbar-brand {
+  letter-spacing: 4px;
+  font-size: 150%;
+  color: $muted-gray;
 }
 
 .letter {
@@ -19,6 +40,7 @@
     size: 300%;
     weight: 600;
   }
+  background-color: white;
 }
 
 .letternw {

@@ -3,9 +3,12 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 
-theClock = 10
+theClock = 180
 timerId = 0
+mode = 0
+
 $(document).ready(() ->
+  $('input#words').removeAttr('disabled')
   $('input#words').focus()
   timerId = setInterval(clock, 1000)
 )
@@ -64,7 +67,18 @@ snake = (field, word, x, y) ->
 clock = () ->
   if theClock-- < 1
     clearTimeout(timerId)
-    $.get('/solution')
+    if mode == 0
+      $('input#words').attr('disabled', 'disabled')
+      $.get('/solution')
+      mode = 1
+      theClock = 30
+    else
+      $('input#words').removeAttr('disabled')
+      $.get('/new')
+      $('div#solution').html('')
+      mode = 0
+      theClock = 180
+    timerId = setInterval(clock, 1000)
   else
-    $('div#timer').html(((theClock / 60)|0) + ':' + ('0' + (theClock % 60))[-2..])
+    $('span#timer').html(((theClock / 60)|0) + ':' + ('0' + (theClock % 60))[-2..])
   return true

@@ -1,5 +1,5 @@
 $('input#words').val('')
 <% if @guess %>
   $h = $('div#guesses').html()
-  $('div#guesses').html($h + '<%= render inline: (@guess[1] == 0 ? "<span style=\"color: red\">#{@guess[0]}</span> " : "#{@guess[0]}:#{@guess[1]} ") %>')
+  $('div#guesses').html('<%= render inline: (@guess[1] == 0 ? "<span style=\"color: red\">#{@guess[0]}</span> " : "#{@guess[0]}:#{@guess[1]} ") %>' + $h)
 <% end %>
