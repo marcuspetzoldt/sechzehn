@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140105123841) do
+ActiveRecord::Schema.define(version: 20140114161109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,9 +26,16 @@ ActiveRecord::Schema.define(version: 20140105123841) do
     t.integer "user_id"
     t.integer "game_id"
     t.string  "word"
+    t.integer "points"
   end
 
   add_index "guesses", ["game_id", "user_id", "word"], name: "index_guesses_on_game_id_and_user_id_and_word", unique: true, using: :btree
+
+  create_table "locks", force: true do |t|
+    t.integer "lock"
+  end
+
+  add_index "locks", ["lock"], name: "index_locks_on_lock", unique: true, using: :btree
 
   create_table "solutions", force: true do |t|
     t.string  "word"
@@ -41,6 +48,7 @@ ActiveRecord::Schema.define(version: 20140105123841) do
     t.string  "name"
     t.integer "salt"
     t.string  "password_digest"
+    t.string  "remember_token"
   end
 
   add_index "users", ["name", "salt"], name: "index_users_on_name_and_salt", unique: true, using: :btree

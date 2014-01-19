@@ -2,25 +2,10 @@
   <div class="col-md-4">
     <div style="background-color: #e8f8f9">
       <div id="field" style="padding-top: 32px; padding-bottom: 32px; margin: auto; width: 280px">
-
-        <% i=0 %>
-        <% @field.each do |row| %>
-          <% row.each do |letter| %>
-            <div id="<%= "l#{i}" %>" class="letter<%= letter[0] %>">
-              <% if letter[1] != 'qu' %>
-                <span class="vmiddle"><%= letter[1].upcase %></span>
-              <% else %>
-                <span class="vmiddle">Qu</span>
-              <% end %>
-              <% i=i+1 %>
-            </div>
-          <% end %>
-          <div style="clear: left"></div>
-        <% end %>
-
+        <%= render 'layouts/show_dice' %>
       </div>
     </div>
-    <%= form_tag guess_path, remote: true do %>
+    <%= form_tag guess_path, remote: true, id: 'guess', style: @play ? 'display: inherit' : 'display: none' do %>
       <div class="form-group">
         <div class="input-group">
           <%= text_field_tag 'words', nil, id: 'words', class: "form-control" %>
@@ -28,6 +13,47 @@
         </div>
       </div>
     <% end %>
+    <%= form_for @user, html: { style: @play ? 'display: none' : 'display: inherit', id: 'signin' } do |f| %>
+      <div class="form-group">
+        <%= f.label :name, t('activerecord.models.attributes.user.name')%>
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+          <%= f.text_field :name, class: 'form-control' %>
+        </div>
+      </div>
+      <% if params[:what] %>
+        <div class="form-group">
+          <%= f.label :password, t('activerecord.models.attributes.user.password') %>
+          <div class="input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+            <%= f.password_field :password, class: 'form-control' %>
+          </div>
+        </div>
+      <% end %>
+      <div class="form-group">
+        <%= label_tag :password, (params[:what] ? 'altes Kennwort' : 'Kennwort') %>
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+          <%= password_field_tag :password, nil, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="form-group">
+        <% if params[:what].nil? %>
+          <%= f.button 'Anmelden', class: 'btn btn-primary', id: 'signin', name: 'commit' %>
+          <% if params[:what].nil? %>
+            <%= f.button 'Neuen Spieler anlegen', class: 'btn btn-default', id: 'signup', name: 'signup' %>
+          <% end %>
+          <%= link_to root_path, style: 'display: none', id: 'cancel' do %><button type="button" class="btn btn-default">Abbrechen</button><% end %>
+        <% else %>
+          <%= f.button 'Speichern', class: 'btn btn-primary', id: 'signin', name: params['what'] == 'signup' ? 'signup' : 'signin' %>
+          <%= link_to root_path, id: 'cancel' do %><button type="button" class="btn btn-default">Abbrechen</button><% end %>
+        <% end %>
+      </div>
+      <% flash.each do |key, value| %>
+        <div class="alert alert-danger"><%= render inline: value %></div>
+      <% end %>
+    <% end %>
+
   </div>
   <div class="col-md-4">
     <table class="table">
@@ -38,19 +64,20 @@
       </colgroup>
       <tr>
         <th></th>
-        <th>Wörter</th>
-        <th>Punkte</th>
+        <th class="right">Wörter</th>
+        <th class="right">Punkte</th>
       </tr>
       <tr>
-        <td>Wortspiel</td>
-        <td>1</td>
-        <td>1</td>
+        <td id="username"><%= @user.name %></td>
+        <td id="cwords" class="right">0</td>
+        <td id="cpoints" class="right">0</td>
       </tr>
       <tr>
         <td colspan="3"></td>
       </tr>
     </table>
     <div id="guesses"></div>
+    <div id="solutionheader" style="display: none"><hr class="row"/><span class="noone">&nbsp;nicht&nbsp;gefunden&nbsp;</span> &bull; <span class="someone">&nbsp;gefunden&nbsp;</span> &bull; <span class="self">&nbsp;von&nbsp;Dir&nbsp;</span> &bull; <span class="onlyself">&nbsp;nur&nbsp;von&nbsp;Dir&nbsp;</span><hr class="row"/></div>
     <div id="solution"></div>
   </div>
   <div class="col-md-4">
@@ -64,20 +91,20 @@
       <tr>
         <th></th>
         <th></th>
-        <th>Wörter</th>
-        <th>Punkte</th>
+        <th class="right">Wörter</th>
+        <th class="right">Punkte</th>
       </tr>
       <tr>
         <td>1</td>
-        <td>Wortspiel</td>
-        <td>1</td>
-        <td>1</td>
+        <td>Hexe</td>
+        <td class="right">2</td>
+        <td class="right">2</td>
       </tr>
       <tr>
         <td>2</td>
-        <td>Hexe</td>
-        <td>1</td>
-        <td>1</td>
+        <td>Wortspiel</td>
+        <td class="right">1</td>
+        <td class="right">1</td>
       </tr>
     </table>
   </div>

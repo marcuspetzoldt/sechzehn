@@ -1,2 +1,21 @@
 de:
-  hello: 'Hallo Welt!'
+  activerecord:
+    models:
+      attributes:
+        user:
+          name: 'Name'
+          password: 'Kennwort'
+    errors:
+      models:
+        user:
+          attributes:
+            password_confirmation:
+              blank: 'Die Kennwortbestätigung darf nicht leer sein.'
+            password:
+              blank: 'Das Kennwort darf nicht leer sein.'
+              too_short: 'Das Kennwort muss mindestens %{count} Zeichen lang sein.'
+            name:
+              blank: 'Der Name darf nicht leer sein.'
+              too_short: 'Der Name muss mindesten %{count} Zeichen lang sein.'
+              too_long: 'Der Name darf höchsten %{count} Zeichen lang sein.'
+              invalid: 'Der Name darf lediglich die Zeichen a-z und A-Z, sowie ., _ und - enthalten.'

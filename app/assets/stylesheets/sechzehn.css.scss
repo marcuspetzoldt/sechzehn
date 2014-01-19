@@ -4,8 +4,12 @@
 
 $muted-gray: #999999;
 
-body {
-  padding-top: 70px;
+hr.row {
+  margin-bottom: 8px;
+  margin-top: 8px;
+  margin-left: 0px;
+  margin-right: 0px;
+  border-top: 1px solid #dddddd
 }
 
 form {
@@ -18,8 +22,8 @@ form {
   display: inline-block;
 }
 
-.navbar {
-  background-color: #e8f8f9;
+.navbar-default {
+  background-color: #e8f8f9 !important;
 }
 
 .navbar-brand {
@@ -69,4 +73,36 @@ form {
   -moz-border-radius-bottomright: 12px;
   -webkit-border-bottom-right-radius: 12px;
   border-bottom-right-radius: 12px;
+}
+
+.noone {
+  color: $muted-gray;
+}
+
+.someone {
+  color: black;
+}
+
+.self {
+  color: black;
+  background-color: #ffffa0;
+}
+
+.onlyself {
+  color: green;
+  background-color: #ffffa0;
+
+}
+
+div#guesses, div#solution {
+  margin-bottom: 2em;
+  text-align: justify;
+}
+
+div#solutionheader {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
 }

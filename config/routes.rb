@@ -1,8 +1,13 @@
 Sechzehn::Application.routes.draw do
   root 'sechzehn#show'
-  post '/guess' => 'sechzehn#guess'
-  get '/solution' => 'sechzehn#solution'
-  get '/new' => 'sechzehn#new'
+  resources :users
+  post '/guess', to: 'sechzehn#guess'
+  get '/solution', to: 'sechzehn#solution'
+  get '/new', to: 'sechzehn#new'
+  get '/sync', to: 'sechzehn#sync'
+  match '/signout', to: 'users#signout', via: 'delete'
+  match '/signup', to: 'users#signup', via: 'get'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

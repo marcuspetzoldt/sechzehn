@@ -1,1 +1,11 @@
-$('div#solution').html('<%= (@words.map { |w| w[0] }).join(', ') %>')
+<% html = (@words.map do |w| %>
+    <% case w[3] %>
+      <% when 0 then "<span class=\"noone\">#{w[0]}</span>" %>
+      <% when 1 then "<span class=\"someone\">#{w[0]}</span>" %>
+      <% when 2 then "<span class=\"self\">#{w[0]}</span>" %>
+      <% else "<span class=\"onlyself\">#{w[0]}</span>" %>
+    <% end %>
+<% end).join(' ') %>
+$('div#solution').html('<%= render inline: html %>')
+$('td#cwords').html('<%= "#{@cwords} / #{@twords > 0 ? (100*@cwords/@twords).round(0) : 0}%" %>')
+$('td#cpoints').html('<%= "#{@cpoints} / #{@tpoints > 0 ? (100*@cpoints/@tpoints).round(0) : 0}%" %>')

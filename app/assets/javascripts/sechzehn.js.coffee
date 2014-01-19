@@ -3,14 +3,18 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 
-theClock = 180
+theClock = 30
 timerId = 0
 mode = 0
 
+$(document).on('focus', 'form#signin input', () ->
+  $('div.alert').fadeOut(500, () ->
+    $(this).remove()
+  )
+)
+
 $(document).ready(() ->
-  $('input#words').removeAttr('disabled')
-  $('input#words').focus()
-  timerId = setInterval(clock, 1000)
+  sync()
 )
 
 $(document).on('keyup', 'input#words', () ->
@@ -66,19 +70,45 @@ snake = (field, word, x, y) ->
 
 clock = () ->
   if theClock-- < 1
-    clearTimeout(timerId)
-    if mode == 0
-      $('input#words').attr('disabled', 'disabled')
-      $.get('/solution')
-      mode = 1
-      theClock = 30
+    if mode == 1
+      getSolution()
+      sync()
     else
-      $('input#words').removeAttr('disabled')
-      $.get('/new')
-      $('div#solution').html('')
-      mode = 0
-      theClock = 180
-    timerId = setInterval(clock, 1000)
+      startGame()
   else
     $('span#timer').html(((theClock / 60)|0) + ':' + ('0' + (theClock % 60))[-2..])
   return true
+
+sync = () ->
+  if timerId != 0
+    clearInterval(timerId)
+  $.get('/sync', null, (data) ->
+    theClock = parseInt(data)
+    if theClock > 180
+      getSolution()
+    else
+      startGame()
+  )
+
+getSolution = () ->
+  $('input#words').attr('disabled', 'disabled')
+  $('div#solutionheader').show()
+  $.get('/solution')
+  mode = 0
+  theClock = theClock - 180
+  timerId = setInterval(clock, 1000)
+
+startGame = () ->
+  $.get('/new', null, (data) ->
+    $('div#field').html(data)
+  )
+  $('input#words').removeAttr('disabled')
+  $('input#words').focus()
+  $('div#solution').html('')
+  $('div#guesses').html('')
+  $('div#solutionheader').hide()
+  $('td#cwords').html('0')
+  $('td#cpoints').html('0')
+  mode = 1
+  theClock = 180
+  timerId = setInterval(clock, 1000)
