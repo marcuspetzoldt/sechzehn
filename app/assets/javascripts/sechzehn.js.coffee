@@ -3,10 +3,6 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 
-theClock = 30
-timerId = 0
-mode = 0
-
 $(document).on('focus', 'form#signin input', () ->
   $('div.alert').fadeOut(500, () ->
     $(this).remove()
@@ -69,34 +65,38 @@ snake = (field, word, x, y) ->
   return false
 
 clock = () ->
-  if theClock-- < 1
-    if mode == 1
-      getSolution()
-      sync()
-    else
-      startGame()
+  window.gameTimer--
+  if (window.gameTimer <= 0)
+    sync()
   else
-    $('span#timer').html(((theClock / 60)|0) + ':' + ('0' + (theClock % 60))[-2..])
+    if (window.gameTimer <= 180)
+      t = window.gameTimer
+      if (window.gameMode != 'play')
+        window.gameMode = 'play'
+        startGame()
+    else
+      if (window.gameTimer <= 210)
+        t = window.gameTimer - 180
+        if (window.gameMode != 'score')
+          window.gameMode = 'score'
+          getSolution()
+      else
+        window.gameMode = 'limbo'
+        t = 0
+  $('span#timer').html( ((t/60)|0).toString() + ':' + ('0' + (t%60).toString())[1..])
   return true
 
 sync = () ->
-  if timerId != 0
-    clearInterval(timerId)
+  clearInterval(window.gameInterval) if window.gameInterval
   $.get('/sync', null, (data) ->
-    theClock = parseInt(data)
-    if theClock > 180
-      getSolution()
-    else
-      startGame()
+    window.gameTimer = parseInt(data)
   )
+  window.gameInterval = setInterval(clock, 1000)
 
 getSolution = () ->
   $('input#words').attr('disabled', 'disabled')
   $('div#solutionheader').show()
   $.get('/solution')
-  mode = 0
-  theClock = theClock - 180
-  timerId = setInterval(clock, 1000)
 
 startGame = () ->
   $.get('/new', null, (data) ->
@@ -109,6 +109,3 @@ startGame = () ->
   $('div#solutionheader').hide()
   $('td#cwords').html('0')
   $('td#cpoints').html('0')
-  mode = 1
-  theClock = 180
-  timerId = setInterval(clock, 1000)

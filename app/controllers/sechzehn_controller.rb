@@ -50,12 +50,26 @@ class SechzehnController < ApplicationController
         end
       end
 
+      # Player score
       @twords = @words.length
       @tpoints = 0
       @words.each do |word|
         @tpoints = @tpoints + word[2]
       end
       @cwords, @cpoints = get_score
+
+      # All player's score
+    @scores = ActiveRecord::Base.connection.execute(
+        'SELECT a.id, a.name, count(b.points), sum(b.points)' +
+        '  FROM guesses b' +
+        '  JOIN users a' +
+        '    ON a.id = b.user_id' +
+          ' WHERE b.game_id = ' + session['game_id'].to_s +
+          '   AND b.points > 0' +
+          ' GROUP BY a.id ' +
+          'HAVING SUM(b.points) > 0' +
+          ' ORDER BY SUM(b.points)')
+
     end
 
     def guess
@@ -74,7 +88,7 @@ class SechzehnController < ApplicationController
     end
 
     def sync
-      time_left = 185 - get_time_left
+      time_left = 215 - get_time_left
       # Most recent game is older than 210 seconds
       if time_left <= 0
         begin
@@ -84,7 +98,7 @@ class SechzehnController < ApplicationController
         rescue
           sleep 0.5 while Lock.uncached { Lock.find_by(lock: 1) }
         end
-        time_left = 185
+        time_left = 215
       end
       render inline: "#{time_left.to_i}"
     end

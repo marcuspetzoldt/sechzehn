@@ -9,3 +9,9 @@
 $('div#solution').html('<%= render inline: html %>')
 $('td#cwords').html('<%= "#{@cwords} / #{@twords > 0 ? (100*@cwords/@twords).round(0) : 0}%" %>')
 $('td#cpoints').html('<%= "#{@cpoints} / #{@tpoints > 0 ? (100*@cpoints/@tpoints).round(0) : 0}%" %>')
+$('tbody#score').html('')
+<% place = 0 %>
+<% @scores.each_with_index do |score, i| %>
+<% place = place + 1 if @scores[i-1]['sum'] != score['sum'] %>
+$('tbody#score').append('<tr><td><%= place %>.</td><td><%= score['name'] %></td><td class="right"><%= "#{score['count']} / #{@twords > 0 ? (100*score['count'].to_i/@twords).round(0) : 0}%" %></td><td class="right"><%= "#{score['sum']} / #{@tpoints > 0 ? (100*score['sum'].to_i/@tpoints).round(0) : 0}%" %></td>')
+<% end %>

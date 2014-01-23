@@ -62,19 +62,23 @@
         <col />
         <col />
       </colgroup>
-      <tr>
-        <th></th>
-        <th class="right">Wörter</th>
-        <th class="right">Punkte</th>
-      </tr>
-      <tr>
-        <td id="username"><%= @user.name %></td>
-        <td id="cwords" class="right">0</td>
-        <td id="cpoints" class="right">0</td>
-      </tr>
-      <tr>
-        <td colspan="3"></td>
-      </tr>
+      <thead>
+        <tr>
+          <th></th>
+          <th class="right">Wörter</th>
+          <th class="right">Punkte</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="username"><%= @user.name %></td>
+          <td id="cwords" class="right">0</td>
+          <td id="cpoints" class="right">0</td>
+        </tr>
+        <tr>
+          <td colspan="3"></td>
+        </tr>
+      </tbody>
     </table>
     <div id="guesses"></div>
     <div id="solutionheader" style="display: none"><hr class="row"/><span class="noone">&nbsp;nicht&nbsp;gefunden&nbsp;</span> &bull; <span class="someone">&nbsp;gefunden&nbsp;</span> &bull; <span class="self">&nbsp;von&nbsp;Dir&nbsp;</span> &bull; <span class="onlyself">&nbsp;nur&nbsp;von&nbsp;Dir&nbsp;</span><hr class="row"/></div>
@@ -88,24 +92,15 @@
         <col />
         <col />
       </colgroup>
-      <tr>
-        <th></th>
-        <th></th>
-        <th class="right">Wörter</th>
-        <th class="right">Punkte</th>
-      </tr>
-      <tr>
-        <td>1</td>
-        <td>Hexe</td>
-        <td class="right">2</td>
-        <td class="right">2</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>Wortspiel</td>
-        <td class="right">1</td>
-        <td class="right">1</td>
-      </tr>
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th class="right">Wörter</th>
+          <th class="right">Punkte</th>
+        </tr>
+      </thead>
+      <tbody id="score"></tbody>
     </table>
   </div>
 </div>
