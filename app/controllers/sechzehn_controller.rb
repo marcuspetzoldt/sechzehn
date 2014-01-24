@@ -88,7 +88,7 @@ class SechzehnController < ApplicationController
     end
 
     def sync
-      time_left = 215 - get_time_left
+      time_left = 213 - get_time_left
       # Most recent game is older than 210 seconds
       if time_left <= 0
         begin
@@ -98,7 +98,7 @@ class SechzehnController < ApplicationController
         rescue
           sleep 0.5 while Lock.uncached { Lock.find_by(lock: 1) }
         end
-        time_left = 215
+        time_left = 213
       end
       render inline: "#{time_left.to_i}"
     end
