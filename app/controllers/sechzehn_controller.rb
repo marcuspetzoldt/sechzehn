@@ -123,6 +123,8 @@ class SechzehnController < ApplicationController
       if signed_in?
         guesses = Guess.where("user_id = ? AND game_id = ? AND points > 0", current_user.id, session['game_id'])
         [guesses.count, guesses.sum(:points)]
+      else
+        [0, 0]
       end
     end
 

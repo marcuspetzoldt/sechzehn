@@ -10,7 +10,8 @@ class UsersController < ApplicationController
 
   def create
     if params[:signup]
-      params[:user][:password_confirmation] = params[:user][:password]
+      params[:user][:password] = params[:password]
+      params[:user][:password_confirmation] = params[:password]
       @user = User.new(user_params)
       if @user.save
         sign_in(@user)
