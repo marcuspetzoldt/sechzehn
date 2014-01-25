@@ -36,6 +36,11 @@ $(document).on('keyup', 'input#words', () ->
 
 )
 
+$(document).on('submit', 'guess', () ->
+  for i in [0..15]
+    $('div#' + i).css('background-color', 'white')
+)
+
 snake = (field, word, x, y) ->
 
   # break if empty word

@@ -59,7 +59,7 @@ class SechzehnController < ApplicationController
       @cwords, @cpoints = get_score
 
       # All player's score
-    @scores = ActiveRecord::Base.connection.execute(
+      @scores = ActiveRecord::Base.connection.execute(
         'SELECT a.id, a.name, count(b.points), sum(b.points)' +
         '  FROM guesses b' +
         '  JOIN users a' +
@@ -68,7 +68,7 @@ class SechzehnController < ApplicationController
           '   AND b.points > 0' +
           ' GROUP BY a.id ' +
           'HAVING SUM(b.points) > 0' +
-          ' ORDER BY SUM(b.points)')
+          ' ORDER BY SUM(b.points) DESC')
 
     end
 
@@ -98,7 +98,8 @@ class SechzehnController < ApplicationController
         rescue
           sleep 0.5 while Lock.uncached { Lock.find_by(lock: 1) }
         end
-        time_left = 213
+        session['game_id'] = Game.maximum(:id)
+        time_left = 213 - get_time_left
       end
       render inline: "#{time_left.to_i}"
     end
