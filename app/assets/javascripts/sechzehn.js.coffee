@@ -65,8 +65,11 @@ snake = (field, word, x, y) ->
   return false
 
 clock = () ->
+  t = 0
   window.gameTimer--
   if (window.gameTimer <= 0)
+    $('input#words').attr('disabled', 'disabled')
+    $('input#words').val('Spiel auswerten ...')
     sync()
   else
     if (window.gameTimer <= 180)
@@ -78,12 +81,14 @@ clock = () ->
       if (window.gameTimer <= 210)
         t = window.gameTimer - 180
         if (window.gameMode != 'score')
+          $('input#words').val('')
           window.gameMode = 'score'
           getSolution()
       else
-        $('input#words').attr('disabled', 'disabled')
-        window.gameMode = 'limbo'
-        t = 0
+        if (window.gameMode != 'limbo')
+          window.gameMode = 'limbo'
+          $('input#words').attr('disabled', 'disabled')
+          $('input#words').val('neues Spiel erzeugen ...')
   $('span#timer').html( ((t/60)|0).toString() + ':' + ('0' + (t%60).toString())[-2..])
   return true
 
