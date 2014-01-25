@@ -81,9 +81,10 @@ clock = () ->
           window.gameMode = 'score'
           getSolution()
       else
+        $('input#words').attr('disabled', 'disabled')
         window.gameMode = 'limbo'
         t = 0
-  $('span#timer').html( ((t/60)|0).toString() + ':' + ('0' + (t%60).toString())[1..])
+  $('span#timer').html( ((t/60)|0).toString() + ':' + ('0' + (t%60).toString())[-2..])
   return true
 
 sync = () ->
