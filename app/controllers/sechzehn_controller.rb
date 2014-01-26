@@ -120,7 +120,11 @@ class SechzehnController < ApplicationController
     end
 
     def init_field
-      letters = Game.find_by(id: session['game_id']).letters
+      if session['game_id']
+        letters = Game.find_by(id: session['game_id']).letters
+      else
+        letters = 'XXXXXXXXXXXXXXXX'
+      end
       [
         [['nw', letters[0]], ['', letters[1]], ['', letters[2]], ['ne', letters[3]]],
         [['', letters[4]], ['', letters[5]], ['', letters[6]], ['', letters[7]]],
