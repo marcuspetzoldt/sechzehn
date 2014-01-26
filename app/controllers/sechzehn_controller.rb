@@ -97,8 +97,8 @@ class SechzehnController < ApplicationController
 
     def sync
       game_id = Game.maximum(:id)
-      time_left = 215 - get_time_left(game_id)
-      # Most recent game is older than 215 seconds (180 game + 30 pause + 5 sync)
+      time_left = 220 - get_time_left(game_id)
+      # Most recent game is older than 215 seconds (180 game + 30 pause + 10 sync)
       if time_left <= 0
         begin
           l = Lock.create
