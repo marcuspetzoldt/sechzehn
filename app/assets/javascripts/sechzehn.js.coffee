@@ -13,8 +13,8 @@ $(document).ready(() ->
   sync()
 )
 
-$(document).on('keyup', 'input#words', () ->
-  w = this.value
+$(document).on('keypress', 'input#words', (event) ->
+  w = this.value + String.fromCharCode(event.which)
   f = [
     [[0, $('div#l0').text().trim()], [0, $('div#l1').text().trim()], [0, $('div#l2').text().trim()], [0, $('div#l3').text().trim()]],
     [[0, $('div#l4').text().trim()], [0, $('div#l5').text().trim()], [0, $('div#l6').text().trim()], [0, $('div#l7').text().trim()]],
@@ -34,11 +34,7 @@ $(document).on('keyup', 'input#words', () ->
         when 2 then  $('div#l' + (x + y*4)).css('background-color', '#dfdf00')
         else $('div#l' + (x + y*4)).css('background-color', '#ffffff')
 
-)
-
-$(document).on('submit', 'guess', () ->
-  for i in [0..15]
-    $('div#' + i).css('background-color', 'white')
+  return true
 )
 
 snake = (field, word, x, y) ->
@@ -73,8 +69,9 @@ clock = () ->
   t = 0
   window.gameTimer--
   if (window.gameTimer <= 0)
+    window.gameMode = 'sync'
     $('input#words').attr('disabled', 'disabled')
-    $('input#words').val('Spiel auswerten ...')
+    $('input#words').val('neues Spiel erzeugen ...')
     sync()
   else
     if (window.gameTimer <= 180)
@@ -91,9 +88,10 @@ clock = () ->
           getSolution()
       else
         if (window.gameMode != 'limbo')
+          t = window.gameTimer - 210
           window.gameMode = 'limbo'
           $('input#words').attr('disabled', 'disabled')
-          $('input#words').val('neues Spiel erzeugen ...')
+          $('input#words').val('Spiel auswerten ...')
   $('span#timer').html( ((t/60)|0).toString() + ':' + ('0' + (t%60).toString())[-2..])
   return true
 

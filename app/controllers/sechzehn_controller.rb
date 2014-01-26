@@ -1,8 +1,11 @@
 class SechzehnController < ApplicationController
 
     def new
-      current_user.guesses.destroy_all if signed_in?
-      session['game_id'] = Game.maximum(:id)
+      game_id = Game.maximum(:id)
+      if game_id != session['game_id']
+        current_user.guesses.destroy_all if signed_in?
+        session['game_id'] = Game.maximum(:id)
+      end
       @field = init_field
       render partial: 'layouts/show_dice'
     end
@@ -23,6 +26,7 @@ class SechzehnController < ApplicationController
     end
 
     def solution
+      @tpoints = 0
       @words = Game.find_by(id: session['game_id']).solutions.map do |s|
         format = 0
         found = Guess.where(word: s.word)
@@ -40,6 +44,7 @@ class SechzehnController < ApplicationController
             format = 1
           end
         end
+        @tpoints = @tpoints + letter_score[s.word.length]
         [s.word, s.word.length, letter_score[s.word.length], format]
       end
       @words.sort! do |a, b|
@@ -52,10 +57,6 @@ class SechzehnController < ApplicationController
 
       # Player score
       @twords = @words.length
-      @tpoints = 0
-      @words.each do |word|
-        @tpoints = @tpoints + word[2]
-      end
       @cwords, @cpoints = get_score
 
       # All player's score
@@ -64,12 +65,11 @@ class SechzehnController < ApplicationController
         '  FROM guesses b' +
         '  JOIN users a' +
         '    ON a.id = b.user_id' +
-          ' WHERE b.game_id = ' + session['game_id'].to_s +
-          '   AND b.points > 0' +
-          ' GROUP BY a.id ' +
-          'HAVING SUM(b.points) > 0' +
-          ' ORDER BY SUM(b.points) DESC')
-
+        ' WHERE b.game_id = ' + session['game_id'].to_s +
+        '   AND b.points > 0' +
+        ' GROUP BY a.id ' +
+        'HAVING SUM(b.points) > 0' +
+        ' ORDER BY SUM(b.points) DESC')
     end
 
     def guess
@@ -88,18 +88,19 @@ class SechzehnController < ApplicationController
     end
 
     def sync
-      time_left = 213 - get_time_left
-      # Most recent game is older than 210 seconds
+      game_id = Game.maximum(:id)
+      time_left = 215 - get_time_left(game_id)
+      # Most recent game is older than 215 seconds (180 game + 30 pause + 5 sync)
       if time_left <= 0
         begin
-          Lock.create
-          Game.create
-          Lock.destroy_all
+          l = Lock.create
+          g = Game.create
+          l.destroy
         rescue
-          sleep 0.5 while Lock.uncached { Lock.find_by(lock: 1) }
+          # ignore unique index constraint violation and sync again
+          # another player already computes the next game
+          sleep(0.5)
         end
-        session['game_id'] = Game.maximum(:id)
-        time_left = 213 - get_time_left
       end
       render inline: "#{time_left.to_i}"
     end
@@ -129,8 +130,8 @@ class SechzehnController < ApplicationController
       end
     end
 
-    def get_time_left
-      Time.now - Game.find_by(id: session['game_id']).created_at
+    def get_time_left(game_id)
+      Time.now - Game.find_by(id: game_id).created_at
     end
 
 end

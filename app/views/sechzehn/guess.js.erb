@@ -1,7 +1,10 @@
 $('input#words').val('')
 <% if @guess %>
-  $h = $('div#guesses').html()
-  $('div#guesses').html('<%= render inline: (@guess[1] == 0 ? "<span style=\"color: red\">#{@guess[0]}</span> " : "#{@guess[0]}:#{@guess[1]} ") %>' + $h)
+  <% if @guess[1] > 0 %>
+    $('div#guesses').prepend('<%= "#{@guess[0]}:#{@guess[1]} " %>')
+  <% else %>
+    $('div#guesses').prepend('<span style="color: red"><%= @guess[0] %> </span>')
+  <% end %>
   $('td#cwords').html('<%= @cwords %>')
   $('td#cpoints').html('<%= @cpoints %>')
 <% end %>
