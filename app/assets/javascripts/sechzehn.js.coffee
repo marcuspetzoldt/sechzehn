@@ -14,7 +14,11 @@ $(document).ready(() ->
 )
 
 $(document).on('keypress', 'input#words', (event) ->
-  w = this.value + String.fromCharCode(event.which)
+  if event.which == 8
+    # Backspace
+    w = this.value[0..-2]
+  else
+    w = this.value + String.fromCharCode(event.which)
   f = [
     [[0, $('div#l0').text().trim()], [0, $('div#l1').text().trim()], [0, $('div#l2').text().trim()], [0, $('div#l3').text().trim()]],
     [[0, $('div#l4').text().trim()], [0, $('div#l5').text().trim()], [0, $('div#l6').text().trim()], [0, $('div#l7').text().trim()]],
