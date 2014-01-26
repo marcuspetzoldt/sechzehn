@@ -2,6 +2,7 @@ class SechzehnController < ApplicationController
 
     def new
       game_id = Game.maximum(:id)
+      # don't destroy guesses on F5
       if game_id != session['game_id']
         current_user.guesses.destroy_all if signed_in?
         session['game_id'] = Game.maximum(:id)
@@ -12,7 +13,7 @@ class SechzehnController < ApplicationController
 
     def show
       @play = true
-      session['game_id'] = Game.maximum(:id)
+#     session['game_id'] = Game.maximum(:id)
       if signed_in?
         @user = current_user
         if params[:what]
@@ -27,6 +28,13 @@ class SechzehnController < ApplicationController
 
     def solution
       @tpoints = 0
+      @twords = 0
+      @cpoints = 0
+      @cwords = 0
+      @words = []
+
+      return if session['game_id'].nil?
+
       @words = Game.find_by(id: session['game_id']).solutions.map do |s|
         format = 0
         found = Guess.where(word: s.word)

@@ -70,8 +70,7 @@ clock = () ->
   window.gameTimer--
   if (window.gameTimer <= 0)
     window.gameMode = 'sync'
-    $('input#words').attr('disabled', 'disabled')
-    $('input#words').val('neues Spiel erzeugen ...')
+    disableGame()
     sync()
   else
     if (window.gameTimer <= 180)
@@ -83,15 +82,14 @@ clock = () ->
       if (window.gameTimer <= 210)
         t = window.gameTimer - 180
         if (window.gameMode != 'score')
-          $('input#words').val('')
           window.gameMode = 'score'
+          disableGame()
           getSolution()
+          $('input#words').val('')
       else
         if (window.gameMode != 'limbo')
-          t = window.gameTimer - 210
           window.gameMode = 'limbo'
-          $('input#words').attr('disabled', 'disabled')
-          $('input#words').val('Spiel auswerten ...')
+          disableGame()
   $('span#timer').html( ((t/60)|0).toString() + ':' + ('0' + (t%60).toString())[-2..])
   return true
 
@@ -118,3 +116,12 @@ startGame = () ->
   $('div#solutionheader').hide()
   $('td#cwords').html('0')
   $('td#cpoints').html('0')
+
+disableGame = () ->
+  $('input#words').attr('disabled', 'disabled')
+  $('input#words').val('Spiel auswerten ...')
+  $('div.letter').css({'background-color' : '#eeeeee', 'color' : '#999999'})
+  $('div.letternw').css({'background-color' : '#eeeeee', 'color' : '#999999'})
+  $('div.letterne').css({'background-color' : '#eeeeee', 'color' : '#999999'})
+  $('div.lettersw').css({'background-color' : '#eeeeee', 'color' : '#999999'})
+  $('div.letterse').css({'background-color' : '#eeeeee', 'color' : '#999999'})
