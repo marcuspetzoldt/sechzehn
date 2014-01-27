@@ -113,6 +113,10 @@ class SechzehnController < ApplicationController
       render inline: "#{time_left.to_i}"
     end
 
+    def help
+      @help = true
+    end
+
   private
 
     def letter_score
