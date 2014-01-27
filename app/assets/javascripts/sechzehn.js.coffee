@@ -18,7 +18,15 @@ $(document).on('keypress', 'input#words', (event) ->
     # Backspace
     w = this.value[0..-2]
   else
-    w = this.value + String.fromCharCode(event.which)
+    if event.which == 13
+      w = this.value
+      $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
+      $.ajax({ url: '/guess', data: 'words=' + w })
+      $('input#words').val('')
+      w = ''
+    else
+      w = this.value + String.fromCharCode(event.which)
+
   f = [
     [[0, $('div#l0').text().trim()], [0, $('div#l1').text().trim()], [0, $('div#l2').text().trim()], [0, $('div#l3').text().trim()]],
     [[0, $('div#l4').text().trim()], [0, $('div#l5').text().trim()], [0, $('div#l6').text().trim()], [0, $('div#l7').text().trim()]],
@@ -38,6 +46,12 @@ $(document).on('keypress', 'input#words', (event) ->
         when 2 then  $('div#l' + (x + y*4)).css('background-color', '#dfdf00')
         else $('div#l' + (x + y*4)).css('background-color', '#ffffff')
 
+  return true
+)
+
+$(document).on('submit', 'form#guess', () ->
+  word = $('input#words').val()
+  $('input#words').val('')
   return true
 )
 

@@ -5,14 +5,12 @@
         <%= render 'layouts/show_dice' %>
       </div>
     </div>
-    <%= form_tag guess_path, remote: true, id: 'guess', style: @play ? 'display: inherit' : 'display: none' do %>
-      <div class="form-group">
-        <div class="input-group">
-          <%= text_field_tag 'words', nil, id: 'words', class: "form-control" %>
-          <span class="input-group-addon" id="timer">3:00</span>
-        </div>
+    <div class="form-group" style="margin-top: 20px">
+      <div class="input-group">
+        <%= text_field_tag 'words', nil, id: 'words', class: "form-control" %>
+        <span class="input-group-addon" id="timer">3:00</span>
       </div>
-    <% end %>
+    </div>
     <%= form_for @user, html: { style: @play ? 'display: none' : 'display: inherit', id: 'signin' } do |f| %>
       <div class="form-group">
         <%= f.label :name, t('activerecord.models.attributes.user.name')%>

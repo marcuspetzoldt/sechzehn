@@ -1,7 +1,7 @@
 Sechzehn::Application.routes.draw do
   root 'sechzehn#show'
   resources :users
-  post '/guess', to: 'sechzehn#guess'
+  get '/guess', to: 'sechzehn#guess'
   get '/solution', to: 'sechzehn#solution'
   get '/new', to: 'sechzehn#new'
   get '/sync', to: 'sechzehn#sync'
