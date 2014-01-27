@@ -49,12 +49,6 @@ $(document).on('keypress', 'input#words', (event) ->
   return true
 )
 
-$(document).on('submit', 'form#guess', () ->
-  word = $('input#words').val()
-  $('input#words').val('')
-  return true
-)
-
 snake = (field, word, x, y) ->
 
   # break if empty word

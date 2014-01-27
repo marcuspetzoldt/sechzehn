@@ -37,7 +37,7 @@ class SechzehnController < ApplicationController
 
       @words = Game.find_by(id: session['game_id']).solutions.map do |s|
         format = 0
-        found = Guess.where(word: s.word)
+        found = Guess.where(word: s.word, game_id: session['game_id'])
         unless found.empty?
           if found.find_by(user_id: current_user.id)
             if found.count == 1
