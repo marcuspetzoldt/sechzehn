@@ -1,7 +1,7 @@
 <% i=0 %>
 <% @field.each do |row| %>
   <% row.each do |letter| %>
-    <div id="<%= "l#{i}" %>" class="letter<%= letter[0] %>">
+    <div id="<%= "l#{i}" %>" class="letter <%= letter[0] %>">
       <% if letter[1] != 'qu' %>
         <span class="vmiddle"><%= letter[1].upcase %></span>
       <% else %>

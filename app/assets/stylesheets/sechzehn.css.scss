@@ -51,29 +51,25 @@ div#guess {
   background-color: white;
 }
 
-.letternw {
-  @extend .letter;
+.nw {
   -moz-border-radius-topleft: 12px;
   -webkit-border-top-left-radius: 12px;
   border-top-left-radius: 12px;
 }
 
-.letterne {
-  @extend .letter;
+.ne {
   -moz-border-radius-topright: 12px;
   -webkit-border-top-right-radius: 12px;
   border-top-right-radius: 12px;
 }
 
-.lettersw {
-  @extend .letter;
+.sw {
   -moz-border-radius-bottomleft: 12px;
   -webkit-border-bottom-left-radius: 12px;
   border-bottom-left-radius: 12px;
 }
 
-.letterse {
-  @extend .letter;
+.se {
   -moz-border-radius-bottomright: 12px;
   -webkit-border-bottom-right-radius: 12px;
   border-bottom-right-radius: 12px;

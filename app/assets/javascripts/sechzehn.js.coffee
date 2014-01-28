@@ -18,15 +18,16 @@ $(document).on('keypress', 'input#words', (event) ->
     # Backspace
     w = this.value[0..-2]
   else
+    w = this.value
     if event.which == 13
-      w = this.value
       if $('span#word_' + w).length == 0
         $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
         $.ajax({ url: '/guess', data: 'words=' + w })
       $('input#words').val('')
       w = ''
     else
-      w = this.value + String.fromCharCode(event.which)
+      if event.which > 0
+        w = w + String.fromCharCode(event.which)
 
   f = [
     [[0, $('div#l0').text().trim()], [0, $('div#l1').text().trim()], [0, $('div#l2').text().trim()], [0, $('div#l3').text().trim()]],
@@ -134,7 +135,3 @@ disableGame = () ->
   $('input#words').attr('disabled', 'disabled')
   $('input#words').val('Spiel auswerten ...')
   $('div.letter').css({'background-color' : '#eeeeee', 'color' : '#999999'})
-  $('div.letternw').css({'background-color' : '#eeeeee', 'color' : '#999999'})
-  $('div.letterne').css({'background-color' : '#eeeeee', 'color' : '#999999'})
-  $('div.lettersw').css({'background-color' : '#eeeeee', 'color' : '#999999'})
-  $('div.letterse').css({'background-color' : '#eeeeee', 'color' : '#999999'})
