@@ -20,8 +20,9 @@ $(document).on('keypress', 'input#words', (event) ->
   else
     if event.which == 13
       w = this.value
-      $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
-      $.ajax({ url: '/guess', data: 'words=' + w })
+      if $('span#word_' + w).length == 0
+        $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
+        $.ajax({ url: '/guess', data: 'words=' + w })
       $('input#words').val('')
       w = ''
     else

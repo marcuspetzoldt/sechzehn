@@ -32,6 +32,7 @@ class SechzehnController < ApplicationController
       @cpoints = 0
       @cwords = 0
       @words = []
+      @scores = []
 
       return if session['game_id'].nil?
 
@@ -90,7 +91,7 @@ class SechzehnController < ApplicationController
       if Guess.find_by(user_id: current_user.id, game_id: session['game_id'], word: word).nil?
         Guess.create(user_id: current_user.id, game_id: session['game_id'], word: word, points: @guess[1])
       else
-        @guess[1] = -1
+        @guess = []
       end
       @cwords, @cpoints = get_score
     end

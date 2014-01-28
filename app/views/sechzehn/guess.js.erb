@@ -2,11 +2,7 @@
   <% if @guess[1] > 0 %>
     $('span#word_' + '<%= @guess[0] %>').append('<%= ":#{@guess[1]}" %>')
   <% else %>
-    <% if @guess[1] == 0 %>
-      $('span#word_' + '<%= @guess[0] %>').css('color', 'red')
-    <% else %>
-      $('span#word_' + '<%= @guess[0] %>').first().remove()
-    <% end %>
+    $('span#word_' + '<%= @guess[0] %>').css('color', 'red')
   <% end %>
   $('td#cwords').html('<%= @cwords %>')
   $('td#cpoints').html('<%= @cpoints %>')
