@@ -30,14 +30,14 @@ $(document).on('keypress', 'input#words', (event) ->
         w = w + String.fromCharCode(event.which)
 
   f = [
-    [[0, $('div#l0').text().trim()], [0, $('div#l1').text().trim()], [0, $('div#l2').text().trim()], [0, $('div#l3').text().trim()]],
-    [[0, $('div#l4').text().trim()], [0, $('div#l5').text().trim()], [0, $('div#l6').text().trim()], [0, $('div#l7').text().trim()]],
-    [[0, $('div#l8').text().trim()], [0, $('div#l9').text().trim()], [0, $('div#l10').text().trim()], [0, $('div#l11').text().trim()]],
-    [[0, $('div#l12').text().trim()], [0, $('div#l13').text().trim()], [0, $('div#l14').text().trim()], [0, $('div#l15').text().trim()]]
+    [[0, $('div#l0').text().trim()[0]], [0, $('div#l1').text().trim()[0]], [0, $('div#l2').text().trim()[0]], [0, $('div#l3').text().trim()[0]]],
+    [[0, $('div#l4').text().trim()[0]], [0, $('div#l5').text().trim()[0]], [0, $('div#l6').text().trim()[0]], [0, $('div#l7').text().trim()[0]]],
+    [[0, $('div#l8').text().trim()[0]], [0, $('div#l9').text().trim()[0]], [0, $('div#l10').text().trim()[0]], [0, $('div#l11').text().trim()[0]]],
+    [[0, $('div#l12').text().trim()[0]], [0, $('div#l13').text().trim()[0]], [0, $('div#l14').text().trim()[0]], [0, $('div#l15').text().trim()[0]]]
   ]
   for x in [0..3]
     for y in [0..3]
-      conditionMet = snake f, w.toUpperCase(), x, y
+      conditionMet = snake f, withoutQu(w.toUpperCase()), x, y
       break if conditionMet
     break if conditionMet
 
@@ -50,6 +50,9 @@ $(document).on('keypress', 'input#words', (event) ->
 
   return true
 )
+
+withoutQu = (word) ->
+  return word.replace('QU', 'Q')
 
 snake = (field, word, x, y) ->
 

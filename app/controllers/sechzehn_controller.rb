@@ -1,11 +1,14 @@
 class SechzehnController < ApplicationController
 
     def new
+      @new = true
       game_id = Game.maximum(:id)
       # don't destroy guesses on F5
       if game_id != session['game_id']
         current_user.guesses.destroy_all if signed_in?
         session['game_id'] = Game.maximum(:id)
+        @new = false
+      else
       end
       @field = init_field
       render partial: 'layouts/show_dice'
@@ -13,11 +16,18 @@ class SechzehnController < ApplicationController
 
     def show
       @play = true
-#     session['game_id'] = Game.maximum(:id)
+      @cwords = 0
+      @cpoints = 0
+      @guesses = []
       if signed_in?
         @user = current_user
         if params[:what]
           @play = false
+        else
+          @cwords, @cpoints = get_score
+          @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
+            [guess.word, guess.points]
+          end
         end
       else
         @user = User.new
@@ -150,5 +160,4 @@ class SechzehnController < ApplicationController
     def get_time_left(game_id)
       Time.now - Game.find_by(id: game_id).created_at
     end
-
 end

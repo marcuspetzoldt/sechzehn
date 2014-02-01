@@ -30,8 +30,11 @@ div#guess {
   background-color: #e8f8f9 !important;
 }
 
-.navbar-brand {
+.sechzehn {
   letter-spacing: 4px;
+}
+.navbar-brand {
+  @extend .sechzehn;
   font-size: 150%;
   color: $muted-gray;
 }
@@ -108,6 +111,7 @@ div#solutionheader {
 }
 
 .small-dice {
+  @extend .letter;
   font-size: 100%;
   width: 30px;
   height: 30px;
