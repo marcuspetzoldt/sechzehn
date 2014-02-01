@@ -123,16 +123,16 @@ getSolution = () ->
   $.get('/solution')
 
 startGame = () ->
-  $.get('/new', null, (data) ->
-    $('div#field').html(data)
+  $('div#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->
+    if XMLHttpRequest.getResponseHeader('X-Refreshed') == 0
+      $('div#solution').html('')
+      $('div#guesses').html('')
+      $('div#solutionheader').hide()
+      $('td#cwords').html('0')
+      $('td#cpoints').html('0')
+    $('input#words').removeAttr('disabled')
+    $('input#words').focus()
   )
-  $('input#words').removeAttr('disabled')
-  $('input#words').focus()
-  $('div#solution').html('')
-  $('div#guesses').html('')
-  $('div#solutionheader').hide()
-  $('td#cwords').html('0')
-  $('td#cpoints').html('0')
 
 disableGame = () ->
   $('input#words').attr('disabled', 'disabled')

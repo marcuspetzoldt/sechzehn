@@ -7,8 +7,10 @@ class SechzehnController < ApplicationController
       if game_id != session['game_id']
         current_user.guesses.destroy_all if signed_in?
         session['game_id'] = Game.maximum(:id)
+        response.headers['X-Refreshed'] = '1'
         @new = false
       else
+        response.headers['X-Refreshed'] = '0'
       end
       @field = init_field
       render partial: 'layouts/show_dice'
