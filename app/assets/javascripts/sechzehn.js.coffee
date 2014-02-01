@@ -124,7 +124,7 @@ getSolution = () ->
 
 startGame = () ->
   $('div#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->
-    if XMLHttpRequest.getResponseHeader('X-Refreshed') == 0
+    if XMLHttpRequest.getResponseHeader('X-Refreshed') == '0'
       $('div#solution').html('')
       $('div#guesses').html('')
       $('div#solutionheader').hide()

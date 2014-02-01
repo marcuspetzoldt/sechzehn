@@ -1,16 +1,15 @@
 class SechzehnController < ApplicationController
 
     def new
-      @new = true
       game_id = Game.maximum(:id)
-      # don't destroy guesses on F5
       if game_id != session['game_id']
+        # start a new game
         current_user.guesses.destroy_all if signed_in?
         session['game_id'] = Game.maximum(:id)
-        response.headers['X-Refreshed'] = '1'
-        @new = false
-      else
         response.headers['X-Refreshed'] = '0'
+      else
+        # continue a game
+        response.headers['X-Refreshed'] = '1'
       end
       @field = init_field
       render partial: 'layouts/show_dice'
