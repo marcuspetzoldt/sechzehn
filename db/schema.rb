@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140201120823) do
+ActiveRecord::Schema.define(version: 20140202143702) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,7 +45,7 @@ ActiveRecord::Schema.define(version: 20140201120823) do
     t.float   "pwords"
     t.float   "cpoints"
     t.float   "ppoints"
-    t.integer "elo"
+    t.integer "game_id"
   end
 
   create_table "solutions", force: true do |t|
@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(version: 20140201120823) do
     t.integer "salt"
     t.string  "password_digest"
     t.string  "remember_token"
+    t.integer "elo",             default: 1600
   end
 
   add_index "users", ["name", "salt"], name: "index_users_on_name_and_salt", unique: true, using: :btree

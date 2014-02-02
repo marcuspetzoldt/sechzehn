@@ -5,6 +5,11 @@ class SechzehnController < ApplicationController
       if game_id != session['game_id']
         # start a new game
         current_user.guesses.destroy_all if signed_in?
+        unless session['elo'].nil?
+          current_user.elo = session['elo']
+          current_user.save
+          session['elo'] = nil
+        end
         session['game_id'] = Game.maximum(:id)
         response.headers['X-Refreshed'] = '0'
       else
@@ -81,7 +86,7 @@ class SechzehnController < ApplicationController
 
       # All player's score
       @scores = ActiveRecord::Base.connection.execute(
-        'SELECT a.id, a.name, count(b.points), sum(b.points)' +
+        'SELECT a.id, a.name, a.elo, count(b.points), sum(b.points)' +
         '  FROM guesses b' +
         '  JOIN users a' +
         '    ON a.id = b.user_id' +
@@ -90,6 +95,8 @@ class SechzehnController < ApplicationController
         ' GROUP BY a.id ' +
         'HAVING SUM(b.points) > 0' +
         ' ORDER BY SUM(b.points) DESC')
+
+      compute_highscore if @cpoints > 0
     end
 
     def guess
@@ -155,6 +162,65 @@ class SechzehnController < ApplicationController
         [guesses.count, guesses.sum(:points)]
       else
         [0, 0]
+      end
+    end
+
+    def compute_highscore
+      if signed_in?
+        begin
+          score = Score.find_by!(user_id: current_user.id, type: Score.types[:all_time] )
+        rescue ActiveRecord::RecordNotFound
+          score = Score.new(user_id: current_user.id, game_id: 0, type: Score.types[:all_time], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0)
+        end
+
+        if session['game_id'] != score.game_id
+          score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
+          score.pwords = (score.pwords * score.count + (@cwords * 100 / @twords)) / (score.count + 1)
+          score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
+          score.ppoints = (score.ppoints * score.count + (@cpoints * 100 / @tpoints)) / (score.count + 1)
+          score.count = score.count + 1
+
+          delta_elo = 0
+          count = 0
+          @scores.each do |s|
+            if s['id'].to_i != score.user_id
+              if s['sum'].to_i > 0
+                count = count + 1
+                r = s['elo'].to_i - score.elo
+                r = (r > 0) ? 400 : -400 if r.abs > 400
+                ea = 1.0 / (1 + 10.power(r / 400))
+                delta_elo = delta_elo + k(score) * (sa(s['sum'].to_i) - ea)
+              end
+            end
+            session['elo'] = current_user.elo + delta_elo / count if count > 0
+          end
+          score.save
+        end
+      end
+    end
+
+    def sa(opponent_points)
+      # win: 1, loss: 0, tie: 0.5
+      case opponent_points <=> @cpoints
+      when -1
+        1
+      when 1
+        0
+      else
+        0.5
+      end
+    end
+
+    def k(me)
+      # casual player: 30, frequent player: 15, frequent very good player: 10
+      if me.elo > 2400
+        10
+      else
+        if me.count > 30
+          15
+        else
+          30
+        end
       end
     end
 
