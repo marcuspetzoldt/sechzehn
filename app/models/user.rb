@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
 
   before_create :create_remember_token
   has_many :guesses
+  has_many :scores
   has_secure_password
 
   validates :name, presence: true, length: { minimum: 3, maximum: 32 }, format: { with: /[a-zA-Z\._\-]+/ }

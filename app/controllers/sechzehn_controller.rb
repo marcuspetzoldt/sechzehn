@@ -5,11 +5,7 @@ class SechzehnController < ApplicationController
       if game_id != session['game_id']
         # start a new game
         current_user.guesses.destroy_all if signed_in?
-        unless session['elo'].nil?
-          current_user.elo = session['elo']
-          current_user.save
-          session['elo'] = nil
-        end
+        current_user.update_attribute(:elo, current_user.new_elo)
         session['game_id'] = Game.maximum(:id)
         response.headers['X-Refreshed'] = '0'
       else
@@ -168,17 +164,18 @@ class SechzehnController < ApplicationController
     def compute_highscore
       if signed_in?
         begin
-          score = Score.find_by!(user_id: current_user.id, type: Score.types[:all_time] )
+          score = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:all_time] )
         rescue ActiveRecord::RecordNotFound
-          score = Score.new(user_id: current_user.id, game_id: 0, type: Score.types[:all_time], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0)
+          score = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:all_time], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0)
         end
 
-        if session['game_id'] != score.game_id
+        if session['game_id'] != score.game_id and !session['game_id'].nil?
           score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
           score.pwords = (score.pwords * score.count + (@cwords * 100 / @twords)) / (score.count + 1)
           score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
           score.ppoints = (score.ppoints * score.count + (@cpoints * 100 / @tpoints)) / (score.count + 1)
           score.count = score.count + 1
+          score.game_id = session['game_id']
 
           delta_elo = 0
           count = 0
@@ -186,14 +183,15 @@ class SechzehnController < ApplicationController
             if s['id'].to_i != score.user_id
               if s['sum'].to_i > 0
                 count = count + 1
-                r = s['elo'].to_i - score.elo
+                r = s['elo'].to_i - current_user.elo
                 r = (r > 0) ? 400 : -400 if r.abs > 400
-                ea = 1.0 / (1 + 10.power(r / 400))
+                ea = 1.0 / (1 + 10 ** (r / 400))
                 delta_elo = delta_elo + k(score) * (sa(s['sum'].to_i) - ea)
               end
             end
-            session['elo'] = current_user.elo + delta_elo / count if count > 0
           end
+          new_elo = current_user.elo + delta_elo / count if count > 0
+          current_user.update_attribute(:new_elo, new_elo)
           score.save
         end
       end
@@ -213,7 +211,7 @@ class SechzehnController < ApplicationController
 
     def k(me)
       # casual player: 30, frequent player: 15, frequent very good player: 10
-      if me.elo > 2400
+      if current_user.elo > 2400
         10
       else
         if me.count > 30
