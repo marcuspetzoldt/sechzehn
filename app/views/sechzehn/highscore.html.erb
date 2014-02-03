@@ -1,0 +1,41 @@
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
+    <table class="table">
+      <thead>
+        <colgroup>
+          <col />
+          <col style="width: 50%" />
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
+        <tr>
+          <th>Platz</th>
+          <th>Name</th>
+          <th>Spiele</th>
+          <th>Wörter</th>
+          <th>Punkte</th>
+          <th>Stufe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% old_score = 0 %>
+        <% @scores.each_with_index do |score, i| %>
+        <tr>
+          <% if old_score != score['elo'] %>
+            <td><%= i+1 %></td>
+          <% else %>
+            <td>&nbsp;</td>
+          <% end %>
+          <td><%= score['name'] %></td>
+          <td><%= score['count'] %></td>
+          <td><%= score['cwords'].to_f.round(2) %> / <%= score['pwords'].to_f.round(2) %>%</td>
+          <td><%= score['cpoints'].to_f.round(2) %> / <%= score['ppoints'].to_f.round(2) %>%</td>
+          <td><%= score['elo'] %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

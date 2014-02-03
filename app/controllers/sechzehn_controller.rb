@@ -132,6 +132,18 @@ class SechzehnController < ApplicationController
       @help = true
     end
 
+    def highscore
+      @help = true
+      @scores = ActiveRecord::Base.connection.execute(
+          'SELECT u.name, u.elo, s.count, s.cwords, s.pwords, s.cpoints, s.ppoints' +
+          '  FROM users u' +
+          '  JOIN scores s' +
+          '    ON u.id = s.user_id' +
+          '   AND s.score_type = ' + Score.score_types[:all_time].to_s +
+          ' ORDER BY u.elo desc, s.cpoints desc, s.cwords desc'
+      )
+    end
+
   private
 
     def letter_score

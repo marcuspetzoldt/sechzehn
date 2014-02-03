@@ -27,8 +27,13 @@
             </li>
           <% end %>
           <li>
+            <%= link_to highscore_path do %>
+              Rangliste
+            <% end %>
+          </li>
+          <li>
             <%= link_to help_path do %>
-              Spielregeln
+              Regeln
             <% end %>
           </li>
         <% else %>

@@ -6,6 +6,7 @@ Sechzehn::Application.routes.draw do
   get '/new', to: 'sechzehn#new'
   get '/sync', to: 'sechzehn#sync'
   get '/help', to: 'sechzehn#help'
+  get '/highscore', to: 'sechzehn#highscore'
   match '/signout', to: 'users#signout', via: 'delete'
   match '/signup', to: 'users#signup', via: 'get'
 
