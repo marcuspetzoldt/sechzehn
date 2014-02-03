@@ -4,7 +4,7 @@ class SechzehnController < ApplicationController
       game_id = Game.maximum(:id)
       if game_id != session['game_id']
         # start a new game
-        current_user.guesses.destroy_all if signed_in?
+        current_user.guesses.where('points <> 0').destroy_all if signed_in?
         current_user.update_attribute(:elo, current_user.new_elo)
         session['game_id'] = Game.maximum(:id)
         response.headers['X-Refreshed'] = '0'
@@ -202,8 +202,10 @@ class SechzehnController < ApplicationController
               end
             end
           end
-          new_elo = current_user.elo + delta_elo / count if count > 0
-          current_user.update_attribute(:new_elo, new_elo)
+          if count > 0
+            new_elo = current_user.elo + delta_elo / count
+            current_user.update_attribute(:new_elo, new_elo)
+          end
           score.save
         end
       end

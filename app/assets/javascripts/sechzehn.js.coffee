@@ -20,11 +20,12 @@ $(document).on('keypress', 'input#words', (event) ->
   else
     w = this.value
     if event.which == 13
-      if $('span#word_' + w).length == 0
-        $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
-        $.ajax({ url: '/guess', data: 'words=' + w })
-      $('input#words').val('')
-      w = ''
+      if w.length > 2
+        if $('span#word_' + w).length == 0
+          $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
+          $.ajax({ url: '/guess', data: 'words=' + w })
+        $('input#words').val('')
+        w = ''
     else
       if event.which > 0
         w = w + String.fromCharCode(event.which)
