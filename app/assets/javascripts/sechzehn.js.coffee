@@ -22,8 +22,11 @@ $(document).on('keypress', 'input#words', (event) ->
     if event.which == 13
       if w.length > 2
         if $('span#word_' + w).length == 0
-          $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
-          $.ajax({ url: '/guess', data: 'words=' + w })
+          if window.snake
+            $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
+            $.ajax({ url: '/guess', data: 'words=' + w })
+          else
+            $('div#guesses').prepend(' <span id="word_' + w + '" style="color:red">' + w + '</span>')
         $('input#words').val('')
         w = ''
     else
@@ -42,11 +45,16 @@ $(document).on('keypress', 'input#words', (event) ->
       break if conditionMet
     break if conditionMet
 
+  window.snake = false
   for x in [0..3]
     for y in [0..3]
       switch f[y][x][0]
-        when 1 then  $('div#l' + (x + y*4)).css('background-color', '#ffffa0')
-        when 2 then  $('div#l' + (x + y*4)).css('background-color', '#dfdf00')
+        when 1
+          window.snake = true
+          $('div#l' + (x + y*4)).css('background-color', '#ffffa0')
+        when 2
+          window.snake = true
+          $('div#l' + (x + y*4)).css('background-color', '#dfdf00')
         else $('div#l' + (x + y*4)).css('background-color', '#ffffff')
 
   return true
