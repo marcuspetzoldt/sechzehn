@@ -29,8 +29,8 @@ $(document).on('mousemove touchmove', 'div.letter', (event) ->
     if event.originalEvent.touches
       dX = event.originalEvent.touches[0].clientX - $(this).offset().left
       dY = event.originalEvent.touches[0].clientY - $(this).offset().top
-      divX = dX % 70
-      divY = dY % 70
+      divX = Math.abs(dX % 70)
+      divY = Math.abs(dY % 70)
       id = document.elementFromPoint(event.originalEvent.touches[0].clientX, event.originalEvent.touches[0].clientY).id
       $('div#guesses').html(id + ': ' + divX + ', ' + divY)
     else
@@ -45,7 +45,7 @@ $(document).on('mousemove touchmove', 'div.letter', (event) ->
           $('input#words').val($('input#words').val()[..-2])
         $('div#'+window.mouseIn[-3..]).css('background-color', '#ffff00')
         window.mouseIn = window.mouseIn + id
-        $(this).css('background-color', '#dfdf00')
+        $('div#'+id).css('background-color', '#dfdf00')
         $('input#words').val($('input#words').val() + $(this).text().trim())
   return true
 )
