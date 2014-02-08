@@ -111,6 +111,7 @@ div#solutionheader {
 .small-dice {
   @extend .letter;
   font-size: 100%;
+  line-height: 30px;
   width: 30px;
   height: 30px;
 }
