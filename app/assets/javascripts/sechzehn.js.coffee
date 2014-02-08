@@ -27,20 +27,24 @@ $(document).on('mousemove touchmove', 'div.letter', (event) ->
   event.preventDefault()
   if window.mouseDown
     if event.originalEvent.touches
-      divX = event.originalEvent.touches[0].clientX - $(this).offset().left
-      divY = event.originalEvent.touches[0].clientY - $(this).offset().top
-      $('div#guesses').html(this.id + ': ' + event.originalEvent.touches[0].clientX + ', ' + event.originalEvent.touches[0].clientY)
+      dX = event.originalEvent.touches[0].clientX - $(this).offset().left
+      dY = event.originalEvent.touches[0].clientY - $(this).offset().top
+      divX = dX % 70
+      divY = dY % 70
+      id = document.elementFromPoint(event.originalEvent.touches[0].clientX, event.originalEvent.touches[0].clientY)
+      $('div#guesses').html(id + ': ' + event.originalEvent.touches[0].clientX + ', ' + event.originalEvent.touches[0].clientY)
     else
       divX = event.clientX - $(this).offset().left
       divY = event.clientY - $(this).offset().top
-    if this.id != window.mouseIn[-3..]
+      id = this.id
+    if id != window.mouseIn[-3..]
       if divX > 10 and divX < 60 and divY > 10 and divY < 60
-        while window.mouseIn.indexOf(this.id) > -1
+        while window.mouseIn.indexOf(id) > -1
           $('div#'+window.mouseIn[-3..]).css('background-color', '#ffffff')
           window.mouseIn = window.mouseIn[0..-4]
           $('input#words').val($('input#words').val()[..-2])
         $('div#'+window.mouseIn[-3..]).css('background-color', '#ffff00')
-        window.mouseIn = window.mouseIn + this.id
+        window.mouseIn = window.mouseIn + id
         $(this).css('background-color', '#dfdf00')
         $('input#words').val($('input#words').val() + $(this).text().trim())
   return true
