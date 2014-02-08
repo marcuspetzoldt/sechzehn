@@ -10,7 +10,7 @@ $(document).on('focus', 'form#signin input', () ->
 )
 
 $(document).ready(() ->
-  sync()
+# sync()
 )
 
 $(document).on('mousedown touchstart', 'div.letter', (event) ->
@@ -27,9 +27,10 @@ $(document).on('mousemove touchmove', 'div.letter', (event) ->
   event.preventDefault()
   if window.mouseDown
     if this.id != window.mouseIn[-3..]
-      if event.touches
-        divX = event.touches[0].clientX - $(this).offset().left
-        divY = event.touches[0].clientY - $(this).offset().top
+      alert('hit')
+      if event.originalEvent.touches
+        divX = event.originalEvent.touches[0].clientX - $(this).offset().left
+        divY = event.originalEvent.touches[0].clientY - $(this).offset().top
       else
         divX = event.clientX - $(this).offset().left
         divY = event.clientY - $(this).offset().top
