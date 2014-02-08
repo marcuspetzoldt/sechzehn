@@ -27,7 +27,6 @@ $(document).on('mousemove touchmove', 'div.letter', (event) ->
   event.preventDefault()
   if window.mouseDown
     if event.originalEvent.touches
-      alert('Hit')
       divX = event.originalEvent.touches[0].clientX - $(this).offset().left
       divY = event.originalEvent.touches[0].clientY - $(this).offset().top
     else
