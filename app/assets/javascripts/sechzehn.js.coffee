@@ -31,7 +31,7 @@ $(document).on('mousemove touchmove', 'div.letter', (event) ->
       dY = event.originalEvent.touches[0].clientY - $(this).offset().top
       divX = dX % 70
       divY = dY % 70
-      id = document.elementFromPoint(event.originalEvent.touches[0].clientX, event.originalEvent.touches[0].clientY)
+      id = document.elementFromPoint(event.originalEvent.touches[0].clientX, event.originalEvent.touches[0].clientY).id
       $('div#guesses').html(id + ': ' + event.originalEvent.touches[0].clientX + ', ' + event.originalEvent.touches[0].clientY)
     else
       divX = event.clientX - $(this).offset().left
