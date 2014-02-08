@@ -21,11 +21,6 @@ div#guess {
   margin-top: 20px;
 }
 
-.vmiddle {
-  vertical-align: middle;
-  display: inline-block;
-}
-
 .navbar-default {
   background-color: #e8f8f9 !important;
 }
@@ -42,6 +37,7 @@ div#guess {
 .letter {
   cursor: default;
   float: left;
+  line-height: 70px;
   width: 70px;
   height: 70px;
   text-align: center;
