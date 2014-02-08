@@ -13,7 +13,7 @@ $(document).ready(() ->
   sync()
 )
 
-$(document).on('mousedown', 'div.letter', (event) ->
+$(document).on('mousedown touchstart', 'div.letter', (event) ->
   event.preventDefault()
   if $('input#words:disabled').length == 0
     $('input#words').val($('input#words').val() + $(this).text().trim())
@@ -23,7 +23,7 @@ $(document).on('mousedown', 'div.letter', (event) ->
   return true
 )
 
-$(document).on('mousemove', 'div.letter', (event) ->
+$(document).on('mousemove touchmove', 'div.letter', (event) ->
   event.preventDefault()
   if window.mouseDown
     if this.id != window.mouseIn[-3..]
@@ -41,7 +41,7 @@ $(document).on('mousemove', 'div.letter', (event) ->
   return true
 )
 
-$(document).on('mouseup', 'body', () ->
+$(document).on('mouseup touchend', 'body', () ->
   if window.mouseDown
     w = $('input#words').val().toLowerCase()
     if w.length > 2
