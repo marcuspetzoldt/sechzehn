@@ -13,6 +13,47 @@ $(document).ready(() ->
   sync()
 )
 
+$(document).on('mousedown', 'div.letter', (event) ->
+  event.preventDefault()
+  if $('input#words:disabled').length == 0
+    $('input#words').val($('input#words').val() + $(this).text().trim())
+    $(this).css('background-color', '#dfdf00')
+    window.mouseDown = 1
+    window.mouseIn = this.id
+  return true
+)
+
+$(document).on('mousemove', 'div.letter', (event) ->
+  event.preventDefault()
+  if window.mouseDown
+    if this.id != window.mouseIn[-3..]
+      divX = event.clientX - $(this).offset().left
+      divY = event.clientY - $(this).offset().top
+      if divX > 10 and divX < 60 and divY > 10 and divY < 60
+        while window.mouseIn.indexOf(this.id) > -1
+          $('div#'+window.mouseIn[-3..]).css('background-color', '#ffffff')
+          window.mouseIn = window.mouseIn[0..-4]
+          $('input#words').val($('input#words').val()[..-2])
+        $('div#'+window.mouseIn[-3..]).css('background-color', '#ffff00')
+        window.mouseIn = window.mouseIn + this.id
+        $(this).css('background-color', '#dfdf00')
+        $('input#words').val($('input#words').val() + $(this).text().trim())
+  return true
+)
+
+$(document).on('mouseup', 'body', () ->
+  if window.mouseDown
+    w = $('input#words').val().toLowerCase()
+    if w.length > 2
+      if $('span#word_' + w).length == 0
+        $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
+        $.ajax({ url: '/guess', data: 'words=' + w })
+    $('input#words').val('')
+    window.mouseDown = 0
+    $('div.letter').css('background-color', '#ffffff')
+  return true
+)
+
 $(document).on('keypress', 'input#words', (event) ->
   if event.which == 8
     # Backspace
