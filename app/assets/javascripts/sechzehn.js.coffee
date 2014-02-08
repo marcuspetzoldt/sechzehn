@@ -10,7 +10,7 @@ $(document).on('focus', 'form#signin input', () ->
 )
 
 $(document).ready(() ->
-# sync()
+  sync()
 )
 
 $(document).on('mousedown touchstart', 'div.letter', (event) ->
