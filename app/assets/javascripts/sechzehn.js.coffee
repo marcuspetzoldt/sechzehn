@@ -29,6 +29,7 @@ $(document).on('mousemove touchmove', 'div.letter', (event) ->
     if event.originalEvent.touches
       divX = event.originalEvent.touches[0].clientX - $(this).offset().left
       divY = event.originalEvent.touches[0].clientY - $(this).offset().top
+      $('div#guesses').html(event.originalEvent.touches[0].clientX + ', ' + event.originalEvent.touches[0].clientY)
     else
       divX = event.clientX - $(this).offset().left
       divY = event.clientY - $(this).offset().top
