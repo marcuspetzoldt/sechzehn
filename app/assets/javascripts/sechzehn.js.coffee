@@ -26,14 +26,14 @@ $(document).on('mousedown touchstart', 'div.letter', (event) ->
 $(document).on('mousemove touchmove', 'div.letter', (event) ->
   event.preventDefault()
   if window.mouseDown
-    alert('hit')
+    if event.originalEvent.touches
+      alert('Hit')
+      divX = event.originalEvent.touches[0].clientX - $(this).offset().left
+      divY = event.originalEvent.touches[0].clientY - $(this).offset().top
+    else
+      divX = event.clientX - $(this).offset().left
+      divY = event.clientY - $(this).offset().top
     if this.id != window.mouseIn[-3..]
-      if event.originalEvent.touches
-        divX = event.originalEvent.touches[0].clientX - $(this).offset().left
-        divY = event.originalEvent.touches[0].clientY - $(this).offset().top
-      else
-        divX = event.clientX - $(this).offset().left
-        divY = event.clientY - $(this).offset().top
       if divX > 10 and divX < 60 and divY > 10 and divY < 60
         while window.mouseIn.indexOf(this.id) > -1
           $('div#'+window.mouseIn[-3..]).css('background-color', '#ffffff')
