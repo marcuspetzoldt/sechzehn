@@ -83,9 +83,9 @@ $(document).on('keypress', 'input#words', (event) ->
         w = w + String.fromCharCode(event.which)
 
   f = [
-    [[0, $('div#l0').text().trim()[0]], [0, $('div#l1').text().trim()[0]], [0, $('div#l2').text().trim()[0]], [0, $('div#l3').text().trim()[0]]],
-    [[0, $('div#l4').text().trim()[0]], [0, $('div#l5').text().trim()[0]], [0, $('div#l6').text().trim()[0]], [0, $('div#l7').text().trim()[0]]],
-    [[0, $('div#l8').text().trim()[0]], [0, $('div#l9').text().trim()[0]], [0, $('div#l10').text().trim()[0]], [0, $('div#l11').text().trim()[0]]],
+    [[0, $('div#l00').text().trim()[0]], [0, $('div#l01').text().trim()[0]], [0, $('div#l02').text().trim()[0]], [0, $('div#l03').text().trim()[0]]],
+    [[0, $('div#l04').text().trim()[0]], [0, $('div#l05').text().trim()[0]], [0, $('div#l06').text().trim()[0]], [0, $('div#l07').text().trim()[0]]],
+    [[0, $('div#l08').text().trim()[0]], [0, $('div#l09').text().trim()[0]], [0, $('div#l10').text().trim()[0]], [0, $('div#l11').text().trim()[0]]],
     [[0, $('div#l12').text().trim()[0]], [0, $('div#l13').text().trim()[0]], [0, $('div#l14').text().trim()[0]], [0, $('div#l15').text().trim()[0]]]
   ]
   for x in [0..3]
@@ -100,11 +100,11 @@ $(document).on('keypress', 'input#words', (event) ->
       switch f[y][x][0]
         when 1
           window.snake = true
-          $('div#l' + (x + y*4)).css('background-color', '#ffffa0')
+          $('div#l' + ('0' + (x + y*4).toString())[-2..]).css('background-color', '#ffffa0')
         when 2
           window.snake = true
-          $('div#l' + (x + y*4)).css('background-color', '#dfdf00')
-        else $('div#l' + (x + y*4)).css('background-color', '#ffffff')
+          $('div#l' + ('0' + (x + y*4).toString())[-2..]).css('background-color', '#dfdf00')
+        else $('div#l' + ('0' + (x + y*4).toString())[-2..]).css('background-color', '#ffffff')
 
   return true
 )
