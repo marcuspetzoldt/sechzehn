@@ -5,6 +5,7 @@ de:
         user:
           name: 'Name'
           password: 'Kennwort'
+          newpassword: 'neues Kennwort'
     errors:
       models:
         user:

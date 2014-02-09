@@ -21,7 +21,7 @@
       </div>
       <% if params[:what] %>
         <div class="form-group">
-          <%= f.label :password, t('activerecord.models.attributes.user.password') %>
+          <%= f.label :password, t('activerecord.models.attributes.user.newpassword') %>
           <div class="input-group">
             <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
             <%= f.password_field :password, class: 'form-control' %>
@@ -38,10 +38,9 @@
       <div class="form-group">
         <% if params[:what].nil? %>
           <%= f.button 'Anmelden', class: 'btn btn-primary', id: 'signin', name: 'commit' %>
-          <% if params[:what].nil? %>
-            <%= f.button 'Neuen Spieler anlegen', class: 'btn btn-default', id: 'signup', name: 'signup' %>
-          <% end %>
+          <%= f.button raw('Neuen Spieler anlegen<sup><span class="glyphicon glyphicon-flash"></span></sup>'), class: 'btn btn-default', id: 'signup', name: 'signup' %>
           <%= link_to root_path, style: 'display: none', id: 'cancel' do %><button type="button" class="btn btn-default">Abbrechen</button><% end %>
+          <p class="create-account"><sup><span class="glyphicon glyphicon-flash"></span></sup>Falls noch kein Spieler-Account vorhanden ist, einfach einen Spielernamen und ein Kennwort ausdenken. Damit man sich nicht jedes Mal anmelden muss, wird ein Cookie angelegt. Es wird wieder gelöscht, sobald man sich abmeldet.0</p>
         <% else %>
           <%= f.button 'Speichern', class: 'btn btn-primary', id: 'signin', name: params['what'] == 'signup' ? 'signup' : 'signin' %>
           <%= link_to root_path, id: 'cancel' do %><button type="button" class="btn btn-default">Abbrechen</button><% end %>
