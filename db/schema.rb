@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140202155600) do
+ActiveRecord::Schema.define(version: 20140215151819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,12 +56,14 @@ ActiveRecord::Schema.define(version: 20140202155600) do
   add_index "solutions", ["game_id", "word"], name: "index_solutions_on_game_id_and_word", unique: true, using: :btree
 
   create_table "users", force: true do |t|
-    t.string  "name"
-    t.integer "salt"
-    t.string  "password_digest"
-    t.string  "remember_token"
-    t.integer "elo",             default: 1600
-    t.integer "new_elo",         default: 1600
+    t.string   "name"
+    t.integer  "salt"
+    t.string   "password_digest"
+    t.string   "remember_token"
+    t.integer  "elo",             default: 1600
+    t.integer  "new_elo",         default: 1600
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "users", ["name", "salt"], name: "index_users_on_name_and_salt", unique: true, using: :btree
