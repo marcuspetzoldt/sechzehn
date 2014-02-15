@@ -135,7 +135,7 @@ class SechzehnController < ApplicationController
     def highscore
       @help = true
       @scores = ActiveRecord::Base.connection.execute(
-          'SELECT u.name, u.elo, s.count, s.cwords, s.pwords, s.cpoints, s.ppoints' +
+          'SELECT u.id, u.name, u.elo, s.count, s.cwords, s.pwords, s.cpoints, s.ppoints' +
           '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +

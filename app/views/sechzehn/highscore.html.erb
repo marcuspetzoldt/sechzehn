@@ -1,15 +1,15 @@
 <div class="row">
   <div class="col-md-10 col-md-offset-1">
     <table class="table">
+      <colgroup>
+        <col />
+        <col style="width: 50%" />
+        <col />
+        <col />
+        <col />
+        <col />
+      </colgroup>
       <thead>
-        <colgroup>
-          <col />
-          <col style="width: 50%" />
-          <col />
-          <col />
-          <col />
-          <col />
-        </colgroup>
         <tr>
           <th>Platz</th>
           <th>Name</th>
@@ -22,17 +22,20 @@
       <tbody>
         <% old_score = 0 %>
         <% @scores.each_with_index do |score, i| %>
+          <% if signed_in? %>
+            <% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
+          <% end %>
         <tr>
           <% if old_score != score['elo'] %>
-            <td><%= i+1 %></td>
+            <td class="<%= fat %>"><%= i+1 %></td>
           <% else %>
-            <td>&nbsp;</td>
+            <td class="<%= fat %>">&nbsp;</td>
           <% end %>
-          <td><%= score['name'] %></td>
-          <td><%= score['count'] %></td>
-          <td><%= score['cwords'].to_f.round(2) %> / <%= score['pwords'].to_f.round(2) %>%</td>
-          <td><%= score['cpoints'].to_f.round(2) %> / <%= score['ppoints'].to_f.round(2) %>%</td>
-          <td><%= score['elo'] %></td>
+          <td class="<%= fat %>"><%= score['name'] %></td>
+          <td class="<%= fat %>"><%= score['count'] %></td>
+          <td class="<%= fat %>"><%= score['cwords'].to_f.round(2) %> / <%= score['pwords'].to_f.round(2) %>%</td>
+          <td class="<%= fat %>"><%= score['cpoints'].to_f.round(2) %> / <%= score['ppoints'].to_f.round(2) %>%</td>
+          <td class="<%= fat %>"><%= score['elo'] %></td>
         </tr>
         <% end %>
       </tbody>

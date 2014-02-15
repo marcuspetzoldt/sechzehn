@@ -12,15 +12,15 @@ $('td#cpoints').html('<%= "#{@cpoints} / #{@tpoints > 0 ? (100*@cpoints/@tpoints
 $('tbody#score').html('')
 <% old_score = 0 %>
 <% @scores.each_with_index do |score, i| %>
-  <% fat = (score['id'].to_i == current_user.id.to_i) ? 'style="background-color: #e8f8f9"' : nil %>
+  <% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
   <% if score['sum'] != old_score %>
     <% old_score = score['sum'] %>
-    <% tr = "<tr><td #{fat}>#{i+1}.</td>" %>
+    <% tr = "<tr><td class=\"#{fat}\">#{i+1}.</td>" %>
   <% else %>
-    <% tr = '<tr><td #{fat}>&nbsp;</td>' %>
+    <% tr = '<tr><td class=\"#{fat}\">&nbsp;</td>' %>
   <% end %>
-  <% tr = tr + "<td #{fat}>#{score['name']}</td>" %>
-  <% tr = tr + "<td #{fat} class=\"right\">#{score['count']} / #{@twords > 0 ? (100*score['count'].to_i/@twords).round(0) : 0}%</td>" %>
-  <% tr = tr + "<td #{fat} class=\"right\">#{score['sum']} / #{@tpoints > 0 ? (100*score['sum'].to_i/@tpoints).round(0) : 0}%</td></tr>" %>
+  <% tr = tr + "<td class=\"#{fat}\">#{score['name']}</td>" %>
+  <% tr = tr + "<td class=\"right #{fat}\">#{score['count']} / #{@twords > 0 ? (100*score['count'].to_i/@twords).round(0) : 0}%</td>" %>
+  <% tr = tr + "<td class=\"right #{fat}\">#{score['sum']} / #{@tpoints > 0 ? (100*score['sum'].to_i/@tpoints).round(0) : 0}%</td></tr>" %>
   $('tbody#score').append('<%= render inline: tr %>')
 <% end %>
