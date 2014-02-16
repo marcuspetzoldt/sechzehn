@@ -132,16 +132,30 @@ class SechzehnController < ApplicationController
       @help = true
     end
 
-    def highscore
+    def highscore_elo
+      @scores = highscore(' ORDER BY u.elo DESC, s.cpoints DESC, s.cwords DESC')
+      render 'highscore', locals: { highscore_type: 'highscore_elo' }
+    end
+
+    def highscore_points
+      @scores = highscore(' ORDER BY s.cpoints DESC, u.elo DESC, s.cwords DESC')
+      render 'highscore', locals: { highscore_type: 'highscore_points' }
+    end
+
+    def highscore_words
+      @scores = highscore(' ORDER BY s.cwords DESC, s.cpoints DESC, u.elo DESC')
+      render 'highscore', locals: { highscore_type: 'highscore_words' }
+    end
+
+    def highscore(order_by)
       @help = true
-      @scores = ActiveRecord::Base.connection.execute(
-          'SELECT u.id, u.name, u.elo, s.count, s.cwords, s.pwords, s.cpoints, s.ppoints' +
-          '  FROM users u' +
-          '  JOIN scores s' +
-          '    ON u.id = s.user_id' +
-          '   AND s.score_type = ' + Score.score_types[:all_time].to_s +
-          ' ORDER BY u.elo desc, s.cpoints desc, s.cwords desc'
-      )
+      sql = 'SELECT u.id, u.name, u.elo, s.count, s.cwords, s.pwords, s.cpoints, s.ppoints' +
+            '  FROM users u' +
+            '  JOIN scores s' +
+            '    ON u.id = s.user_id' +
+            '   AND s.score_type = ' + Score.score_types[:all_time].to_s +
+            order_by
+      ActiveRecord::Base.connection.execute(sql)
     end
 
   private
@@ -196,7 +210,7 @@ class SechzehnController < ApplicationController
               if s['sum'].to_i > 0
                 count = count + 1
                 r = s['elo'].to_i - current_user.elo
-                r = (r > 0) ? 400 : -400 if r.abs > 400
+                r = ((r > 0) ? 400 : -400) if r.abs > 400
                 ea = 1.0 / (1 + 10 ** (r / 400))
                 delta_elo = delta_elo + k(score) * (sa(s['sum'].to_i) - ea)
               end
