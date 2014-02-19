@@ -4,8 +4,10 @@ class SechzehnController < ApplicationController
       game_id = Game.maximum(:id)
       if game_id != session['game_id']
         # start a new game
-        current_user.guesses.where('points <> 0').destroy_all if signed_in?
-        current_user.update_attribute(:elo, current_user.new_elo)
+        if signed_in?
+          current_user.guesses.where('points <> 0').destroy_all if signed_in?
+          current_user.update_attribute(:elo, current_user.new_elo)
+        end
         session['game_id'] = Game.maximum(:id)
         response.headers['X-Refreshed'] = '0'
       else
@@ -142,9 +144,19 @@ class SechzehnController < ApplicationController
       render 'highscore', locals: { highscore_type: 'highscore_points' }
     end
 
+    def highscore_points_percent
+      @scores = highscore(' ORDER BY s.ppoints DESC, u.elo DESC, s.cwords DESC')
+      render 'highscore', locals: { highscore_type: 'highscore_points_percent' }
+    end
+
     def highscore_words
       @scores = highscore(' ORDER BY s.cwords DESC, s.cpoints DESC, u.elo DESC')
       render 'highscore', locals: { highscore_type: 'highscore_words' }
+    end
+
+    def highscore_words_percent
+      @scores = highscore(' ORDER BY s.cwords DESC, s.ppoints DESC, u.elo DESC')
+      render 'highscore', locals: { highscore_type: 'highscore_words_percent' }
     end
 
     def highscore(order_by)

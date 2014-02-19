@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-md-10 col-md-offset-1">
+  <div class="col-md-12">
     <table class="table">
       <colgroup>
         <col />
@@ -14,9 +14,9 @@
           <th>Platz</th>
           <th>Name</th>
           <th>Spiele</th>
-          <th><%= highscore_type == 'highscore_words' ? raw('Wörter <span class="glyphicon glyphicon-arrow-down"></span>') : link_to('Wörter', highscore_words_path) %></th>
-          <th><%= highscore_type == 'highscore_points' ? raw('Punkte <span class="glyphicon glyphicon-arrow-down"></span>') : link_to('Punkte', highscore_points_path) %></th>
-          <th><%= highscore_type == 'highscore_elo' ? raw('Stufe <span class="glyphicon glyphicon-arrow-down"></span>') : link_to('Stufe', highscore_elo_path) %></th>
+          <th><%= highscore_type == 'highscore_words' ? 'Wörter' : link_to('Wörter', highscore_words_path) %> <%= highscore_type == 'highscore_words_percent' ? '(%)' : link_to('(%)', highscore_words_percent_path) %></th>
+          <th><%= highscore_type == 'highscore_points' ? 'Punkte' : link_to('Punkte', highscore_points_path) %> <%= highscore_type == 'highscore_points_percent' ? '(%)' : link_to('(%)', highscore_points_percent_path) %></th>
+          <th><%= highscore_type == 'highscore_elo' ? 'Stufe' : link_to('Stufe', highscore_elo_path) %></th>
         </tr>
       </thead>
       <tbody>

@@ -9,6 +9,8 @@ Sechzehn::Application.routes.draw do
   get '/highscore/elo', to: 'sechzehn#highscore_elo'
   get '/highscore/points', to: 'sechzehn#highscore_points'
   get '/highscore/words', to: 'sechzehn#highscore_words'
+  get '/highscore/points/percent', to: 'sechzehn#highscore_points_percent'
+  get '/highscore/words/percent', to: 'sechzehn#highscore_words_percent'
   match '/signout', to: 'users#signout', via: 'delete'
   match '/signup', to: 'users#signup', via: 'get'
 

@@ -11,8 +11,8 @@
     <% end %>
     <td class="<%= fat %>"><%= score['name'] %></td>
     <td class="<%= fat %>"><%= score['count'] %></td>
-    <td class="<%= fat %>"><%= score['cwords'].to_f.round(2) %> / <%= score['pwords'].to_f.round(2) %>%</td>
-    <td class="<%= fat %>"><%= score['cpoints'].to_f.round(2) %> / <%= score['ppoints'].to_f.round(2) %>%</td>
+    <td class="<%= fat %>"><%= score['cwords'].to_f.round(1) %> (<%= score['pwords'].to_f.round(1) %>%)</td>
+    <td class="<%= fat %>"><%= score['cpoints'].to_f.round(1) %> (<%= score['ppoints'].to_f.round(1) %>%)</td>
     <td class="<%= fat %>"><%= score['elo'] %></td>
   </tr>
 <% end %>
