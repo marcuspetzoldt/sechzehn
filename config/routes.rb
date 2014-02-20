@@ -13,6 +13,7 @@ Sechzehn::Application.routes.draw do
   get '/highscore/words/percent', to: 'sechzehn#highscore_words_percent'
   match '/signout', to: 'users#signout', via: 'delete'
   match '/signup', to: 'users#signup', via: 'get'
+  get "sitemap.xml", to: 'sitemap#index', defaults: { format: 'xml' }
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
