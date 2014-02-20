@@ -155,7 +155,7 @@ class SechzehnController < ApplicationController
     end
 
     def highscore_words_percent
-      @scores = highscore(' ORDER BY s.cwords DESC, s.ppoints DESC, u.elo DESC')
+      @scores = highscore(' ORDER BY s.pwords DESC, s.ppoints DESC, u.elo DESC')
       render 'highscore', locals: { highscore_type: 'pwords' }
     end
 
