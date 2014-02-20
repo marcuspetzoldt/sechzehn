@@ -14,13 +14,30 @@
           <th>Platz</th>
           <th>Name</th>
           <th>Spiele</th>
-          <th><%= highscore_type == 'highscore_words' ? 'Wörter' : link_to('Wörter', highscore_words_path) %> <%= highscore_type == 'highscore_words_percent' ? '(%)' : link_to('(%)', highscore_words_percent_path) %></th>
-          <th><%= highscore_type == 'highscore_points' ? 'Punkte' : link_to('Punkte', highscore_points_path) %> <%= highscore_type == 'highscore_points_percent' ? '(%)' : link_to('(%)', highscore_points_percent_path) %></th>
-          <th><%= highscore_type == 'highscore_elo' ? 'Stufe' : link_to('Stufe', highscore_elo_path) %></th>
+          <th><%= highscore_type == 'cwords' ? 'Wörter' : link_to('Wörter', highscore_words_path) %> <%= highscore_type == 'pwords' ? '(%)' : link_to('(%)', highscore_words_percent_path) %></th>
+          <th><%= highscore_type == 'cpoints' ? 'Punkte' : link_to('Punkte', highscore_points_path) %> <%= highscore_type == 'ppoints' ? '(%)' : link_to('(%)', highscore_points_percent_path) %></th>
+          <th><%= highscore_type == 'elo' ? 'Stufe' : link_to('Stufe', highscore_elo_path) %></th>
         </tr>
       </thead>
       <tbody>
-        <%= render partial: highscore_type %>
+      <% old_score = 0 %>
+      <% @scores.each_with_index do |score, i| %>
+        <% if signed_in? %>
+          <% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
+        <% end %>
+        <tr>
+          <% if old_score != score[highscore_type] %>
+            <td class="<%= fat %>"><%= i+1 %></td>
+          <% else %>
+            <td class="<%= fat %>">&nbsp;</td>
+          <% end %>
+          <td class="<%= fat %>"><%= score['name'] %></td>
+          <td class="<%= fat %>"><%= score['count'] %></td>
+          <td class="<%= fat %>"><%= score['cwords'].to_f.round(1) %> (<%= score['pwords'].to_f.round(1) %>%)</td>
+          <td class="<%= fat %>"><%= score['cpoints'].to_f.round(1) %> (<%= score['ppoints'].to_f.round(1) %>%)</td>
+          <td class="<%= fat %>"><%= score['elo'] %></td>
+        </tr>
+      <% end %>
       </tbody>
     </table>
   </div>

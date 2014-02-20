@@ -136,27 +136,27 @@ class SechzehnController < ApplicationController
 
     def highscore_elo
       @scores = highscore(' ORDER BY u.elo DESC, s.cpoints DESC, s.cwords DESC')
-      render 'highscore', locals: { highscore_type: 'highscore_elo' }
+      render 'highscore', locals: { highscore_type: 'elo' }
     end
 
     def highscore_points
       @scores = highscore(' ORDER BY s.cpoints DESC, u.elo DESC, s.cwords DESC')
-      render 'highscore', locals: { highscore_type: 'highscore_points' }
+      render 'highscore', locals: { highscore_type: 'cpoints' }
     end
 
     def highscore_points_percent
       @scores = highscore(' ORDER BY s.ppoints DESC, u.elo DESC, s.cwords DESC')
-      render 'highscore', locals: { highscore_type: 'highscore_points_percent' }
+      render 'highscore', locals: { highscore_type: 'ppoints' }
     end
 
     def highscore_words
       @scores = highscore(' ORDER BY s.cwords DESC, s.cpoints DESC, u.elo DESC')
-      render 'highscore', locals: { highscore_type: 'highscore_words' }
+      render 'highscore', locals: { highscore_type: 'cwords' }
     end
 
     def highscore_words_percent
       @scores = highscore(' ORDER BY s.cwords DESC, s.ppoints DESC, u.elo DESC')
-      render 'highscore', locals: { highscore_type: 'highscore_words_percent' }
+      render 'highscore', locals: { highscore_type: 'pwords' }
     end
 
     def highscore(order_by)
