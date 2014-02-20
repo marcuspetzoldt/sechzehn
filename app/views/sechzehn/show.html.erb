@@ -90,19 +90,22 @@
     <div id="solutionheader" style="display: none"><hr class="row"/><span class="noone">&nbsp;keiner&nbsp;</span> &bull; <span class="someone">&nbsp;gefunden&nbsp;</span> &bull; <span class="self">&nbsp;von&nbsp;Dir&nbsp;</span> &bull; <span class="onlyself">&nbsp;nur&nbsp;von&nbsp;Dir&nbsp;</span><hr class="row"/></div>
     <div id="solution"></div>
     <% else %>
-      <h3>Spielidee</h3>
-      <p style="text-align: justify"><span class="sechzehn">SECHZEHN</span> wurde durch Boggle inspiriert. Finde innerhalb von drei Minuten mehr deutsche Wörter in einem 4x4 Buchstabenfeld als Deine Mitspieler.</p>
-      <h3>Features</h3>
-      <ul>
-        <li>Wörterbuch mit mehr als 1.1 Mio. Einträgen</li>
-        <li>Tastatur-, Maus- und Touch-Input</li>
-        <li>Rangliste</li>
-        <li>Berechnung der Spielstärke (<a href="http://de.wikipedia.org/wiki/Elo-Zahl">ELO-Zahl</a>)</li>
-        <li>keine Installation, keine Kosten</li>
-      </ul>
-      <h3>Regeln</h3>
-      <p style="text-align: justify">Die Buchstaben müssen eine Kette bilden. Ein Wort muss mindestens drei Buchstaben lang sein. Und in einem Wort darf kein Buchstabenfeld mehrfach genutzt werden.</p>
-      <p style="text-align: justify">Die Wörter können getippt, oder mit der Maus oder dem Finger markiert werden.</p>
+      <div itemscope itemtype="http://schema.org/WebApplication">
+        <h3><span itemprop="applicationCategory"><span style="display: none;">Browser</span>Spiel</span>idee</h3>
+        <div style="display:none" itemprop="keywords">Browserspiel online Multiplayer Boggle</div>
+        <div style="display:none" itemprop="countriesSupported">DE</div>
+        <p style="text-align: justify"><span class="sechzehn" itemprop="name">SECHZEHN</span> wurde durch Boggle inspiriert. <span itemprop="description">Finde innerhalb von drei Minuten mehr deutsche Wörter in einem 4x4 Buchstabenfeld als Deine Mitspieler.</span></p>
+        <h3>Features</h3>
+        <ul itemprop="featurelist">
+          <li>Wörterbuch mit mehr als 1.1 Mio. Einträgen,</li>
+          <li>mit Tastatur, Maus und Finger bedienbar,</li>
+          <li>Rangliste,</li>
+          <li>Berechnung der Spielstärke (<a href="http://de.wikipedia.org/wiki/Elo-Zahl">ELO-Zahl</a>),</li>
+          <li>keine Installation (<span itemprop="browserRequirements">benötigt Javascript</span>), keine Kosten</li>
+        </ul>
+        <h3>Regeln</h3>
+        <p style="text-align: justify">Die Buchstaben müssen eine Kette bilden. Ein Wort muss mindestens drei Buchstaben lang sein. Und in einem Wort darf kein Buchstabenfeld mehrfach genutzt werden.</p>
+      </div>
     <% end %>
   </div>
   <div class="col-md-4">
