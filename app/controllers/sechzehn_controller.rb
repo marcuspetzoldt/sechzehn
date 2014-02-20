@@ -132,6 +132,7 @@ class SechzehnController < ApplicationController
 
     def help
       @help = true
+      @subtitle = 'Hilfe'
     end
 
     def highscore_elo
@@ -161,6 +162,7 @@ class SechzehnController < ApplicationController
 
     def highscore(order_by)
       @help = true
+      @subtitle = 'Rangliste'
       sql = 'SELECT u.id, u.name, u.elo, s.count, s.cwords, s.pwords, s.cpoints, s.ppoints' +
             '  FROM users u' +
             '  JOIN scores s' +
