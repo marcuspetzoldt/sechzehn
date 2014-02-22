@@ -38,9 +38,9 @@
       <div class="form-group">
         <% if params[:what].nil? %>
           <%= f.button 'Anmelden', class: 'btn btn-primary', id: 'signin', name: 'commit' %>
-          <%= f.button raw('Neuen Spieler anlegen<sup><span class="glyphicon glyphicon-flash"></span></sup>'), class: 'btn btn-default', id: 'signup', name: 'signup' %>
+          <%= f.button raw('Neuen Spieler anlegen<sup><span class="glyphicon glyphicon-flash" style="color: red"></span></sup>'), class: 'btn btn-default', id: 'signup', name: 'signup' %>
           <%= link_to root_path, style: 'display: none', id: 'cancel' do %><button type="button" class="btn btn-default">Abbrechen</button><% end %>
-          <p class="create-account"><sup><span class="glyphicon glyphicon-flash"></span></sup>Falls noch kein Spieler-Account vorhanden ist, einfach einen Spielernamen und ein Kennwort ausdenken. Damit man sich nicht jedes Mal anmelden muss, wird ein Cookie angelegt. Es wird wieder gelöscht, sobald man sich abmeldet.</p>
+          <p class="create-account"><sup><span class="glyphicon glyphicon-flash"></span></sup> Das erste Mal dabei? Dann einfach einen Namen und ein beliebiges Kennwort eintippen, und einen neuen Spieler anlegen.</p>
         <% else %>
           <%= f.button 'Speichern', class: 'btn btn-primary', id: 'signin', name: params['what'] == 'signup' ? 'signup' : 'signin' %>
           <%= link_to root_path, id: 'cancel' do %><button type="button" class="btn btn-default">Abbrechen</button><% end %>
@@ -92,6 +92,18 @@
     <% else %>
       <div itemscope itemtype="http://schema.org/WebApplication">
         <h3><span itemprop="applicationCategory">Spiel</span>idee</h3>
+        <p style="text-align: justify"><span class="sechzehn" itemprop="name">SECHZEHN</span> wurde durch Boggle inspiriert. <span itemprop="description">Finde innerhalb von drei Minuten mehr deutsche Wörter in einem 4x4 Buchstabenfeld als Deine Mitspieler.</span></p>
+        <h3>Features</h3>
+        <ul>
+          <li itemprop="featurelist">deutsch, über 1.1 Mio. Wörter</li>
+          <li itemprop="featurelist">mit Tastatur, Maus und Finger bedienbar</li>
+          <li itemprop="featurelist">Rangliste</li>
+          <li itemprop="featurelist">Berechnung der Spielstärke (<a href="http://de.wikipedia.org/wiki/Elo-Zahl">ELO-Zahl</a>)</li>
+          <li itemprop="featurelist">im Browser spielbar (<span itemprop="browserRequirements">benötigt Javascript</span>)</li>
+          <li itemprop="featurelist">keine Kosten</li>
+        </ul>
+        <h3>Regeln</h3>
+        <p style="text-align: justify">Die Buchstaben müssen eine Kette bilden. Ein Wort muss mindestens drei Buchstaben lang sein. Und in einem Wort darf kein Buchstabenfeld mehrfach genutzt werden.</p>
         <div style="display:none" itemprop="keywords">Wortspiel</div>
         <div style="display:none" itemprop="keywords">Browserspiel</div>
         <div style="display:none" itemprop="keywords">Multiplayer</div>
@@ -99,17 +111,6 @@
         <div style="display:none" itemprop="keywords">deutsch</div>
         <div style="display:none" itemprop="countriesSupported">DE</div>
         <div style="display:none" itemprop="applicationSubCategory">Browserspiel</div>
-        <p style="text-align: justify"><span class="sechzehn" itemprop="name">SECHZEHN</span> wurde durch Boggle inspiriert. <span itemprop="description">Finde innerhalb von drei Minuten mehr deutsche Wörter in einem 4x4 Buchstabenfeld als Deine Mitspieler.</span></p>
-        <h3>Features</h3>
-        <ul itemprop="featurelist">
-          <li>Wörterbuch mit über 1.1 Mio. Einträgen,</li>
-          <li>mit Tastatur, Maus und Finger bedienbar,</li>
-          <li>Rangliste,</li>
-          <li>Berechnung der Spielstärke (<a href="http://de.wikipedia.org/wiki/Elo-Zahl">ELO-Zahl</a>),</li>
-          <li>keine Installation (<span itemprop="browserRequirements">benötigt Javascript</span>), keine Kosten</li>
-        </ul>
-        <h3>Regeln</h3>
-        <p style="text-align: justify">Die Buchstaben müssen eine Kette bilden. Ein Wort muss mindestens drei Buchstaben lang sein. Und in einem Wort darf kein Buchstabenfeld mehrfach genutzt werden.</p>
       </div>
     <% end %>
   </div>
