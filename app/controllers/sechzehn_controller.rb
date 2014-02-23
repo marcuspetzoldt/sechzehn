@@ -9,9 +9,15 @@ class SechzehnController < ApplicationController
           current_user.update_attribute(:elo, current_user.new_elo)
         end
         session['game_id'] = Game.maximum(:id)
+        response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
         response.headers['X-Refreshed'] = '0'
       else
         # continue a game
+        response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
         response.headers['X-Refreshed'] = '1'
       end
       @field = init_field
@@ -84,7 +90,7 @@ class SechzehnController < ApplicationController
 
       # All player's score
       @scores = ActiveRecord::Base.connection.execute(
-        'SELECT a.id, a.name, a.elo, count(b.points), sum(b.points)' +
+        'SELECT a.id, a.guest, a.name, a.elo, count(b.points), sum(b.points)' +
         '  FROM guesses b' +
         '  JOIN users a' +
         '    ON a.id = b.user_id' +
@@ -202,7 +208,7 @@ class SechzehnController < ApplicationController
     end
 
     def compute_highscore
-      if signed_in?
+      if registered_user?
         begin
           score = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:all_time] )
         rescue ActiveRecord::RecordNotFound
@@ -220,7 +226,7 @@ class SechzehnController < ApplicationController
           delta_elo = 0
           count = 0
           @scores.each do |s|
-            if s['id'].to_i != score.user_id
+            if (s['id'].to_i != score.user_id) and (s['guest'].nil?)
               if s['sum'].to_i > 0
                 count = count + 1
                 r = s['elo'].to_i - current_user.elo

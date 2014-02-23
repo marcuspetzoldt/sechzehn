@@ -16,7 +16,7 @@
     <div class="collapse navbar-collapse" id="sechzehn-navbar">
       <ul class="nav navbar-nav navbar-right">
         <% if @help.nil? %>
-          <% if signed_in? %>
+          <% if registered_user? %>
             <li>
               <%= link_to edit_user_path(current_user) do %>
                 Nutzerdaten ändern

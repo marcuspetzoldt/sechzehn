@@ -39,8 +39,10 @@
         <% if params[:what].nil? %>
           <%= f.button 'Anmelden', class: 'btn btn-primary', id: 'signin', name: 'commit' %>
           <%= f.button raw('Neuen Spieler anlegen<sup><span class="glyphicon glyphicon-flash" style="color: red"></span></sup>'), class: 'btn btn-default', id: 'signup', name: 'signup' %>
+          <%= f.button raw('Gast<sup><span class="glyphicon glyphicon-flash" style="color: red"></span><span class="glyphicon glyphicon-flash" style="color: red"></span</sup>'), class: 'btn btn-default', id: 'guest_signup', name: 'guest_signup' %>
           <%= link_to root_path, style: 'display: none', id: 'cancel' do %><button type="button" class="btn btn-default">Abbrechen</button><% end %>
           <p class="create-account"><sup><span class="glyphicon glyphicon-flash"></span></sup> Das erste Mal dabei? Dann einfach einen Namen und ein beliebiges Kennwort eintippen, und einen neuen Spieler anlegen.</p>
+          <p class="create-account"><sup><span class="glyphicon glyphicon-flash"></span><span class="glyphicon glyphicon-flash"></span></sup> Als Gast kann man ohne Anmeldung mitspielen. Gast-Spiele werden nicht gewertet. Ideal zum trainieren.</p>
         <% else %>
           <%= f.button 'Speichern', class: 'btn btn-primary', id: 'signin', name: params['what'] == 'signup' ? 'signup' : 'signin' %>
           <%= link_to root_path, id: 'cancel' do %><button type="button" class="btn btn-default">Abbrechen</button><% end %>
