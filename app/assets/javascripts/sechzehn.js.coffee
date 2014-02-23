@@ -182,7 +182,6 @@ getSolution = () ->
 
 startGame = () ->
   $('div#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->
-    $('input#words').val(XMLHttpRequest.getResponseHeader('X-Refreshed'))
     if XMLHttpRequest.getResponseHeader('X-Refreshed') == '0'
       $('div#solution').html('')
       $('div#guesses').html('')
