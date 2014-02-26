@@ -10,7 +10,8 @@ $(document).on('focus', 'form#signin input', () ->
 )
 
 $(document).ready(() ->
-  sync()
+  window.___gcfg = {lang: 'de'};
+#  sync()
 )
 
 $(document).on('mousedown touchstart', 'div.letter', (event) ->
@@ -196,3 +197,23 @@ disableGame = () ->
   $('input#words').attr('disabled', 'disabled')
   $('input#words').val('Spiel auswerten ...')
   $('div.letter').css({'background-color' : '#eeeeee', 'color' : '#999999'})
+
+
+((d, s, id) ->
+  fjs = d.getElementsByTagName(s)[0]
+  if d.getElementById(id)
+    return
+  js = d.createElement(s)
+  js.id = id
+  js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1"
+  fjs.parentNode.insertBefore(js, fjs))(document, 'script', 'facebook-jssdk')
+
+
+
+(() ->
+  po = document.createElement('script')
+  po.type = 'text/javascript'
+  po.async = true
+  po.src = 'https://apis.google.com/js/platform.js'
+  s = document.getElementsByTagName('script')[0]
+  s.parentNode.insertBefore(po, s))()
