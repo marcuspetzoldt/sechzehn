@@ -194,6 +194,7 @@ startGame = () ->
   )
 
 disableGame = () ->
+  window.mouseDown = 0
   $('input#words').attr('disabled', 'disabled')
   $('input#words').val('Spiel auswerten ...')
   $('div.letter').css({'background-color' : '#eeeeee', 'color' : '#999999'})
