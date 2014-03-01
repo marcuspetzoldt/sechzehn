@@ -28,6 +28,14 @@
                 Abmelden
               <% end %>
             </li>
+          <% else %>
+            <% if signed_in? %>
+              <li>
+                <%= link_to signout_path, method: 'delete' do %>
+                  Spieler registrieren
+                <% end %>
+              </li>
+            <% end %>
           <% end %>
           <li>
             <%= link_to highscore_elo_path do %>
