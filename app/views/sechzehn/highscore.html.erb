@@ -1,4 +1,12 @@
 <div class="row">
+  <ul class="nav nav-tabs col-md-12">
+    <li class="<%= @which == '0' ? 'active' : nil %>"><%= link_to 'Ewig', highscore_elo_path(which: 0) %></li>
+    <li class="<%= @which == '1' ? 'active' : nil %>"><%= link_to 'Diesen Monat', highscore_elo_path(which: 1) %></li>
+    <li class="<%= @which == '2' ? 'active' : nil %>"><%= link_to 'Diese Woche', highscore_elo_path(which: 2) %></li>
+    <li class="<%= @which == '3' ? 'active' : nil %>"><%= link_to 'Heute', highscore_elo_path(which: 3) %></li>
+  </ul>
+</div>
+<div class="row">
   <div class="col-md-12">
     <table class="table">
       <colgroup>
@@ -14,9 +22,9 @@
           <th>Platz</th>
           <th>Name</th>
           <th>Spiele</th>
-          <th><%= highscore_type == 'cwords' ? 'Wörter' : link_to('Wörter', highscore_words_path) %> <%= highscore_type == 'pwords' ? '(%)' : link_to('(%)', highscore_words_percent_path) %></th>
-          <th><%= highscore_type == 'cpoints' ? 'Punkte' : link_to('Punkte', highscore_points_path) %> <%= highscore_type == 'ppoints' ? '(%)' : link_to('(%)', highscore_points_percent_path) %></th>
-          <th><%= highscore_type == 'elo' ? 'Stufe' : link_to('Stufe', highscore_elo_path) %></th>
+          <th><%= highscore_type == 'cwords' ? 'Wörter' : link_to('Wörter', highscore_words_path(which: @which)) %> <%= highscore_type == 'pwords' ? '(%)' : link_to('(%)', highscore_words_percent_path(which: @which)) %></th>
+          <th><%= highscore_type == 'cpoints' ? 'Punkte' : link_to('Punkte', highscore_points_path) %> <%= highscore_type == 'ppoints' ? '(%)' : link_to('(%)', highscore_points_percent_path(which: @which)) %></th>
+          <th><%= highscore_type == 'elo' ? 'Stufe' : link_to('Stufe', highscore_elo_path(which: @which)) %></th>
         </tr>
       </thead>
       <tbody>

@@ -142,39 +142,74 @@ class SechzehnController < ApplicationController
     end
 
     def highscore_elo
-      @scores = highscore(' ORDER BY u.elo DESC, s.cpoints DESC, s.cwords DESC')
+      @scores = highscore(' ORDER BY u.elo DESC, cpoints DESC, cwords DESC')
       render 'highscore', locals: { highscore_type: 'elo' }
     end
 
     def highscore_points
-      @scores = highscore(' ORDER BY s.cpoints DESC, u.elo DESC, s.cwords DESC')
+      @scores = highscore(' ORDER BY cpoints DESC, u.elo DESC, cwords DESC')
       render 'highscore', locals: { highscore_type: 'cpoints' }
     end
 
     def highscore_points_percent
-      @scores = highscore(' ORDER BY s.ppoints DESC, u.elo DESC, s.cwords DESC')
+      @scores = highscore(' ORDER BY ppoints DESC, u.elo DESC, cwords DESC')
       render 'highscore', locals: { highscore_type: 'ppoints' }
     end
 
     def highscore_words
-      @scores = highscore(' ORDER BY s.cwords DESC, s.cpoints DESC, u.elo DESC')
+      @scores = highscore(' ORDER BY cwords DESC, cpoints DESC, u.elo DESC')
       render 'highscore', locals: { highscore_type: 'cwords' }
     end
 
     def highscore_words_percent
-      @scores = highscore(' ORDER BY s.pwords DESC, s.ppoints DESC, u.elo DESC')
+      @scores = highscore(' ORDER BY pwords DESC, ppoints DESC, u.elo DESC')
       render 'highscore', locals: { highscore_type: 'pwords' }
     end
 
     def highscore(order_by)
       @help = true
       @subtitle = 'Rangliste'
-      sql = 'SELECT u.id, u.name, u.elo, s.count, s.cwords, s.pwords, s.cpoints, s.ppoints' +
+      @which = params[:which]
+
+      case @which
+      when '3'
+        # daily
+        sql = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints' +
             '  FROM users u' +
             '  JOIN scores s' +
             '    ON u.id = s.user_id' +
-            '   AND s.score_type = ' + Score.score_types[:all_time].to_s +
-            order_by
+            '   AND s.score_type = ' + Score.score_types[:daily].to_s +
+            '   AND s.created_at >= \'' + Date.today.to_s + '\''
+
+      when '2'
+        # weekly
+        sql = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords)/count(s.id) as cwords, sum(s.pwords)/count(s.id) as pwords, sum(s.cpoints)/count(s.id) as cpoints, sum(s.ppoints)/count(s.id) as ppoints' +
+            '  FROM users u' +
+            '  JOIN scores s' +
+            '    ON u.id = s.user_id' +
+            '   AND s.score_type = ' + Score.score_types[:daily].to_s +
+            '   AND s.created_at >= \'' + Date.today.beginning_of_week.to_s + '\'' +
+            ' GROUP BY u.id, u.name, u.elo, s.user_id'
+
+      when '1'
+        # monthly
+        sql = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords)/count(s.id) as cwords, sum(s.pwords)/count(s.id) as pwords, sum(s.cpoints)/count(s.id) as cpoints, sum(s.ppoints)/count(s.id) as ppoints' +
+            '  FROM users u' +
+            '  JOIN scores s' +
+            '    ON u.id = s.user_id' +
+            '   AND s.score_type = ' + Score.score_types[:daily].to_s +
+            '   AND s.created_at >= \'' + Date.today.beginning_of_month.to_s + '\'' +
+            ' GROUP BY u.id, u.name, u.elo, s.user_id'
+      else
+        # all time
+        sql = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints' +
+            '  FROM users u' +
+            '  JOIN scores s' +
+            '    ON u.id = s.user_id' +
+            '   AND s.score_type = ' + Score.score_types[:all_time].to_s
+        @which = '0'
+      end
+      sql = sql + order_by
       ActiveRecord::Base.connection.execute(sql)
     end
 
@@ -209,10 +244,20 @@ class SechzehnController < ApplicationController
 
     def compute_highscore
       if registered_user?
+
+        # cleanup
+        Score.where("user_id=? and score_type=? and created_at<?", current_user.id, Score.score_types[:daily], Date.today-1.month).destroy_all
+
         begin
           score = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:all_time] )
         rescue ActiveRecord::RecordNotFound
           score = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:all_time], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0)
+        end
+
+        begin
+          score_daily = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:daily], created_at: Date.today )
+        rescue ActiveRecord::RecordNotFound
+          score_daily = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:daily], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0, created_at: Date.today)
         end
 
         if session['game_id'] != score.game_id and !session['game_id'].nil?
@@ -222,6 +267,13 @@ class SechzehnController < ApplicationController
           score.ppoints = (score.ppoints * score.count + (@cpoints * 100 / @tpoints)) / (score.count + 1)
           score.count = score.count + 1
           score.game_id = session['game_id']
+
+          score_daily.cwords = (score_daily.cwords * score_daily.count + @cwords) / (score_daily.count + 1)
+          score_daily.pwords = (score_daily.pwords * score_daily.count + (@cwords * 100 / @twords)) / (score_daily.count + 1)
+          score_daily.cpoints = (score_daily.cpoints * score_daily.count + @cpoints) / (score_daily.count + 1)
+          score_daily.ppoints = (score_daily.ppoints * score_daily.count + (@cpoints * 100 / @tpoints)) / (score_daily.count + 1)
+          score_daily.count = score_daily.count + 1
+          score_daily.game_id = session['game_id']
 
           delta_elo = 0
           count = 0
@@ -241,6 +293,7 @@ class SechzehnController < ApplicationController
             current_user.update_attribute(:new_elo, new_elo)
           end
           score.save
+          score_daily.save
         end
       end
     end
