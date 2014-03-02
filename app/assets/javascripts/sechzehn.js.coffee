@@ -11,7 +11,7 @@ $(document).on('focus', 'form#signin input', () ->
 
 $(document).ready(() ->
   window.___gcfg = {lang: 'de'};
-  # sync()
+  sync()
 )
 
 $(document).on('mousedown touchstart', 'div.letter', (event) ->
