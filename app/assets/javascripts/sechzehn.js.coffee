@@ -32,10 +32,11 @@ $(document).on('mousemove touchmove', 'div.letter', (event) ->
       dY = event.originalEvent.touches[0].clientY - $(this).offset().top
       divX = Math.abs(dX % 70)
       divY = Math.abs(dY % 70)
+      id = document.elementFromPoint(event.originalEvent.touches[0].clientX, event.originalEvent.touches[0].clientY).id
     else
       divX = event.clientX - $(this).offset().left
       divY = event.clientY - $(this).offset().top
-    id = this.id
+      id = this.id
     if id != window.mouseIn[-3..]
       if divX > 10 and divX < 60 and divY > 10 and divY < 60
         while window.mouseIn.indexOf(id) > -1
