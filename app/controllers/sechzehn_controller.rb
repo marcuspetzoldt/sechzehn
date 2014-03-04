@@ -183,7 +183,7 @@ class SechzehnController < ApplicationController
 
       when '2'
         # weekly
-        sql = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords)/count(s.id) as cwords, sum(s.pwords)/count(s.id) as pwords, sum(s.cpoints)/count(s.id) as cpoints, sum(s.ppoints)/count(s.id) as ppoints' +
+        sql = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints' +
             '  FROM users u' +
             '  JOIN scores s' +
             '    ON u.id = s.user_id' +
@@ -193,7 +193,7 @@ class SechzehnController < ApplicationController
 
       when '1'
         # monthly
-        sql = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords)/count(s.id) as cwords, sum(s.pwords)/count(s.id) as pwords, sum(s.cpoints)/count(s.id) as cpoints, sum(s.ppoints)/count(s.id) as ppoints' +
+        sql = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints' +
             '  FROM users u' +
             '  JOIN scores s' +
             '    ON u.id = s.user_id' +
