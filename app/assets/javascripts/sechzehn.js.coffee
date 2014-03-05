@@ -190,6 +190,7 @@ startGame = () ->
       $('td#cwords').html('0')
       $('td#cpoints').html('0')
     $('input#words').removeAttr('disabled')
+    $('input#words').val('')
     $('input#words').focus()
   )
 
