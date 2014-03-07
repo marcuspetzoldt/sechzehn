@@ -146,6 +146,7 @@ clock = () ->
   window.gameTimer--
   if (window.gameTimer <= 0)
     window.gameMode = 'sync'
+    $('input#words').val('Spiel auswerten ...')
     disableGame()
     sync()
   else
@@ -159,12 +160,13 @@ clock = () ->
         t = window.gameTimer - 180
         if (window.gameMode != 'score')
           window.gameMode = 'score'
+          $('input#words').val('Spiel startet in ...')
           disableGame()
           getSolution()
-          $('input#words').val('')
       else
         if (window.gameMode != 'limbo')
           window.gameMode = 'limbo'
+          $('input#words').val('Spiel auswerten ...')
           disableGame()
   $('span#timer').html( ((t/60)|0).toString() + ':' + ('0' + (t%60).toString())[-2..])
   return true
@@ -197,9 +199,7 @@ startGame = () ->
 disableGame = () ->
   window.mouseDown = 0
   $('input#words').attr('disabled', 'disabled')
-  $('input#words').val('Spiel auswerten ...')
   $('div.letter').css({'background-color' : '#eeeeee', 'color' : '#999999'})
-
 
 ((d, s, id) ->
   fjs = d.getElementsByTagName(s)[0]
