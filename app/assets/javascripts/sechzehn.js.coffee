@@ -11,7 +11,17 @@ $(document).on('focus', 'form#signin input', () ->
 
 $(document).ready(() ->
   window.___gcfg = {lang: 'de'};
-  sync()
+  if $('input#words').length > 0
+    sync()
+  else
+    $('div#l04').css('background-color', '#ffff00')
+    $('div#l05').css('background-color', '#ffff00')
+    $('div#l06').css('background-color', '#ffff00')
+    $('div#l07').css('background-color', '#ffff00')
+    $('div#l08').css('background-color', '#ffff00')
+    $('div#l09').css('background-color', '#ffff00')
+    $('div#l10').css('background-color', '#ffff00')
+    $('div#l11').css('background-color', '#dfdd00')
 )
 
 $(document).on('mousedown touchstart', 'div.letter', (event) ->
