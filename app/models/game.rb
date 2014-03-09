@@ -10,7 +10,12 @@ class Game < ActiveRecord::Base
   private
 
     def roll_dice
-      self.letters = (0.upto(15).map { |i| draw_letter }).join
+      vowels = 0
+      # at least two vowels, but not more than six
+      until (2..6) === vowels
+        self.letters = (0.upto(15).map { |i| draw_letter }).join
+        vowels = self.letters.count('aeiou')
+      end
     end
 
     def find_words
