@@ -52,7 +52,7 @@
     <div id="solutionheader" style="display: none"><hr class="row"/><span class="noone">&nbsp;keiner&nbsp;</span> &bull; <span class="someone">&nbsp;gefunden&nbsp;</span> &bull; <span class="self">&nbsp;von&nbsp;Dir&nbsp;</span> &bull; <span class="onlyself">&nbsp;nur&nbsp;von&nbsp;Dir&nbsp;</span><hr class="row"/></div>
     <div id="solution"></div>
     <% else %>
-      <%= form_for @user, html: { style: @play ? 'display: none' : 'display: inherit', id: 'signin' } do |f| %>
+      <%= form_for @user, html: { style: @play ? 'display: none' : 'display: inherit', id: 'form_signin' } do |f| %>
         <div class="form-group">
           <%= f.label :name, t('activerecord.models.attributes.user.name')%>
           <div class="input-group">
@@ -80,13 +80,13 @@
           <% if params[:what].nil? %>
             <%= f.button 'Anmelden', class: 'btn btn-primary', id: 'signin', name: 'commit' %>
             <%= f.button raw('Spieler registrieren<sup><span class="glyphicon glyphicon-flash" style="color: red"></span></sup>'), class: 'btn btn-default', id: 'signup', name: 'signup' %>
-            <%= f.button raw('Gast<sup><span class="glyphicon glyphicon-flash" style="color: red"></span><span class="glyphicon glyphicon-flash" style="color: red"></span</sup>'), class: 'btn btn-default', id: 'guest_signup', name: 'guest_signup' %>
-            <%= link_to root_path, style: 'display: none', id: 'cancel' do %><button type="button" class="btn btn-default">Abbrechen</button><% end %>
+            <%= f.button raw('Gast<sup><span class="glyphicon glyphicon-flash" style="color: red"></span><span class="glyphicon glyphicon-flash" style="color: red"></span></sup>'), class: 'btn btn-default', id: 'guest_signup', name: 'guest_signup' %>
+            <%= link_to 'Abbrechen', root_path, style: 'display: none', id: 'cancel', class: "btn btn-default" %>
             <p class="create-account"><sup><span class="glyphicon glyphicon-flash"></span></sup> Das erste Mal dabei? Dann einfach einen Namen und ein beliebiges Kennwort eintippen, und einen neuen Spieler registrieren.</p>
             <p class="create-account"><sup><span class="glyphicon glyphicon-flash"></span><span class="glyphicon glyphicon-flash"></span></sup> Als Gast kann man ohne Anmeldung mitspielen. Gast-Spiele werden nicht gewertet. Ideal zum trainieren.</p>
           <% else %>
             <%= f.button 'Speichern', class: 'btn btn-primary', id: 'signin', name: params['what'] == 'signup' ? 'signup' : 'signin' %>
-            <%= link_to root_path, id: 'cancel' do %><button type="button" class="btn btn-default">Abbrechen</button><% end %>
+            <%= link_to 'Abbrechen', root_path, id: 'cancel', class: "btn btn-default" %>
           <% end %>
         </div>
       <% end %>

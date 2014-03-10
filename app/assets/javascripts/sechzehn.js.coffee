@@ -3,7 +3,7 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 
-$(document).on('focus', 'form#signin input', () ->
+$(document).on('focus', 'form#form_signin input', () ->
   $('div.alert').fadeOut(500, () ->
     $(this).remove()
   )
