@@ -14,7 +14,7 @@ end
 
 use Rack::Rewrite do
   r301 %r{.*}, "http://#{ENV['SITE_URL']}$&", :if => Proc.new { |rack_env|
-  rack_env['SERVER_NAME'].start_with?('sechzehn')}
+  !(rack_env['SERVER_NAME'].start_with?('spiele'))}
 
   r301 %r{^(.+)/$}, '$1'
 end
