@@ -9,6 +9,7 @@ gem 'pg'
 gem 'bootstrap-sass'
 gem 'bcrypt-ruby', '3.0.1'
 gem 'i18n'
+gem 'rack-rewrite'
 
 group :production do
   gem 'rails_12factor'
