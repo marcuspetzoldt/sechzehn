@@ -22,6 +22,7 @@ class SechzehnController < ApplicationController
   end
 
   def show
+    @canonical = 'http://spiele.sechzehn.org/'
     @play = true
     @cwords = 0
     @cpoints = 0
@@ -166,6 +167,7 @@ class SechzehnController < ApplicationController
 
   def highscore(order_by)
     @help = true
+    @canonical = 'http://spiele.sechzehn.org/highscore/elo'
     @subtitle = 'Rangliste'
     @which = params[:which]
 

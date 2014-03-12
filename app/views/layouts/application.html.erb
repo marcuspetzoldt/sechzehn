@@ -5,6 +5,9 @@
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
   <meta name="google-site-verification" content="5avFjpgG47OfcroItoOuARYs4SRsDyFJNcRRUQvS5Wg" />
   <meta name="msvalidate.01" content="00D5B887D59ECBE57165D33474142A47" />
+  <% unless @canonical.nil? %>
+    <link rel="canonical" href="<%= @canonical %>" />
+  <% end %>
   <meta name="description" content="SECHZEHN ist ein Wortspiel wie Boggle. Finde innerhalb von drei Minuten mehr deutsche Wörter in einem 4x4 Buchstabenfeld als Deine Mitspieler." />
   <meta name="author" content="Marcus Petzoldt" />
   <meta name="keywords" content="sechzehn, deutsch, online, Wortspiel, Browserspiel, Multiplayer" />

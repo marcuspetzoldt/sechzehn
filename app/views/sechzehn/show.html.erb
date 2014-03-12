@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-4">
-    <div style="background-color: #e8f8f9">
-      <div id="field" style="padding-top: 32px; padding-bottom: 32px; margin: auto; width: 280px">
+    <div class="sechzehn-color">
+      <div id="field" class="sechzehn-field">
         <%= render 'layouts/show_dice' %>
       </div>
     </div>
@@ -45,7 +45,7 @@
         <% if guess[1] > 0 %>
           <span id="word_<%= guess[0] %>"> <%= guess[0] %>:<%= guess[1] %></span>
         <% else %>
-          <span id="word_<%= guess[0] %>" style="color: red"> <%= guess[0] %></span>
+          <span id="word_<%= guess[0] %>" class="sechzehn-red"> <%= guess[0] %></span>
         <% end %>
       <% end %>
     </div>
@@ -79,9 +79,9 @@
         <div class="form-group">
           <% if params[:what].nil? %>
             <%= f.button 'Anmelden', class: 'btn btn-primary', id: 'signin', name: 'commit' %>
-            <%= f.button raw('Spieler registrieren<sup><span class="glyphicon glyphicon-flash" style="color: red"></span></sup>'), class: 'btn btn-default', id: 'signup', name: 'signup' %>
-            <%= f.button raw('Gast<sup><span class="glyphicon glyphicon-flash" style="color: red"></span><span class="glyphicon glyphicon-flash" style="color: red"></span></sup>'), class: 'btn btn-default', id: 'guest_signup', name: 'guest_signup' %>
-            <%= link_to 'Abbrechen', root_path, style: 'display: none', id: 'cancel', class: "btn btn-default" %>
+            <%= f.button raw('Spieler registrieren<sup><span class="glyphicon glyphicon-flash sechzehn-red"></span></sup>'), class: 'btn btn-default', id: 'signup', name: 'signup' %>
+            <%= f.button raw('Gast<sup><span class="glyphicon glyphicon-flash sechzehn-red"></span><span class="glyphicon glyphicon-flash sechzehn-red"></span></sup>'), class: 'btn btn-default', id: 'guest_signup', name: 'guest_signup' %>
+            <%= link_to 'Abbrechen', root_path, id: 'cancel', class: "btn btn-default", style: "display: none"%>
             <p class="create-account"><sup><span class="glyphicon glyphicon-flash"></span></sup> Das erste Mal dabei? Dann einfach einen Namen und ein beliebiges Kennwort eintippen, und einen neuen Spieler registrieren.</p>
             <p class="create-account"><sup><span class="glyphicon glyphicon-flash"></span><span class="glyphicon glyphicon-flash"></span></sup> Als Gast kann man ohne Anmeldung mitspielen. Gast-Spiele werden nicht gewertet. Ideal zum trainieren.</p>
           <% else %>
@@ -123,12 +123,12 @@
   <div itemscope itemtype="http://schema.org/WebApplication">
     <div class="col-md-4">
       <h3><span itemprop="applicationCategory">Spiel</span>idee</h3>
-      <p style="text-align: justify">Das online Multiplayer Wortspiel <span class="sechzehn" itemprop="name">SECHZEHN</span> wurde durch Boggle inspiriert. <span itemprop="description">Finde innerhalb von drei Minuten mehr deutsche Wörter in einem 4x4 Buchstabenfeld als deine Mitspieler.</span></p>
-      <p style="text-align: justify">Lege als Gast sofort mit der Wortsuche los, oder kämpfe als registrierter Spieler in diversen Ranglisten um die besten Plätze.</p>
+      <p class="text-justify">Das <span itemprop="keywords">online</span> <span itemprop="keywords">Multiplayer</span> <span itemprop="keywords">Wortspiel</span> <span class="sechzehn" itemprop="name">SECHZEHN</span> wurde durch <span itemprop="keywords">Boggle</span> inspiriert. <span itemprop="description">Finde innerhalb von drei Minuten mehr <span itemprop="keywords">deutsch</span>e Wörter in einem 4x4 Buchstabenfeld als deine Mitspieler.</span></p>
+      <p class="text-justify">Lege als Gast sofort mit der Wortsuche los, oder kämpfe als registrierter Spieler in diversen Ranglisten um die besten Plätze.</p>
     </div>
     <div class="col-md-4">
       <h3>Regeln</h3>
-      <p style="text-align: justify">Die Buchstaben müssen eine Kette bilden. Ein Wort muss mindestens drei Buchstaben lang sein. Und in einem Wort darf kein Buchstabenfeld mehrfach genutzt werden. Es gelten alle Wörter außer:</p>
+      <p class="text-justify">Die Buchstaben müssen eine Kette bilden. Ein Wort muss mindestens drei Buchstaben lang sein. Und in einem Wort darf kein Buchstabenfeld mehrfach genutzt werden. Es gelten alle Wörter außer:</p>
       <ul>
         <li>geografische Bezeichnungen</li>
         <li>Eigennamen und Markennamen</li>
@@ -146,11 +146,7 @@
         <li itemprop="featurelist">kostenlos</li>
       </ul>
     </div>
-    <div style="display:none" itemprop="keywords">Wortspiel</div>
     <div style="display:none" itemprop="keywords">Browserspiel</div>
-    <div style="display:none" itemprop="keywords">Multiplayer</div>
-    <div style="display:none" itemprop="keywords">Boggle</div>
-    <div style="display:none" itemprop="keywords">deutsch</div>
     <div style="display:none" itemprop="countriesSupported">DE</div>
     <div style="display:none" itemprop="applicationSubCategory">Browserspiel</div>
     <div style="display:none" itemprop="browserRequirements">benötigt Javascript</div>
