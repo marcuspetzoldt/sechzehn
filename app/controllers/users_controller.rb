@@ -34,7 +34,7 @@ class UsersController < ApplicationController
           end
         end
         @user = User.new(user_params)
-        flash[:error] = 'Name oder Kennwort falsch.'
+        flash[:error] = 'Name oder Kennwort falsch. Bitte Groß- und Kleinschreibung beachten.'
       end
     end
     redirect_to root_path

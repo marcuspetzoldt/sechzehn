@@ -19,37 +19,37 @@
         <% if @help.nil? %>
           <% if registered_user? %>
             <li>
-              <%= link_to edit_user_path(current_user) do %>
+              <%= link_to edit_user_path(current_user), title: 'Kennwort und/oder Spielernamen ändern' do %>
                 Nutzerdaten ändern
               <% end %>
             </li>
             <li>
-              <%= link_to signout_path, method: 'delete' do %>
+              <%= link_to signout_path, title: 'Abmelden und Cookies löschen', method: 'delete' do %>
                 Abmelden
               <% end %>
             </li>
           <% else %>
             <% if signed_in? %>
               <li>
-                <%= link_to signout_path, method: 'delete' do %>
+                <%= link_to signout_path, title: 'Gaststatus aufgeben, und einen Spieler registrieren', method: 'delete' do %>
                   Spieler registrieren
                 <% end %>
               </li>
             <% end %>
           <% end %>
           <li>
-            <%= link_to highscore_elo_path do %>
+            <%= link_to highscore_elo_path, title: 'Tägliche, wöchentliche, monatliche und ewige Ranglisten' do %>
               Rangliste
             <% end %>
           </li>
           <li>
-            <%= link_to help_path do %>
+            <%= link_to help_path, title: 'Die Regeln und Bedienung kurz erklärt' do %>
               Hilfe / Kontakt
             <% end %>
           </li>
         <% else %>
           <li>
-            <%= link_to root_path do %>
+            <%= link_to root_path, title: 'Zurück zum Spiel' do %>
               Spielen
             <% end %>
           </li>
