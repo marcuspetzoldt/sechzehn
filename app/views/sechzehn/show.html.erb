@@ -119,38 +119,40 @@
   </div>
 </div>
 <% unless @play %>
-<div class="row">
-  <div itemscope itemtype="http://schema.org/WebApplication">
-    <div class="col-md-4">
-      <h2><span itemprop="applicationCategory">Spiel</span>idee</h2>
-      <p class="text-justify">Das <span itemprop="keywords">online</span> <span itemprop="keywords">Multiplayer</span> <span itemprop="keywords">Wortspiel</span> <span class="sechzehn" itemprop="name">SECHZEHN</span> wurde durch <span itemprop="keywords">Boggle</span> inspiriert. <span itemprop="description">Finde innerhalb von drei Minuten mehr <span itemprop="keywords">deutsch</span>e Wörter in einem zufällig erzeugten 4x4 Buchstabenfeld als deine Mitspieler.</span></p>
-      <p class="text-justify">Lege als Gast sofort mit der Wortsuche los, oder kämpfe als registrierter Spieler in diversen <%= link_to 'Ranglisten', highscore_elo_path, title: 'tägliche, wöchentliche, monatliche und ewige Ranglisten' %> um die besten Plätze.</p>
-    </div>
-    <div class="col-md-4">
-      <h2>Regeln</h2>
-      <p class="text-justify">Die Buchstaben müssen eine Kette bilden. Ein Wort muss mindestens drei Buchstaben lang sein. Und in einem Wort darf kein Buchstabenfeld mehrfach genutzt werden. Es gelten alle Wörter außer:</p>
-      <ul>
-        <li>geografische Bezeichnungen</li>
-        <li>Eigennamen und Markennamen</li>
-        <li>Abkürzungen</li>
-      </ul>
-      <p>Ausführlichere Erklärung der Regeln und der Bedienung gibt es auf der <%= link_to 'Hilfeseite', help_path, title: 'Regeln und Bedienung kurz erklärt' %>.</p>
-    </div>
-    <div class="col-md-4">
-      <h2>Features</h2>
-      <ul>
-        <li itemprop="featurelist">deutsch, über 1.1 Mio. Wörter</li>
-        <li itemprop="featurelist">mit Tastatur, Maus und Finger spielbar</li>
-        <li itemprop="featurelist">Ranglisten</li>
-        <li itemprop="featurelist">Berechnung der Spielstärke (<a href="http://de.wikipedia.org/wiki/Elo-Zahl" title="Erklärung der ELO-Zahl auf Wikipedia">ELO-Zahl</a>)</li>
-        <li itemprop="featurelist">online im Browser spielbar</li>
-        <li itemprop="featurelist">kostenlos</li>
-      </ul>
-    </div>
-    <div class="sechzehn-hidden" itemprop="keywords">Browserspiel </div>
-    <div class="sechzehn-hidden" itemprop="countriesSupported">DE</div>
-    <div class="sechzehn-hidden" itemprop="applicationSubCategory">Browserspiel</div>
-    <div class="sechzehn-hidden" itemprop="browserRequirements">benötigt Javascript</div>
+<div class="row" itemscope itemtype="http://schema.org/WebApplication">
+  <div class="col-md-4">
+    <h2><span itemprop="applicationCategory">Spiel</span>idee</h2>
+    <p class="text-justify">Das <span itemprop="keywords">online</span> <span itemprop="keywords">Multiplayer</span> <span itemprop="keywords">Wortspiel</span> <span class="sechzehn" itemprop="name">SECHZEHN</span> wurde durch <span itemprop="keywords">Boggle</span> inspiriert. <span itemprop="description">Finde innerhalb von drei Minuten mehr <span itemprop="keywords">deutsch</span>e Wörter in einem Quadrat mit sechzehn zufällig erzeugten Buchstaben als deine Mitspieler.</span></p>
+    <p class="text-justify">Lege als Gast sofort mit der Wortsuche los, oder kämpfe als registrierter Spieler in diversen <%= link_to 'Ranglisten', highscore_elo_path, title: 'tägliche, wöchentliche, monatliche und ewige Ranglisten' %> um die besten Plätze.</p>
   </div>
+  <div class="col-md-4">
+    <h2>Regeln</h2>
+    <p class="text-justify">Die Buchstaben müssen eine Kette bilden. Ein Wort muss mindestens drei Buchstaben lang sein. Und in einem Wort darf kein Buchstabenfeld mehrfach genutzt werden. Es gelten alle Wörter außer:</p>
+    <ul>
+      <li>geografische Bezeichnungen</li>
+      <li>Eigennamen und Markennamen</li>
+      <li>Abkürzungen</li>
+    </ul>
+    <p>Ausführlichere Erklärung der Regeln und der Bedienung gibt es auf der <%= link_to 'Hilfeseite', help_path, title: 'Regeln und Bedienung kurz erklärt' %>.</p>
+  </div>
+  <div class="col-md-4">
+    <h2>Features</h2>
+    <ul>
+      <li itemprop="featurelist">deutsch, über 1.1 Mio. Wörter</li>
+      <li itemprop="featurelist">mit Tastatur, Maus und Finger spielbar</li>
+      <li itemprop="featurelist">online im Browser spielbar</li>
+      <li itemprop="featurelist">kein Zwang zur Registrierung</li>
+      <li itemprop="featurelist">kostenlos</li>
+    </ul>
+    <p class="text-justify">Registrierte Spieler haben zudem Zugriff auf die folgenden Features:</p>
+    <ul>
+      <li itemprop="featurelist">Ranglisten</li>
+      <li itemprop="featurelist">Berechnung der <a href="http://de.wikipedia.org/wiki/Elo-Zahl" title="Erklärung der ELO-Zahl auf Wikipedia">Spielstärke</a></li>
+    </ul>
+  </div>
+  <div class="sechzehn-hidden" itemprop="keywords">Browserspiel </div>
+  <div class="sechzehn-hidden" itemprop="countriesSupported">DE</div>
+  <div class="sechzehn-hidden" itemprop="applicationSubCategory">Browserspiel</div>
+  <div class="sechzehn-hidden" itemprop="browserRequirements">benötigt Javascript</div>
 </div>
 <% end %>

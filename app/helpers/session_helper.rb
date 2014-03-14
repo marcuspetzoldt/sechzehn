@@ -12,13 +12,15 @@ module SessionHelper
   end
 
   def sign_out
-    if current_user.guest
-      session[:remember_token] = nil
-    else
-      current_user.update_attribute(:remember_token, User.encrypt(User.new_remember_token))
-      cookies.delete(:remember_token, domain: :all)
+    unless current_user.nil?
+      if current_user.guest
+        session[:remember_token] = nil
+      else
+        current_user.update_attribute(:remember_token, User.encrypt(User.new_remember_token))
+        cookies.delete(:remember_token, domain: :all)
+      end
+      self.current_user = nil
     end
-    self.current_user = nil
   end
 
   def current_user=(user)

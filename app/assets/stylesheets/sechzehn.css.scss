@@ -27,6 +27,7 @@ div#guess {
 
 .sechzehn-color {
   background-color: #e8f8f9;
+  clear: both;
 }
 
 .sechzehn-field {
@@ -60,7 +61,7 @@ div#guess {
   padding: 22px;
 }
 
-.letter {
+.l {
   cursor: default;
   float: left;
   line-height: 70px;
@@ -76,6 +77,11 @@ div#guess {
   }
   background-color: white;
   -ms-touch-action: none;
+}
+
+.le {
+  @extend .l;
+  clear: left;
 }
 
 .nw {
@@ -135,7 +141,7 @@ div#solutionheader {
 }
 
 .small-dice {
-  @extend .letter;
+  @extend .l;
   font-size: 100%;
   line-height: 30px;
   width: 30px;

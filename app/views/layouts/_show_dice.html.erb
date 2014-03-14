@@ -1,15 +1,17 @@
 <% i=0 %>
 <% @field.each do |row| %>
+  <% j=0 %>
   <% row.each do |letter| %>
-    <div id="<%= "l#{"%.02i" % i}" %>" class="letter <%= letter[0] %>">
+    <div id="<%= "l#{"%.02i" % i}" %>" class="<%= j==0 ? 'le' : 'l'%><%= letter[0].nil? ? '' : " #{letter[0]}" %>">
       <% if letter[1] != 'qu' %>
         <%= letter[1].upcase %>
       <% else %>
         Qu
       <% end %>
       <% i=i+1 %>
+      <% j=j+1 %>
     </div>
   <% end %>
-  <div style="clear: left"></div>
 <% end %>
+<br style="clear: both" />
 
