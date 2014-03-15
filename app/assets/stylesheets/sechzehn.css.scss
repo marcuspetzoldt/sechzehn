@@ -61,7 +61,7 @@ div#guess {
   padding: 22px;
 }
 
-.l {
+.letter {
   cursor: default;
   float: left;
   line-height: 70px;
@@ -79,8 +79,7 @@ div#guess {
   -ms-touch-action: none;
 }
 
-.le {
-  @extend .l;
+.end {
   clear: left;
 }
 
@@ -141,7 +140,7 @@ div#solutionheader {
 }
 
 .small-dice {
-  @extend .l;
+  @extend .letter;
   font-size: 100%;
   line-height: 30px;
   width: 30px;

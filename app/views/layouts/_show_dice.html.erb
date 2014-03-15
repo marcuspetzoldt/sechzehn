@@ -2,7 +2,7 @@
 <% @field.each do |row| %>
   <% j=0 %>
   <% row.each do |letter| %>
-    <div id="<%= "l#{"%.02i" % i}" %>" class="<%= j==0 ? 'le' : 'l'%><%= letter[0].nil? ? '' : " #{letter[0]}" %>">
+    <div id="<%= "l#{"%.02i" % i}" %>" class="letter<%= ' end' if j==0 %><%= " #{letter[0]}" unless letter[0].nil? %>">
       <% if letter[1] != 'qu' %>
         <%= letter[1].upcase %>
       <% else %>
