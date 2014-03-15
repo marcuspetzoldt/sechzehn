@@ -8,7 +8,7 @@
     <% if @play %>
       <div id="guess" class="form-group" style="<%= @play ? 'display: inherit' : 'display: none' %>">
         <div class="input-group">
-          <%= text_field_tag 'words', nil, id: 'words', class: "form-control" %>
+          <%= text_field_tag 'words', nil, id: 'words', class: 'form-control', autocomplete: 'off' %>
           <span class="input-group-addon" id="timer">3:00</span>
         </div>
       </div>
