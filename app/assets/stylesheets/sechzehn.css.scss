@@ -3,6 +3,7 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 $muted-gray: #999999;
+$sechzehn-bkgnd: #e8f8f9;
 
 hr.row {
   margin-bottom: 8px;
@@ -26,7 +27,7 @@ div#guess {
 }
 
 .sechzehn-color {
-  background-color: #e8f8f9;
+  background-color: $sechzehn-bkgnd;
   clear: both;
 }
 
@@ -117,13 +118,20 @@ div#guess {
 
 .self {
   color: black;
+  border: 1px solid #ffffa0;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
   background-color: #ffffa0;
 }
 
 .onlyself {
-  color: green;
+  color: black;
+  border: 1px solid $muted-gray;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
   background-color: #ffffa0;
-
 }
 
 div#guesses, div#solution {
