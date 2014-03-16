@@ -57,7 +57,7 @@
           <%= f.label :name, t('activerecord.models.attributes.user.name')%>
           <div class="input-group">
             <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-            <%= f.text_field :name, class: 'form-control' %>
+            <%= f.text_field :name, class: 'form-control', maxlength: '32' %>
           </div>
         </div>
         <% if params[:what] %>

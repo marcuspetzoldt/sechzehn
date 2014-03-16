@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   has_many :scores
   has_secure_password
 
-  validates :name, presence: true, length: { minimum: 3, maximum: 32 }, format: { with: /[a-zA-Z\._\-]+/ }
+  validates :name, presence: true, length: { minimum: 3, maximum: 32 }
   validates :password, length: { minimum: 6 }
 
   def User.new_remember_token

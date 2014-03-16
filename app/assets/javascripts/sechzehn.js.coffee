@@ -211,6 +211,24 @@ disableGame = () ->
   $('input#words').attr('disabled', 'disabled')
   $('div.letter').css({'background-color' : '#eeeeee', 'color' : '#999999'})
 
+# Length hint
+$(document).on('focus', 'input[maxlength]', () ->
+  $(this).after('<span class="length-hint">' + $(this).val().length + '/' + $(this).attr('maxLength') + '</span>')
+  $hint = $(this).next()
+  $hint.css('margin-left', '-' + ($hint.width() + 15) + 'px')
+)
+
+$(document).on('blur', 'input[maxlength]', () ->
+  $(this).next().remove()
+)
+
+$(document).on('keyup', 'input[maxlength]', () ->
+  $hint = $(this).next()
+  $hint.text($(this).val().length + '/' + $(this).attr('maxLength'))
+  $hint.css('margin-left', '-' + ($hint.width() + 15) + 'px')
+)
+
+# Facebook like
 ((d, s, id) ->
   fjs = d.getElementsByTagName(s)[0]
   if d.getElementById(id)
@@ -220,8 +238,7 @@ disableGame = () ->
   js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1"
   fjs.parentNode.insertBefore(js, fjs))(document, 'script', 'facebook-jssdk')
 
-
-
+# google +1
 (() ->
   po = document.createElement('script')
   po.type = 'text/javascript'
