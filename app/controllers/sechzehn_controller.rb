@@ -283,22 +283,18 @@ class SechzehnController < ApplicationController
           score_daily.game_id = session['game_id']
 
           delta_elo = 0
-          count = 0
           @scores.each do |s|
             if (s['id'].to_i != score.user_id) and (s['guest'].nil?)
               if s['sum'].to_i > 0
-                count = count + 1
-                r = s['elo'].to_i - current_user.elo
-                r = ((r > 0) ? 400 : -400) if r.abs > 400
-                ea = 1.0 / (1 + 10 ** (r / 400))
+                r = s['elo'].to_f - current_user.elo.to_f
+                r = ((r > 0) ? 400.0 : -400.0) if r.abs > 400.0
+                ea = 1.0 / (1 + 10 ** (r / 400.0))
                 delta_elo = delta_elo + k(score) * (sa(s['sum'].to_i) - ea)
               end
             end
           end
-          if count > 0
-            new_elo = current_user.elo + delta_elo / count
-            current_user.update_attribute(:new_elo, new_elo)
-          end
+          new_elo = current_user.elo + delta_elo
+          current_user.update_attribute(:new_elo, new_elo)
           score.save
           score_daily.save
         end
