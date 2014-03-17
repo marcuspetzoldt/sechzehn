@@ -288,7 +288,7 @@ class SechzehnController < ApplicationController
               if s['sum'].to_i > 0
                 r = s['elo'].to_f - current_user.elo.to_f
                 r = ((r > 0) ? 400.0 : -400.0) if r.abs > 400.0
-                ea = 1.0 / (1 + 10 ** (r / 400.0))
+                ea = 1.0 / (1.0 + 10.0 ** (r / 400.0))
                 delta_elo = delta_elo + k(score) * (sa(s['sum'].to_i) - ea)
               end
             end
