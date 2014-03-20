@@ -20,6 +20,18 @@ form {
 
 .navbar-header h1 {
   margin-top: 0px;
+  display: table-row;
+  width: 1px;
+  letter-spacing: 8px;
+  font-size: 18px;
+}
+
+.navbar-header h2 {
+  display: table-cell;
+  width: 1px;
+  font-size: 66%;
+  text-align: justify;
+  padding-right: 8px;
 }
 
 div#guess {
@@ -56,6 +68,10 @@ div#guess {
 .navbar-brand {
   font-size: 150%;
   color: $muted-gray;
+  display: table-cell;
+  line-height: 16px;
+  margin-bottom: -24px;
+  margin-top: -4px
 }
 
 .fb-like {
