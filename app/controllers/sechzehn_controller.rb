@@ -250,51 +250,51 @@ class SechzehnController < ApplicationController
     end
 
     def compute_highscore
-      if registered_user?
 
-        # cleanup
-        Score.where("user_id=? and score_type=? and created_at<?", current_user.id, Score.score_types[:daily], Date.today-1.month).destroy_all
+      # cleanup
+      Score.where("user_id=? and score_type=? and created_at<?", current_user.id, Score.score_types[:daily], Date.today-1.month).destroy_all
 
-        begin
-          score = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:all_time] )
-        rescue ActiveRecord::RecordNotFound
-          score = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:all_time], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0)
-        end
+      begin
+        score = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:all_time] )
+      rescue ActiveRecord::RecordNotFound
+        score = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:all_time], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0)
+      end
 
-        begin
-          score_daily = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:daily], created_at: Date.today )
-        rescue ActiveRecord::RecordNotFound
-          score_daily = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:daily], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0, created_at: Date.today)
-        end
+      begin
+        score_daily = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:daily], created_at: Date.today )
+      rescue ActiveRecord::RecordNotFound
+        score_daily = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:daily], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0, created_at: Date.today)
+      end
 
-        if session['game_id'] != score.game_id and !session['game_id'].nil?
-          score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
-          score.pwords = (score.pwords * score.count + (@cwords * 100 / @twords)) / (score.count + 1)
-          score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
-          score.ppoints = (score.ppoints * score.count + (@cpoints * 100 / @tpoints)) / (score.count + 1)
-          score.count = score.count + 1
-          score.game_id = session['game_id']
+      if session['game_id'] != score.game_id and !session['game_id'].nil?
+        score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
+        score.pwords = (score.pwords * score.count + (@cwords * 100 / @twords)) / (score.count + 1)
+        score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
+        score.ppoints = (score.ppoints * score.count + (@cpoints * 100 / @tpoints)) / (score.count + 1)
+        score.count = score.count + 1
+        score.game_id = session['game_id']
 
-          score_daily.cwords = (score_daily.cwords * score_daily.count + @cwords) / (score_daily.count + 1)
-          score_daily.pwords = (score_daily.pwords * score_daily.count + (@cwords * 100 / @twords)) / (score_daily.count + 1)
-          score_daily.cpoints = (score_daily.cpoints * score_daily.count + @cpoints) / (score_daily.count + 1)
-          score_daily.ppoints = (score_daily.ppoints * score_daily.count + (@cpoints * 100 / @tpoints)) / (score_daily.count + 1)
-          score_daily.count = score_daily.count + 1
-          score_daily.game_id = session['game_id']
+        score_daily.cwords = (score_daily.cwords * score_daily.count + @cwords) / (score_daily.count + 1)
+        score_daily.pwords = (score_daily.pwords * score_daily.count + (@cwords * 100 / @twords)) / (score_daily.count + 1)
+        score_daily.cpoints = (score_daily.cpoints * score_daily.count + @cpoints) / (score_daily.count + 1)
+        score_daily.ppoints = (score_daily.ppoints * score_daily.count + (@cpoints * 100 / @tpoints)) / (score_daily.count + 1)
+        score_daily.count = score_daily.count + 1
+        score_daily.game_id = session['game_id']
 
-          delta_elo = 0
-          @scores.each do |s|
-            if (s['id'].to_i != score.user_id) and (s['guest'].nil?)
-              if s['sum'].to_i > 0
-                r = s['elo'].to_f - current_user.elo.to_f
-                r = ((r > 0) ? 400.0 : -400.0) if r.abs > 400.0
-                ea = 1.0 / (1.0 + 10.0 ** (r / 400.0))
-                delta_elo = delta_elo + k(score) * (sa(s['sum'].to_i) - ea)
-              end
+        delta_elo = 0
+        @scores.each do |s|
+          if s['id'].to_i != score.user_id
+            if s['sum'].to_i > 0
+              r = s['elo'].to_f - current_user.elo.to_f
+              r = ((r > 0) ? 400.0 : -400.0) if r.abs > 400.0
+              ea = 1.0 / (1.0 + 10.0 ** (r / 400.0))
+              delta_elo = delta_elo + k(score) * (sa(s['sum'].to_i) - ea)
             end
           end
-          new_elo = current_user.elo + delta_elo
-          current_user.update_attribute(:new_elo, new_elo)
+        end
+        new_elo = current_user.elo + delta_elo
+        current_user.update_attribute(:new_elo, new_elo)
+        if registered_user?
           score.save
           score_daily.save
         end
