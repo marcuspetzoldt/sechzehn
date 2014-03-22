@@ -1,5 +1,7 @@
 class SechzehnController < ApplicationController
 
+  before_action :maintenance?, except: [:sync, :solution, :guess, :maintenance]
+
   def new
     game_id = Game.maximum(:id)
     response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
@@ -15,7 +17,7 @@ class SechzehnController < ApplicationController
       response.headers['X-Refreshed'] = '0'
     else
       # continue a game
-      response.headers['X-Refreshed'] = '1'
+      response.headers['X-Refreshed'] = '2'
     end
     @field = init_field
     render partial: 'layouts/show_dice'
@@ -118,18 +120,21 @@ class SechzehnController < ApplicationController
   end
 
   def sync
-    game_id = Game.maximum(:id)
-    time_left = 220 - get_time_left(game_id)
     # Most recent game is older than 215 seconds (180 game + 30 pause + 10 sync)
+    time_left = get_time_left
     if time_left <= 0
-      begin
-        l = Lock.create
-        g = Game.create
-        l.destroy
-      rescue
-        # ignore unique index constraint violation and sync again
-        # another player already computes the next game
-        sleep(0.5)
+      if Lock.find_by(lock: 2).nil?
+        begin
+          l = Lock.create
+          g = Game.create
+          l.destroy
+        rescue
+          # ignore unique index constraint violation and sync again
+          # another player already computes the next game
+        end
+      else
+        render inline: 'maintenance'
+        return
       end
     end
     render inline: "#{time_left.to_i}"
@@ -218,6 +223,10 @@ class SechzehnController < ApplicationController
     end
     sql = sql + order_by
     ActiveRecord::Base.connection.execute(sql)
+  end
+
+  def maintenance
+    render 'layouts/maintenance'
   end
 
   private
@@ -326,7 +335,9 @@ class SechzehnController < ApplicationController
       end
     end
 
-    def get_time_left(game_id)
-      Time.now - Game.find_by(id: game_id).created_at
+    def get_time_left()
+      game_id = Game.maximum(:id)
+      220 - (Time.now - Game.find_by(id: game_id).created_at)
     end
+
 end

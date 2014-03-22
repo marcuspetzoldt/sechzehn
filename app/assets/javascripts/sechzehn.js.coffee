@@ -184,9 +184,14 @@ clock = () ->
 sync = () ->
   clearInterval(window.gameInterval) if window.gameInterval
   $.get('/sync', null, (data) ->
-    window.gameTimer = parseInt(data)
+    if data == 'maintenance'
+      window.gameTimer = 220
+      window.maintenance = true
+    else
+      window.gameTimer = parseInt(data)
+      window.maintenance = false
+    window.gameInterval = setInterval(clock, 1000)
   )
-  window.gameInterval = setInterval(clock, 1000)
 
 getSolution = () ->
   $('input#words').attr('disabled', 'disabled')
@@ -194,6 +199,10 @@ getSolution = () ->
   $.get('/solution')
 
 startGame = () ->
+  if window.maintenance
+    clearInterval(window.gameInterval) if window.gameInterval
+    $('body').load('/maintenance')
+    return
   $('div#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->
     if XMLHttpRequest.getResponseHeader('X-Refreshed') == '0'
       $('div#solution').html('')

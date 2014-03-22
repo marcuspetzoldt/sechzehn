@@ -11,6 +11,7 @@ Sechzehn::Application.routes.draw do
   get '/highscore/words', to: 'sechzehn#highscore_words'
   get '/highscore/points/percent', to: 'sechzehn#highscore_points_percent'
   get '/highscore/words/percent', to: 'sechzehn#highscore_words_percent'
+  get '/maintenance', to: 'sechzehn#maintenance'
   match '/signout', to: 'users#signout', via: 'delete'
   match '/signup', to: 'users#signup', via: 'get'
   get "sitemap.xml", to: 'sitemap#index', defaults: { format: 'xml' }
