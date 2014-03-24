@@ -14,9 +14,6 @@ Sechzehn::Application.routes.draw do
   get '/maintenance', to: 'sechzehn#maintenance'
   match '/signout', to: 'users#signout', via: 'delete'
   match '/signup', to: 'users#signup', via: 'get'
-  match '/404', to: 'sechzehn#error_404', via: 'get'
-  match '/422', to: 'sechzehn#error_422', via: 'get'
-  match '/500', to: 'sechzehn#error_500', via: 'get'
   get "sitemap.xml", to: 'sitemap#index', defaults: { format: 'xml' }
 
   # The priority is based upon order of creation: first created -> highest priority.

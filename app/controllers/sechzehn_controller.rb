@@ -229,30 +229,6 @@ class SechzehnController < ApplicationController
     render 'layouts/maintenance'
   end
 
-  def error_404
-    @subtitle = 'Seite nicht gefunden - 404'
-    respond_to do |format|
-      format.html { render status: 404 }
-      format.any  { render text: "404 Not found", status: 404 }
-    end
-  end
-
-  def error_422
-    @subtitle = 'Die Verarbeitung der Anfrage wurde abgelehnt (422)'
-    respond_to do |format|
-      format.html { render status: 422 }
-      format.any  { render text: "422 Unprocessable Entity", status: 422 }
-    end
-  end
-
-  def error_500
-    @subtitle = 'Unerwarteter Systemfehler (500)'
-    respond_to do |format|
-      format.html { render status: 500 }
-      format.any  { render text: "500 Internal Server Error", status: 500 }
-    end
-  end
-
   private
 
     def letter_score
