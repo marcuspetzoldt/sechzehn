@@ -36,6 +36,9 @@
             <% end %>
           <% end %>
           <li>
+            <a href="http://blog.sechzehn.org" title="Der Blog von Sechzehn">Blog</a>
+          </li>
+          <li>
             <%= link_to highscore_elo_path, title: 'Tägliche, wöchentliche, monatliche und ewige Ranglisten' do %>
               Rangliste
             <% end %>
@@ -46,14 +49,19 @@
             <% end %>
           </li>
         <% else %>
-          <li>
-            <a href="http://blog.sechzehn.org" title="Der Blog von Sechzehn">Blog</a>
-          </li>
-          <li>
-            <%= link_to root_path, title: 'Zurück zum Spiel' do %>
-              Spielen
-            <% end %>
-          </li>
+          <% if signed_in? %>
+            <li>
+              <%= link_to root_path, title: 'Zurück zum Spiel' do %>
+                Spielen
+              <% end %>
+            </li>
+          <% else %>
+            <li>
+              <%= link_to root_path, title: 'Anmelden oder neuen Spieler anlegen' do %>
+                Anmelden
+              <% end %>
+            </li>
+          <% end %>
         <% end %>
       </ul>
     </div>
