@@ -201,7 +201,7 @@ getSolution = () ->
 startGame = () ->
   if window.maintenance
     clearInterval(window.gameInterval) if window.gameInterval
-    $('body').load('/maintenance')
+    window.location.reload()
     return
   $('div#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->
     if XMLHttpRequest.getResponseHeader('X-Refreshed') == '0'

@@ -226,7 +226,6 @@ class SechzehnController < ApplicationController
   end
 
   def maintenance
-    render 'layouts/maintenance'
   end
 
   private
