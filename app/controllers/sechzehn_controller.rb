@@ -25,6 +25,7 @@ class SechzehnController < ApplicationController
 
   def show
     @canonical = 'http://spiele.sechzehn.org/'
+    @description = 'Sechzehn ist ein Wortspiel wie Boggle. Finde innerhalb von 3 Minuten mehr deutsche Wörter in einem Quadrat mit 16 zufälligen Buchstaben als deine Mitspieler.'
     @play = true
     @cwords = 0
     @cpoints = 0
@@ -143,6 +144,7 @@ class SechzehnController < ApplicationController
   def help
     @help = true
     @subtitle = 'Hilfe'
+    @description = 'Hier findest Du die wirklich einfachen Regeln, sowie eine Erklärung der Bedienung von Sechzehn. Sechzehn ist eine Mehrspieler online Boggle Variante.'
   end
 
   def highscore_elo
@@ -173,6 +175,8 @@ class SechzehnController < ApplicationController
   def highscore(order_by)
     @help = true
     @canonical = 'http://spiele.sechzehn.org/highscore/elo'
+    @description = 'Sechzehn ist ein Wortspiel wie Boggle. Finde innerhalb von 3 Minuten mehr deutsche Wörter in einem Quadrat mit 16 zufälligen Buchstaben als deine Mitspieler.'
+    @description = 'Als registrierter Spieler von Sechzehn, kannst Du in diesen täglichen, wöchentlichen und monatlichen, sowie in einer ewigen Rangliste um Plätze kämpfen.'
     @which = params[:which]
 
     case @which
