@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
       </button>
       <%= link_to root_path, class: 'navbar-brand', title: 'Ein Denkspiel für alle, die Boggle und Scrabble mögen' do %>
-        <h1>SECHZEHN</h1>
+        <h1>Sechzehn</h1>
         <h2>ein Wortspiel auf deutsch <span style="visibility: hidden">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></h2>
       <% end %>
     </div>
@@ -49,19 +49,11 @@
             <% end %>
           </li>
         <% else %>
-          <% if signed_in? %>
-            <li>
-              <%= link_to root_path, title: 'Zurück zum Spiel' do %>
-                Spielen
-              <% end %>
-            </li>
-          <% else %>
-            <li>
-              <%= link_to root_path, title: 'Anmelden oder neuen Spieler anlegen' do %>
-                Anmelden
-              <% end %>
-            </li>
-          <% end %>
+          <li>
+            <%= link_to root_path, title: 'Zurück zum Spiel' do %>
+              Spielen
+            <% end %>
+          </li>
         <% end %>
       </ul>
     </div>
