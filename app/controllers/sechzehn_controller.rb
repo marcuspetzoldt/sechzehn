@@ -144,7 +144,7 @@ class SechzehnController < ApplicationController
   def help
     @help = true
     @subtitle = 'Hilfe'
-    @description = 'Hier findest Du die wirklich einfachen Regeln, sowie eine Erklärung der Bedienung von Sechzehn. Sechzehn ist eine Mehrspieler online Boggle Variante.'
+    @description = 'Hier findest Du die die Regeln von Sechzehn, sowie eine Erklärung der Bedienung von Sechzehn, und das Impressum.'
   end
 
   def highscore_elo
