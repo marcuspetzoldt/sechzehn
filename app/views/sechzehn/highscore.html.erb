@@ -36,6 +36,7 @@
         <tr>
           <% if old_score != score[highscore_type] %>
             <td class="<%= fat %>"><%= i+1 %>.</td>
+            <% old_score = score[highscore_type] %>
           <% else %>
             <td class="<%= fat %>">&nbsp;</td>
           <% end %>
