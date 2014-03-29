@@ -2,7 +2,7 @@ module SechzehnHelper
 
   def maintenance?
     unless Lock.find_by(lock: 2).nil?
-      render 'layouts/maintenance'
+      render 'sechzehn/maintenance'
     end
   end
 

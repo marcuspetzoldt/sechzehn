@@ -201,6 +201,7 @@ getSolution = () ->
 startGame = () ->
   if window.maintenance
     clearInterval(window.gameInterval) if window.gameInterval
+    window.Location.href="/"
     window.location.reload()
     return
   $('div#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->

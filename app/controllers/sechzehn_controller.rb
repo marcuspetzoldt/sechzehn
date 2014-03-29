@@ -135,11 +135,11 @@ class SechzehnController < ApplicationController
           # another player already computes the next game
         end
       else
-        render inline: 'maintenance'
+        render text: 'maintenance'
         return
       end
     end
-    render inline: "#{time_left.to_i}"
+    render text: "#{time_left.to_i}"
   end
 
   def help
@@ -231,6 +231,7 @@ class SechzehnController < ApplicationController
   end
 
   def maintenance
+    render 'maintenance'
   end
 
   private
