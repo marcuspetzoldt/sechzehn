@@ -1,7 +1,7 @@
 <table class="table table-condensed">
   <colgroup>
     <col />
-    <col style="width: 50%"/>
+    <col width="50%"/>
     <col />
   </colgroup>
   <thead>
@@ -18,7 +18,7 @@
           Ewige Rangliste
         <% end %>
       </th>
-      <th>
+      <th class="right">
         <% case highscore_type %>
         <% when 'elo' %>
           Elo-Zahl
@@ -38,7 +38,7 @@
           <td>&nbsp;</td>
         <% end %>
         <td><%= score['name'] %></td>
-        <td><%= score[highscore_type] %></td>
+        <td class="right"><%= score[highscore_type] %></td>
       </tr>
     <% end %>
   </tbody>
