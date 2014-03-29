@@ -52,6 +52,9 @@
     <div id="solutionheader" class="sechzehn-hidden"><hr class="row"/><span class="noone">&nbsp;keiner&nbsp;</span> &bull; <span class="someone">&nbsp;gefunden&nbsp;</span> &bull; <span class="self">&nbsp;von&nbsp;Dir&nbsp;</span> &bull; <span class="onlyself">&nbsp;nur&nbsp;von&nbsp;Dir&nbsp;</span><hr class="row"/></div>
     <div id="solution"></div>
     <% else %>
+      <% flash.each do |key, value| %>
+        <div class="alert alert-danger"><%= render inline: value %></div>
+      <% end %>
       <%= form_for @user, html: { class: @play ? 'displaynone' : 'displayinherit', id: 'form_signin' } do |f| %>
         <div class="form-group">
           <%= f.label :name, t('activerecord.models.attributes.user.name')%>
@@ -112,9 +115,7 @@
       <tbody id="score"></tbody>
     </table>
     <% else %>
-      <% flash.each do |key, value| %>
-        <div class="alert alert-danger"><%= render inline: value %></div>
-      <% end %>
+      <%= render partial: 'layouts/topten', locals: { highscore_type: 'elo' }%>
     <% end %>
   </div>
 </div>

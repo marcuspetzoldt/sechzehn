@@ -45,6 +45,9 @@ class SechzehnController < ApplicationController
       @user = User.new
       @play = false
       session['game_id'] = nil
+      @which = 1
+      sql = highscore_sql(' ORDER BY u.elo DESC, cpoints DESC, cwords DESC', true)
+      @scores = ActiveRecord::Base.connection.execute(sql)
     end
     @field = init_field
   end
@@ -180,6 +183,30 @@ class SechzehnController < ApplicationController
     @description = 'Als registrierter Spieler von Sechzehn, kannst Du in diesen täglichen, wöchentlichen und monatlichen, sowie in einer ewigen Rangliste um Plätze kämpfen.'
     @which = params[:which]
 
+    sql = highscore_sql(order_by, false)
+    case @which
+    when '3'
+      # daily
+      @subtitle = 'Rangliste für ' + ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'][Date.today.wday]
+
+    when '2'
+      # weekly
+      @subtitle = 'Rangliste der ' + Date.today.cweek.to_s + '. KW'
+
+    when '1'
+      # monthly
+      @subtitle = 'Rangliste für ' + ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][Date.today.month-1]
+
+    else
+      # all time
+      @which = 0
+      @subtitle = 'ewige Rangliste'
+
+    end
+    ActiveRecord::Base.connection.execute(sql)
+  end
+
+  def highscore_sql(order_by, homepage)
     case @which
     when '3'
       # daily
@@ -189,8 +216,6 @@ class SechzehnController < ApplicationController
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.to_s + '\''
-
-      @subtitle = 'Rangliste für ' + ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'][Date.today.wday]
 
     when '2'
       # weekly
@@ -202,8 +227,6 @@ class SechzehnController < ApplicationController
           '   AND s.created_at >= \'' + Date.today.beginning_of_week.to_s + '\'' +
           ' GROUP BY u.id, u.name, u.elo, s.user_id'
 
-      @subtitle = 'Rangliste der ' + Date.today.cweek.to_s + '. KW'
-
     when '1'
       # monthly
       sql = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints' +
@@ -213,7 +236,6 @@ class SechzehnController < ApplicationController
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.beginning_of_month.to_s + '\'' +
           ' GROUP BY u.id, u.name, u.elo, s.user_id'
-      @subtitle = 'Rangliste für ' + ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][Date.today.month-1]
 
     else
       # all time
@@ -222,12 +244,11 @@ class SechzehnController < ApplicationController
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:all_time].to_s
-      @which = '0'
-      @subtitle = 'ewige Rangliste'
 
     end
     sql = sql + order_by
-    ActiveRecord::Base.connection.execute(sql)
+    sql = sql + "  LIMIT 10" if homepage
+    sql
   end
 
   def maintenance

@@ -1,0 +1,45 @@
+<table class="table table-condensed">
+  <colgroup>
+    <col />
+    <col style="width: 50%"/>
+    <col />
+  </colgroup>
+  <thead>
+    <tr>
+      <th colspan="2">
+        <% case @which %>
+        <% when 3 %>
+          Tagesrangliste
+        <% when 2 %>
+          Wochenrangliste
+        <% when 1 %>
+          Monatsrangliste
+        <% else %>
+          Ewige Rangliste
+        <% end %>
+      </th>
+      <th>
+        <% case highscore_type %>
+        <% when 'elo' %>
+          Elo-Zahl
+        <% else %>
+          N/A
+        <% end %>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% old_score = 0 %>
+    <% @scores.each_with_index do |score, i| %>
+      <tr>
+        <% if old_score != score[highscore_type] %>
+          <td><%= i+1 %>.</td>
+        <% else %>
+          <td>&nbsp;</td>
+        <% end %>
+        <td><%= score['name'] %></td>
+        <td><%= score[highscore_type] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
