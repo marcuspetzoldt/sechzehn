@@ -6,7 +6,7 @@
       </div>
     </div>
     <% if @play %>
-      <div id="guess" class="form-group" style="<%= @play ? 'display: inherit' : 'display: none' %>">
+      <div id="guess" class="form-group">
         <div class="input-group">
           <%= text_field_tag 'words', nil, id: 'words', class: 'form-control', autocomplete: 'off' %>
           <span class="input-group-addon" id="timer">3:00</span>
@@ -52,7 +52,7 @@
     <div id="solutionheader" class="sechzehn-hidden"><hr class="row"/><span class="noone">&nbsp;keiner&nbsp;</span> &bull; <span class="someone">&nbsp;gefunden&nbsp;</span> &bull; <span class="self">&nbsp;von&nbsp;Dir&nbsp;</span> &bull; <span class="onlyself">&nbsp;nur&nbsp;von&nbsp;Dir&nbsp;</span><hr class="row"/></div>
     <div id="solution"></div>
     <% else %>
-      <%= form_for @user, html: { style: @play ? 'display: none' : 'display: inherit', id: 'form_signin' } do |f| %>
+      <%= form_for @user, html: { class: @play ? 'displaynone' : 'displayinherit', id: 'form_signin' } do |f| %>
         <div class="form-group">
           <%= f.label :name, t('activerecord.models.attributes.user.name')%>
           <div class="input-group">
@@ -122,8 +122,8 @@
 <div class="row" itemscope itemtype="http://schema.org/WebApplication">
   <div class="col-md-4">
     <h3 itemprop="applicationCategory">Spiel</h3>
-    <p class="text-justify">Das <span itemprop="keywords">online</span> <span itemprop="keywords">Multiplayer</span> <span itemprop="keywords">Wortspiel</span> <span class="sechzehn" itemprop="name">SECHZEHN</span> wurde durch <span itemprop="keywords">Boggle</span> inspiriert. <span itemprop="description">Finde innerhalb von drei Minuten mehr <span itemprop="keywords">deutsch</span>e Wörter in einem Quadrat mit sechzehn zufällig erzeugten Buchstaben als deine Mitspieler.</span></p>
-    <p class="text-justify">Lege als Gast sofort mit der Wortsuche los, oder kämpfe als registrierter Spieler in diversen <%= link_to 'Ranglisten', highscore_elo_path, title: 'tägliche, wöchentliche, monatliche und ewige Ranglisten' %> um die besten Plätze.</p>
+    <p class="text-justify">Das <span itemprop="keywords">online</span> <span itemprop="keywords">Multiplayer</span> <span itemprop="keywords">Wortspiel</span> <span itemprop="name">Sechzehn</span> wurde durch <span itemprop="keywords">Boggle</span> inspiriert. <span itemprop="description">Finde innerhalb von drei Minuten mehr <span itemprop="keywords">deutsch</span>e Wörter in einem Quadrat mit sechzehn zufällig erzeugten Buchstaben als deine Mitspieler.</span></p>
+    <p class="text-justify">Lege als Gast sofort mit der Wortsuche los, oder kämpfe als registrierter Spieler in täglichen, wöchentlichen, monatlichen und einer ewigen <%= link_to 'Rangliste', highscore_elo_path, title: 'tägliche, wöchentliche, monatliche und ewige Ranglisten' %> um die besten Plätze.</p>
   </div>
   <div class="col-md-4">
     <h3>Regeln</h3>
@@ -133,7 +133,7 @@
       <li>Eigennamen und Markennamen</li>
       <li>Abkürzungen</li>
     </ul>
-    <p>Ausführlichere Erklärung der Regeln und der Bedienung gibt es auf der <%= link_to 'Hilfeseite', help_path, title: 'Regeln und Bedienung kurz erklärt' %>.</p>
+    <p>Ausführlichere Erklärung der Regeln und der Bedienung von Sechzehn gibt es auf der <%= link_to 'Hilfeseite', help_path, title: 'Regeln und Bedienung kurz erklärt' %>.</p>
   </div>
   <div class="col-md-4">
     <h3>Features</h3>
@@ -144,7 +144,7 @@
       <li itemprop="featurelist">kein Zwang zur Registrierung</li>
       <li itemprop="featurelist">kostenlos</li>
     </ul>
-    <p class="text-justify">Registrierte Spieler haben zudem Zugriff auf die folgenden Features:</p>
+    <p class="text-justify">Registrierte Spieler haben zudem Zugriff auf die folgenden Features von Sechzehn:</p>
     <ul>
       <li itemprop="featurelist">Ranglisten</li>
       <li itemprop="featurelist">Berechnung der <a href="http://de.wikipedia.org/wiki/Elo-Zahl" title="Erklärung der ELO-Zahl auf Wikipedia">Spielstärke</a></li>

@@ -28,11 +28,29 @@ form {
 }
 
 .navbar-header h2 {
-  display: table-cell;
-  width: 1px;
   font-size: 66%;
   text-align: justify;
+  height: 14px;
+  overflow: hidden;
+  margin: 0;
+}
+
+.subtitlewrapper {
+  display: table-cell;
+  width: 1px;
   padding-right: 8px;
+}
+
+.clear {
+  clear: both;
+}
+
+.displayinherit {
+  display: inherit;
+}
+
+.displaynone {
+  display: none;
 }
 
 div#guess {
