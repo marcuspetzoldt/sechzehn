@@ -110,14 +110,14 @@ class SechzehnController < ApplicationController
   end
 
   def guess
-    word = params['words'].downcase
-    if Solution.find_by(game_id: session['game_id'], word: word).nil?
+    @word = params['words'].downcase
+    if Solution.find_by(game_id: session['game_id'], word: @word).nil?
       @guess = 0
     else
-      @guess = letter_score[word.length]
+      @guess = letter_score[@word.length]
     end
-    if Guess.find_by(user_id: current_user.id, game_id: session['game_id'], word: word).nil?
-      Guess.create(user_id: current_user.id, game_id: session['game_id'], word: word, points: @guess)
+    if Guess.find_by(user_id: current_user.id, game_id: session['game_id'], word: @word).nil?
+      Guess.create(user_id: current_user.id, game_id: session['game_id'], word: @word, points: @guess)
     else
       @guess = nil
     end

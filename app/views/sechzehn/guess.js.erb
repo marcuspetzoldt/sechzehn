@@ -1,10 +1,10 @@
 <% unless @guess.nil? %>
+  $e = $('span#word_<%= @word %>')
   <% if @guess > 0 %>
-    $e = $('div#guesses').children(':first')
     $e.append('<%= ":#{@guess}" %>')
     $e.css('font-size',  '<%= 100 + (@guess-1)*4 %>%')
   <% else %>
-    $('div#guesses').children(':first').css('color', 'red')
+    $e.css('color', 'red')
   <% end %>
   $('td#cwords').html('<%= @cwords %>')
   $('td#cpoints').html('<%= @cpoints %>')
