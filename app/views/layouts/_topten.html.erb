@@ -1,7 +1,7 @@
 <table class="table table-condensed">
   <colgroup>
     <col />
-    <col width="50%"/>
+    <col class="fifty-percent"/>
     <col />
   </colgroup>
   <thead>
@@ -22,6 +22,8 @@
         <% case highscore_type %>
         <% when 'elo' %>
           Elo-Zahl
+        <% when 'ppoints' %>
+          <span title="Durchschnittliche Punkte pro Spiel in Prozent">&Oslash; Punkte</span>
         <% else %>
           N/A
         <% end %>
@@ -39,7 +41,7 @@
           <td>&nbsp;</td>
         <% end %>
         <td><%= score['name'] %></td>
-        <td class="right"><%= score[highscore_type] %></td>
+        <td class="right"><%= score[highscore_type].to_f.round(1) %> %</td>
       </tr>
     <% end %>
   </tbody>

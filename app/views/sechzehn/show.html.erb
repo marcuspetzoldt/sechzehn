@@ -18,7 +18,7 @@
     <% if @play %>
     <table class="table">
       <colgroup>
-        <col width="50%" />
+        <col class="fifty-percent" />
         <col />
         <col />
       </colgroup>
@@ -100,7 +100,7 @@
     <table class="table">
       <colgroup>
         <col />
-        <col width="50%" />
+        <col class="fifty-percent" />
         <col />
         <col />
       </colgroup>
@@ -115,7 +115,7 @@
       <tbody id="score"></tbody>
     </table>
     <% else %>
-      <%= render partial: 'layouts/topten', locals: { highscore_type: 'elo' }%>
+      <%= render partial: 'layouts/topten', locals: { highscore_type: 'ppoints' }%>
     <% end %>
   </div>
 </div>

@@ -46,7 +46,7 @@ class SechzehnController < ApplicationController
       @play = false
       session['game_id'] = nil
       @which = 1
-      sql = highscore_sql(' ORDER BY u.elo DESC, cpoints DESC, cwords DESC', true)
+      sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
       @scores = ActiveRecord::Base.connection.execute(sql)
     end
     @field = init_field
