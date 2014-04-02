@@ -203,6 +203,7 @@ startGame = () ->
     clearInterval(window.gameInterval) if window.gameInterval
     alert("Wartungsarbeiten - Sechzehn kann einige Minuten nicht gespielt werden.")
     window.Location.href='/'
+    window.location.reload()
     return
   $('div#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->
     if XMLHttpRequest.getResponseHeader('X-Refreshed') == '0'
