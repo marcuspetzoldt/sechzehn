@@ -201,7 +201,7 @@ getSolution = () ->
 startGame = () ->
   if window.maintenance
     clearInterval(window.gameInterval) if window.gameInterval
-    alert("Wartungsarbeiten - Sechzehn kann für einige Minuten nicht gespielt werden.")
+    alert("Wartungsarbeiten - Sechzehn kann einige Minuten nicht gespielt werden.")
     window.Location.href='/'
     return
   $('div#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->

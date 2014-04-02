@@ -13,7 +13,7 @@
         <% when '2' %>
           Wochenrangliste
         <% when '1' %>
-          Monatsrangliste
+          <%= 'Rangliste für ' + ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][Date.today.month-1] %>
         <% else %>
           Ewige Rangliste
         <% end %>
