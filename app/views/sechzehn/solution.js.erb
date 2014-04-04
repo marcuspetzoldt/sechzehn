@@ -22,5 +22,6 @@ $('tbody#score').html('')
   <% tr = tr + "<td class=\"#{fat}\">#{score['name']}</td>" %>
   <% tr = tr + "<td class=\"right #{fat}\">#{score['count']} / #{@twords > 0 ? (100*score['count'].to_i/@twords).round(0) : 0}%</td>" %>
   <% tr = tr + "<td class=\"right #{fat}\">#{score['sum']} / #{@tpoints > 0 ? (100*score['sum'].to_i/@tpoints).round(0) : 0}%</td></tr>" %>
-  $('tbody#score').append('<%= render inline: tr %>')
+  $('tbody#score').hide()
+  $('tbody#score').append('<%= render inline: tr %>').show(400)
 <% end %>
