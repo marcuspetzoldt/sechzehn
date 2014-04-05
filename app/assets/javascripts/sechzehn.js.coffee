@@ -257,3 +257,8 @@ $(document).on('keyup', 'input[maxlength]', () ->
   po.src = 'https://apis.google.com/js/platform.js'
   s = document.getElementsByTagName('script')[0]
   s.parentNode.insertBefore(po, s))()
+
+$(document).on('mousedown', 'img#kostenlos-browsergame', () ->
+  if document.images
+    (new Image()).src=''+'http://www.kostenlos-browsergame.de/in.php?id=222'+''
+)
