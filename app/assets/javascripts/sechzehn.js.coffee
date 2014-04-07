@@ -260,5 +260,6 @@ $(document).on('keyup', 'input[maxlength]', () ->
 
 $(document).on('mousedown', 'img#kostenlos-browsergame', () ->
   if document.images
-    (new Image()).src=''+'http://www.kostenlos-browsergame.de/in.php?id=222'+''
+    (new Image()).src='http://www.kostenlos-browsergame.de/in.php?id=222'
+  return true
 )
