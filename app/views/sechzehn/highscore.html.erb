@@ -23,7 +23,7 @@
           <th>Name</th>
           <th>Spiele</th>
           <th><%= highscore_type == 'cwords' ? 'Wörter' : link_to('Wörter', highscore_words_path(which: @which)) %> <%= highscore_type == 'pwords' ? '(%)' : link_to('(%)', highscore_words_percent_path(which: @which)) %></th>
-          <th><%= highscore_type == 'cpoints' ? 'Punkte' : link_to('Punkte', highscore_points_path) %> <%= highscore_type == 'ppoints' ? '(%)' : link_to('(%)', highscore_points_percent_path(which: @which)) %></th>
+          <th><%= highscore_type == 'cpoints' ? 'Punkte' : link_to('Punkte', highscore_points_path(which: @which)) %> <%= highscore_type == 'ppoints' ? '(%)' : link_to('(%)', highscore_points_percent_path(which: @which)) %></th>
           <th><%= highscore_type == 'elo' ? 'Stufe' : link_to('Stufe', highscore_elo_path(which: @which)) %></th>
         </tr>
       </thead>
