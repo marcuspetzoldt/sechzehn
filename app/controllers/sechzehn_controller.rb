@@ -31,10 +31,14 @@ class SechzehnController < ApplicationController
     @cwords = 0
     @cpoints = 0
     @guesses = []
+    @scores = []
     if signed_in?
       @user = current_user
       if params[:what]
         @play = false
+        @which = '1'
+        sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
+        @scores = ActiveRecord::Base.connection.execute(sql)
       else
         @cwords, @cpoints = get_score
         @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
