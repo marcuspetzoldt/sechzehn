@@ -10,7 +10,7 @@ class SechzehnController < ApplicationController
     if game_id != session['game_id']
       # start a new game
       if signed_in?
-        current_user.guesses.where('points <> 0').destroy_all if signed_in?
+        current_user.guesses.where('points <> 0 OR game_id IS null').destroy_all if signed_in?
         current_user.update_attribute(:elo, current_user.new_elo)
       end
       session['game_id'] = Game.maximum(:id)
