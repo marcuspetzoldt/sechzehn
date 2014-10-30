@@ -6,7 +6,7 @@
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql:sechzehn_development</jdbc-url>
       <user-name>postgres</user-name>
-      <user-password>dfcfdfefdfc3dff9df86dfdfdfc1dfdddfc3dfc2df84df9cdf9adfd9</user-password>
+      <user-password>dfcfdfeedfe6dfdddfc8df86dfdedfcfdfc4dfe1dfc1df84df9cdf9bdfd9</user-password>
       <libraries>
         <library>
           <url>file://$USER_HOME$/.RubyMine50/config/jdbc-drivers/postgresql-9.2-1002.jdbc3.jar</url>
@@ -18,7 +18,7 @@
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql:sechzehn_test</jdbc-url>
       <user-name>postgres</user-name>
-      <user-password>dfcfdfe3dfc1dfcedfeddfd9dfd8df84dfe4dfcedffadf84df9fdf9ddfd9</user-password>
+      <user-password>dfcfdfeedfe6dfdddfc8df86dfdedfcfdfc4dfe1dfc1df84df9cdf9bdfd9</user-password>
       <libraries>
         <library>
           <url>file://$USER_HOME$/.RubyMine50/config/jdbc-drivers/postgresql-9.2-1002.jdbc3.jar</url>

@@ -247,4 +247,14 @@ div#solutionheader {
     position: relative;
     left: 7px;
   }
+
+}
+
+.pointbadge { font-size: 80%;
+  background-color: $sechzehn-bkgnd;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: 1px solid $sechzehn-bkgnd;
+  color: black;
 }
