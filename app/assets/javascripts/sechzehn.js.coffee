@@ -185,7 +185,7 @@ sync = () ->
   clearInterval(window.gameInterval) if window.gameInterval
   $.get('/sync', null, (data) ->
     if data == 'maintenance'
-      window.gameTimer = 220
+      window.gameTimer = 210
       window.maintenance = true
     else
       window.gameTimer = parseInt(data)

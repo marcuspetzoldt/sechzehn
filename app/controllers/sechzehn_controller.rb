@@ -135,14 +135,15 @@ class SechzehnController < ApplicationController
   end
 
   def sync
-    # Most recent game is older than 215 seconds (180 game + 30 pause + 10 sync)
+    # Most recent game is older than 210 seconds (180 game + 30 pause)
     time_left = get_time_left
     if time_left <= 0
       if Lock.find_by(lock: 2).nil?
         begin
-          l = Lock.create
+          # Locks are not necessary as long as Ruby is single threaded
+#         l = Lock.create
           g = Game.create
-          l.destroy
+#         l.destroy
         rescue
           # ignore unique index constraint violation and sync again
           # another player already computes the next game
@@ -373,7 +374,7 @@ class SechzehnController < ApplicationController
 
     def get_time_left()
       game_id = Game.maximum(:id)
-      220 - (Time.now - Game.find_by(id: game_id).created_at)
+      210 - (Time.now - Game.find_by(id: game_id).updated_at)
     end
 
 end

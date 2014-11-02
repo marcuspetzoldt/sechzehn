@@ -43,6 +43,7 @@ class Game < ActiveRecord::Base
 
       @words = nil
       @field = nil
+      self.touch
     end
 
     def draw_letter
