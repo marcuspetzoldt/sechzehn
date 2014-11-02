@@ -40,9 +40,15 @@ class SechzehnController < ApplicationController
         sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
         @scores = ActiveRecord::Base.connection.execute(sql)
       else
-        @cwords, @cpoints = get_score
-        @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
-          [guess.word, guess.points]
+        if session['game_id'].to_i == Game.maximum(:id)
+          # Spieler spielt
+          @cwords, @cpoints = get_score
+          @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
+            [guess.word, guess.points]
+          end
+        else
+          # Spieler hat Speiler übersprungen, aber Cookie ist noch da
+          session['game_id'] = nil
         end
       end
     else
