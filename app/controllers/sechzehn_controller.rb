@@ -36,18 +36,19 @@ class SechzehnController < ApplicationController
       @user = current_user
       if params[:what]
         @play = false
+        # Highscores of the month
         @which = '1'
         sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
         @scores = ActiveRecord::Base.connection.execute(sql)
       else
         if session['game_id'].to_i == Game.maximum(:id)
-          # Spieler spielt
+          # Active player
           @cwords, @cpoints = get_score
           @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
             [guess.word, guess.points]
           end
         else
-          # Spieler hat Speiler übersprungen, aber Cookie ist noch da
+          # Player left the site and skipped at least one game, session info is deprecated
           session['game_id'] = nil
         end
       end
@@ -143,6 +144,10 @@ class SechzehnController < ApplicationController
           # Locks are not necessary as long as Ruby is single threaded
 #         l = Lock.create
           g = Game.create
+          # As long as I want to know which valid words are not in the database, only solutions will
+          # be deleted from the database, instead of:
+          # Games.destroy_all("id < #{Game.maximum(:id) - 2}")
+          Solutions.destroy_all("game_id < #{Game.maximum(:id) - 2}")
 #         l.destroy
         rescue
           # ignore unique index constraint violation and sync again
@@ -258,7 +263,11 @@ class SechzehnController < ApplicationController
 
     end
     sql = sql + order_by
-    sql = sql + "  LIMIT 10" if homepage
+    if homepage
+      sql = sql + " LIMIT 10"
+    else
+#     sql = sql + " LIMIT #{@limit} OFFSET " + (params['offset'].to_i).to_s
+    end
     sql
   end
 
