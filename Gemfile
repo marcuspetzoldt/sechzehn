@@ -6,7 +6,7 @@ gem 'rails', '4.0.0'
 
 # Use postgresql as the database for Active Record
 gem 'pg'
-gem 'bootstrap-sass'
+gem 'bootstrap-sass', '3.1.1.0'
 gem 'bcrypt-ruby', '3.0.1'
 gem 'i18n'
 gem 'rack-rewrite'
