@@ -143,11 +143,11 @@ class SechzehnController < ApplicationController
         begin
           # Locks are not necessary as long as Ruby is single threaded
 #         l = Lock.create
+          Solutions.destroy_all("game_id < #{Game.maximum(:id) - 1}")
           g = Game.create
           # As long as I want to know which valid words are not in the database, only solutions will
           # be deleted from the database, instead of:
           # Games.destroy_all("id < #{Game.maximum(:id) - 2}")
-          Solutions.destroy_all("game_id < #{Game.maximum(:id) - 2}")
 #         l.destroy
         rescue
           # ignore unique index constraint violation and sync again
