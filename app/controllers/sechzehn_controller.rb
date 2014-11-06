@@ -143,7 +143,7 @@ class SechzehnController < ApplicationController
         begin
           # Locks are not necessary as long as Ruby is single threaded
 #         l = Lock.create
-          Solution.destroy_all("game_id < #{Game.maximum(:id) - 1}")
+          # Solution.destroy_all("game_id < #{Game.maximum(:id) - 1}")
           g = Game.create
           # As long as I want to know which valid words are not in the database, only solutions will
           # be deleted from the database, instead of:
