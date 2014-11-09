@@ -194,8 +194,6 @@ sync = () ->
   )
 
 getSolution = () ->
-  $('input#words').attr('disabled', 'disabled')
-  $('div#solutionheader').show()
   $.get('/solution')
 
 startGame = () ->
@@ -209,12 +207,12 @@ startGame = () ->
     if XMLHttpRequest.getResponseHeader('X-Refreshed') == '0'
       $('div#solution').html('')
       $('div#guesses').html('')
-      $('div#solutionheader').hide()
       $('td#cwords').html('0')
       $('td#cpoints').html('0')
     $('input#words').removeAttr('disabled')
     $('input#words').val('')
     $('input#words').focus()
+    getSolution()
   )
 
 disableGame = () ->

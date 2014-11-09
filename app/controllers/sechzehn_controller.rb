@@ -7,13 +7,13 @@ class SechzehnController < ApplicationController
     response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
-    if game_id != session['game_id']
+    if game_id != session['game_id'].to_i
       # start a new game
       if signed_in?
-        current_user.guesses.where('points <> 0 OR game_id IS null').destroy_all if signed_in?
+        current_user.guesses.where("(points <> 0 OR game_id IS null) and game_id < #{game_id-1}").destroy_all if signed_in?
         current_user.update_attribute(:elo, current_user.new_elo)
       end
-      session['game_id'] = Game.maximum(:id)
+      session['game_id'] = game_id
       response.headers['X-Refreshed'] = '0'
     else
       # continue a game
@@ -41,15 +41,10 @@ class SechzehnController < ApplicationController
         sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
         @scores = ActiveRecord::Base.connection.execute(sql)
       else
-        if session['game_id'].to_i == Game.maximum(:id)
-          # Active player
-          @cwords, @cpoints = get_score
-          @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
-            [guess.word, guess.points]
-          end
-        else
-          # Player left the site and skipped at least one game, session info is deprecated
-          session['game_id'] = nil
+        # Active player
+        @cwords, @cpoints = get_score
+        @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
+          [guess.word, guess.points]
         end
       end
     else
@@ -64,6 +59,7 @@ class SechzehnController < ApplicationController
   end
 
   def solution
+    Rails.logger.info("Solution")
     @tpoints = 0
     @twords = 0
     @cpoints = 0
@@ -71,11 +67,11 @@ class SechzehnController < ApplicationController
     @words = []
     @scores = []
 
-    return if session['game_id'].nil?
+    game_id = Game.maximum(:id) - 1
 
-    @words = Game.find_by(id: session['game_id']).solutions.map do |s|
+    @words = Game.find_by(id: game_id).solutions.map do |s|
       format = 0
-      found = Guess.where(word: s.word, game_id: session['game_id'])
+      found = Guess.where(word: s.word, game_id: game_id)
       unless found.empty?
         if found.find_by(user_id: current_user.id)
           if found.count == 1
@@ -104,6 +100,7 @@ class SechzehnController < ApplicationController
     # Player score
     @twords = @words.length
     @cwords, @cpoints = get_score
+    compute_highscore if @cpoints > 0
 
     # All player's score
     @scores = ActiveRecord::Base.connection.execute(
@@ -111,24 +108,24 @@ class SechzehnController < ApplicationController
       '  FROM guesses b' +
       '  JOIN users a' +
       '    ON a.id = b.user_id' +
-      ' WHERE b.game_id = ' + session['game_id'].to_s +
+      ' WHERE b.game_id = ' + game_id.to_s +
       '   AND b.points > 0' +
       ' GROUP BY a.id ' +
       'HAVING SUM(b.points) > 0' +
       ' ORDER BY SUM(b.points) DESC')
 
-    compute_highscore if @cpoints > 0
   end
 
   def guess
+    game_id = Game.maximum(:id)
     @word = params['words'].downcase
-    if Solution.find_by(game_id: session['game_id'], word: @word).nil?
+    if Solution.find_by(game_id: game_id, word: @word).nil?
       @guess = 0
     else
       @guess = letter_score[@word.length]
     end
-    if Guess.find_by(user_id: current_user.id, game_id: session['game_id'], word: @word).nil?
-      Guess.create(user_id: current_user.id, game_id: session['game_id'], word: @word, points: @guess)
+    if Guess.find_by(user_id: current_user.id, game_id: game_id, word: @word).nil?
+      Guess.create(user_id: current_user.id, game_id: game_id, word: @word, points: @guess)
     else
       @guess = nil
     end
@@ -137,22 +134,11 @@ class SechzehnController < ApplicationController
 
   def sync
     # Most recent game is older than 210 seconds (180 game + 30 pause)
-    time_left = get_time_left
+    game_id = Game.maximum(:id)
+    time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
     if time_left <= 0
       if Lock.find_by(lock: 2).nil?
-        begin
-          # Locks are not necessary as long as Ruby is single threaded
-#         l = Lock.create
-          # Solution.destroy_all("game_id < #{Game.maximum(:id) - 1}")
-          g = Game.create
-          # As long as I want to know which valid words are not in the database, only solutions will
-          # be deleted from the database, instead of:
-          # Games.destroy_all("id < #{Game.maximum(:id) - 2}")
-#         l.destroy
-        rescue
-          # ignore unique index constraint violation and sync again
-          # another player already computes the next game
-        end
+        Game.create
       else
         render text: 'maintenance'
         return
@@ -322,6 +308,7 @@ class SechzehnController < ApplicationController
       end
 
       if session['game_id'] != score.game_id and !session['game_id'].nil?
+        Rails.logger.info("Computing Scores")
         score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
         score.pwords = (score.pwords * score.count + (@cwords * 100 / @twords)) / (score.count + 1)
         score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
@@ -379,11 +366,6 @@ class SechzehnController < ApplicationController
           30
         end
       end
-    end
-
-    def get_time_left()
-      game_id = Game.maximum(:id)
-      210 - (Time.now - Game.find_by(id: game_id).updated_at)
     end
 
 end
