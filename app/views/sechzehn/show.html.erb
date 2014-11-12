@@ -16,41 +16,46 @@
   </div>
   <div class="col-md-4">
     <% if @play %>
-    <table class="table">
-      <colgroup>
-        <col class="fifty-percent" />
-        <col />
-        <col />
-      </colgroup>
-      <thead>
-        <tr>
-          <th></th>
-          <th class="right">Wörter</th>
-          <th class="right">Punkte</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td id="username"><%= @user.name %></td>
-          <td id="cwords" class="right"><%= @cwords %></td>
-          <td id="cpoints" class="right"><%= @cpoints %></td>
-        </tr>
-        <tr>
-          <td colspan="3"></td>
-        </tr>
-      </tbody>
-    </table>
-    <div id="guesses">
-      <% @guesses.each do |guess| %>
-        <% if guess[1] > 0 %>
-          <span id="word_<%= guess[0] %>" style="font-size: <%= 100 + (guess[1]-1)*4 %>%"> <%= guess[0] %>:<%= guess[1] %></span>
-        <% else %>
-          <span id="word_<%= guess[0] %>" class="sechzehn-red"> <%= guess[0] %></span>
+    <div id="guessesdiv">
+      <table class="table">
+        <colgroup>
+          <col class="fifty-percent" />
+          <col />
+          <col />
+        </colgroup>
+        <thead>
+          <tr>
+            <th></th>
+            <th class="right">Wörter</th>
+            <th class="right">Punkte</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="username"><%= @user.name %></td>
+            <td id="cwords" class="right"><%= @cwords %></td>
+            <td id="cpoints" class="right"><%= @cpoints %></td>
+          </tr>
+          <tr>
+            <td colspan="3"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="guesses">
+        <% @guesses.each do |guess| %>
+          <% if guess[1] > 0 %>
+            <span id="word_<%= guess[0] %>" style="font-size: <%= 100 + (guess[1]-1)*4 %>%"> <%= guess[0] %>:<%= guess[1] %></span>
+          <% else %>
+            <span id="word_<%= guess[0] %>" class="sechzehn-red"> <%= guess[0] %></span>
+          <% end %>
         <% end %>
-      <% end %>
+      </div>
     </div>
-    <div id="solutionheader"><hr class="row"/><span class="noone">&nbsp;keiner&nbsp;</span> &bull; <span class="someone">&nbsp;gefunden&nbsp;</span> &bull; <span class="self">&nbsp;von&nbsp;Dir&nbsp;</span> &bull; <span class="onlyself">&nbsp;nur&nbsp;von&nbsp;Dir&nbsp;</span><hr class="row"/></div>
-    <div id="solution"></div>
+    <div id="solutiondiv" class="sechzehn-hidden">
+      <div style="padding-top: 8px; padding-left: 8px"><strong>Lösung</strong></div>
+      <div id="solutionheader"><hr class="row"/><span class="noone">&nbsp;keiner&nbsp;</span> &bull; <span class="someone">&nbsp;gefunden&nbsp;</span> &bull; <span class="self">&nbsp;von&nbsp;Dir&nbsp;</span> &bull; <span class="onlyself">&nbsp;nur&nbsp;von&nbsp;Dir&nbsp;</span><hr class="row"/></div>
+      <div id="solution"></div>
+    </div>
     <% else %>
       <% flash.each do |key, value| %>
         <div class="alert alert-danger"><%= render inline: value %></div>

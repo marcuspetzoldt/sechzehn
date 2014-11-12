@@ -9,11 +9,11 @@ class SechzehnController < ApplicationController
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
     if game_id != session['game_id'].to_i
       # start a new game
+      session['game_id'] = game_id
       if signed_in?
         current_user.guesses.where("(points <> 0 OR game_id IS null) and game_id < #{game_id-1}").destroy_all if signed_in?
         current_user.update_attribute(:elo, current_user.new_elo)
       end
-      session['game_id'] = game_id
       response.headers['X-Refreshed'] = '0'
     else
       # continue a game
@@ -42,6 +42,7 @@ class SechzehnController < ApplicationController
         @scores = ActiveRecord::Base.connection.execute(sql)
       else
         # Active player
+        session['game_id'] = nil if Game.maximum(:id) != session['game_id']
         @cwords, @cpoints = get_score
         @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
           [guess.word, guess.points]
@@ -64,43 +65,48 @@ class SechzehnController < ApplicationController
     @twords = 0
     @cpoints = 0
     @cwords = 0
-    @words = []
     @scores = []
+    @word = nil
 
-    game_id = Game.maximum(:id) - 1
-
-    @words = Game.find_by(id: game_id).solutions.map do |s|
-      format = 0
-      found = Guess.where(word: s.word, game_id: game_id)
-      unless found.empty?
-        if found.find_by(user_id: current_user.id)
-          if found.count == 1
-            # no one but Player found the word
-            format = 3
+    game_id = Game.maximum(:id)
+    time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
+    game_id = game_id - 1
+    Rails.logger.info("Time left: #{time_left}")
+    if time_left.to_i > 180
+      @words = []
+      @words = Game.find_by(id: game_id).solutions.map do |s|
+        format = 0
+        found = Guess.where(word: s.word, game_id: game_id)
+        unless found.empty?
+          if found.find_by(user_id: current_user.id)
+            if found.count == 1
+              # no one but Player found the word
+              format = 3
+            else
+              # Player and others found the word
+              format = 2
+            end
           else
-            # Player and others found the word
-            format = 2
+            # other Player found the word
+            format = 1
           end
+        end
+        @tpoints = @tpoints + letter_score[s.word.length]
+        [s.word, s.word.length, letter_score[s.word.length], format]
+      end
+      @words.sort! do |a, b|
+        if b[1] == a[1]
+          a[0] <=> b[0]
         else
-          # other Player found the word
-          format = 1
+          b[1] <=> a[1]
         end
       end
-      @tpoints = @tpoints + letter_score[s.word.length]
-      [s.word, s.word.length, letter_score[s.word.length], format]
-    end
-    @words.sort! do |a, b|
-      if b[1] == a[1]
-        a[0] <=> b[0]
-      else
-        b[1] <=> a[1]
-      end
-    end
 
-    # Player score
-    @twords = @words.length
-    @cwords, @cpoints = get_score
-    compute_highscore if @cpoints > 0
+      # Player score
+      @twords = @words.length
+      @cwords, @cpoints = get_score
+      compute_highscore if @cpoints > 0
+    end
 
     # All player's score
     @scores = ActiveRecord::Base.connection.execute(
@@ -217,7 +223,8 @@ class SechzehnController < ApplicationController
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
-          '   AND s.created_at >= \'' + Date.today.to_s + '\''
+          '   AND s.created_at >= \'' + Date.today.to_s + '\'' +
+          ' WHERE u.elo > 0'
 
     when '2'
       # weekly
@@ -227,6 +234,7 @@ class SechzehnController < ApplicationController
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.beginning_of_week.to_s + '\'' +
+          ' WHERE u.elo > 0' +
           ' GROUP BY u.id, u.name, u.elo, s.user_id'
 
     when '1'
@@ -237,6 +245,7 @@ class SechzehnController < ApplicationController
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.beginning_of_month.to_s + '\'' +
+          ' WHERE u.elo > 0' +
           ' GROUP BY u.id, u.name, u.elo, s.user_id'
 
     else
@@ -245,7 +254,8 @@ class SechzehnController < ApplicationController
           '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
-          '   AND s.score_type = ' + Score.score_types[:all_time].to_s
+          '   AND s.score_type = ' + Score.score_types[:all_time].to_s +
+          ' WHERE u.elo > 0'
 
     end
     sql = sql + order_by

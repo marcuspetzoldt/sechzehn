@@ -1,43 +1,50 @@
 <% points = 0 %>
-<% html = (@words.map do |w| %>
-  <% out = '' %>
-  <% case w[0].length %>
-    <% when 3..4 %>
-      <% if points != 1 %>
-        <% points = 1 %>
-        <% out = "<span class=\"pointbadge\">1&nbsp;&#9654;</span> " %>
+<% if @words %>
+  <% html = (@words.map do |w| %>
+    <% out = '' %>
+    <% case w[0].length %>
+      <% when 3..4 %>
+        <% if points != 1 %>
+          <% points = 1 %>
+          <% out = "<span class=\"pointbadge\">1&nbsp;&#9654;</span> " %>
+        <% end %>
+      <% when 5 %>
+        <% if points != 2 %>
+          <% points = 2 %>
+          <% out = "<span class=\"pointbadge\">2&nbsp;&#9654;</span> " %>
+        <% end %>
+      <% when 6 %>
+        <% if points != 3 %>
+          <% points = 3 %>
+          <% out = "<span class=\"pointbadge\">3&nbsp;&#9654;</span> " %>
+        <% end %>
+      <% when 7 %>
+        <% if points != 5 %>
+          <% points = 5 %>
+          <% out = "<span class=\"pointbadge\">5&nbsp;&#9654;</span> " %>
+        <% end %>
+      <% else %>
+        <% if points != 11 %>
+          <% points = 11 %>
+          <% out = "<span class=\"pointbadge\">11&nbsp;&#9654;</span> " %>
+        <% end %>
       <% end %>
-    <% when 5 %>
-      <% if points != 2 %>
-        <% points = 2 %>
-        <% out = "<span class=\"pointbadge\">2&nbsp;&#9654;</span> " %>
-      <% end %>
-    <% when 6 %>
-      <% if points != 3 %>
-        <% points = 3 %>
-        <% out = "<span class=\"pointbadge\">3&nbsp;&#9654;</span> " %>
-      <% end %>
-    <% when 7 %>
-      <% if points != 5 %>
-        <% points = 5 %>
-        <% out = "<span class=\"pointbadge\">5&nbsp;&#9654;</span> " %>
-      <% end %>
-    <% else %>
-      <% if points != 11 %>
-        <% points = 11 %>
-        <% out = "<span class=\"pointbadge\">11&nbsp;&#9654;</span> " %>
-      <% end %>
+    <% case w[3] %>
+      <% when 0 then out + "<span class=\"noone\">#{w[0]}</span>" %>
+      <% when 1 then out + "<span class=\"someone\">#{w[0]}</span>" %>
+      <% when 2 then out + "<span class=\"self\">#{w[0]}</span>" %>
+      <% else out + "<span class=\"onlyself\">#{w[0]}</span>" %>
     <% end %>
-  <% case w[3] %>
-    <% when 0 then out + "<span class=\"noone\">#{w[0]}</span>" %>
-    <% when 1 then out + "<span class=\"someone\">#{w[0]}</span>" %>
-    <% when 2 then out + "<span class=\"self\">#{w[0]}</span>" %>
-    <% else out + "<span class=\"onlyself\">#{w[0]}</span>" %>
-  <% end %>
-<% end).join(' ') %>
-$('div#solution').html('<%= render inline: html %>')
-$('td#cwords').html('<%= "#{@cwords}" %>')
-$('td#cpoints').html('<%= "#{@cpoints}" %>')
+  <% end).join(' ') %>
+  $('div#solution').html('<%= render inline: html %>')
+  $('td#cwords').html('<%= "#{@cwords}" %>')
+  $('td#cpoints').html('<%= "#{@cpoints}" %>')
+  $('div#solutiondiv').show()
+  $('div#guessesdiv').hide()
+<% else %>
+  $('div#solutiondiv').hide()
+  $('div#guessesdiv').show()
+<% end %>
 $('tbody#score').html('')
 <% old_score = 0 %>
 <% @scores.each_with_index do |score, i| %>
