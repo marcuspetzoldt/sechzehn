@@ -96,6 +96,18 @@ class SechzehnController < ApplicationController
     @twords = @words.length
     @cwords, @cpoints = get_score
 
+    # All player's score
+    @scores = ActiveRecord::Base.connection.execute(
+      'SELECT a.id, a.guest, a.name, a.elo, count(b.points), sum(b.points)' +
+      '  FROM guesses b' +
+      '  JOIN users a' +
+      '    ON a.id = b.user_id' +
+      ' WHERE b.game_id = ' + game_id.to_s +
+      '   AND b.points > 0' +
+      ' GROUP BY a.id ' +
+      'HAVING SUM(b.points) > 0' +
+      ' ORDER BY SUM(b.points) DESC')
+
     if time_left.to_i > 180
       @words.sort! do |a, b|
         if b[1] == a[1]
@@ -108,18 +120,6 @@ class SechzehnController < ApplicationController
     else
       @words = nil
     end
-
-    # All player's score
-    @scores = ActiveRecord::Base.connection.execute(
-      'SELECT a.id, a.guest, a.name, a.elo, count(b.points), sum(b.points)' +
-      '  FROM guesses b' +
-      '  JOIN users a' +
-      '    ON a.id = b.user_id' +
-      ' WHERE b.game_id = ' + game_id.to_s +
-      '   AND b.points > 0' +
-      ' GROUP BY a.id ' +
-      'HAVING SUM(b.points) > 0' +
-      ' ORDER BY SUM(b.points) DESC')
 
   end
 
