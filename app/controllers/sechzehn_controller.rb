@@ -91,7 +91,10 @@ class SechzehnController < ApplicationController
       @tpoints = @tpoints + letter_score[s.word.length]
       [s.word, s.word.length, letter_score[s.word.length], format]
     end
+
+    # Player score
     @twords = @words.length
+    @cwords, @cpoints = get_score
 
     if time_left.to_i > 180
       @words.sort! do |a, b|
@@ -101,7 +104,6 @@ class SechzehnController < ApplicationController
           b[1] <=> a[1]
         end
       end
-      @cwords, @cpoints = get_score
       compute_highscore if @cpoints > 0
     else
       @words = nil
