@@ -66,34 +66,34 @@ class SechzehnController < ApplicationController
     @cpoints = 0
     @cwords = 0
     @scores = []
-    @word = nil
+    @words = []
 
     game_id = Game.maximum(:id)
     time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
     game_id = game_id - 1
-    Rails.logger.info("Time left: #{time_left}")
-    if time_left.to_i > 180
-      @words = []
-      @words = Game.find_by(id: game_id).solutions.map do |s|
-        format = 0
-        found = Guess.where(word: s.word, game_id: game_id)
-        unless found.empty?
-          if found.find_by(user_id: current_user.id)
-            if found.count == 1
-              # no one but Player found the word
-              format = 3
-            else
-              # Player and others found the word
-              format = 2
-            end
+    @words = Game.find_by(id: game_id).solutions.map do |s|
+      format = 0
+      found = Guess.where(word: s.word, game_id: game_id)
+      unless found.empty?
+        if found.find_by(user_id: current_user.id)
+          if found.count == 1
+            # no one but Player found the word
+            format = 3
           else
-            # other Player found the word
-            format = 1
+            # Player and others found the word
+            format = 2
           end
+        else
+          # other Player found the word
+          format = 1
         end
-        @tpoints = @tpoints + letter_score[s.word.length]
-        [s.word, s.word.length, letter_score[s.word.length], format]
       end
+      @tpoints = @tpoints + letter_score[s.word.length]
+      [s.word, s.word.length, letter_score[s.word.length], format]
+    end
+    @twords = @words.length
+
+    if time_left.to_i > 180
       @words.sort! do |a, b|
         if b[1] == a[1]
           a[0] <=> b[0]
@@ -101,11 +101,10 @@ class SechzehnController < ApplicationController
           b[1] <=> a[1]
         end
       end
-
-      # Player score
-      @twords = @words.length
       @cwords, @cpoints = get_score
       compute_highscore if @cpoints > 0
+    else
+      @words = nil
     end
 
     # All player's score
@@ -318,7 +317,6 @@ class SechzehnController < ApplicationController
       end
 
       if session['game_id'] != score.game_id and !session['game_id'].nil?
-        Rails.logger.info("Computing Scores")
         score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
         score.pwords = (score.pwords * score.count + (@cwords * 100 / @twords)) / (score.count + 1)
         score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
