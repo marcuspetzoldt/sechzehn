@@ -306,6 +306,9 @@ class SechzehnController < ApplicationController
       # cleanup
       Score.where("user_id=? and score_type=? and created_at<?", current_user.id, Score.score_types[:daily], Date.today-1.month).destroy_all
 
+      # Player played a game
+      current_user.touch
+
       begin
         score = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:all_time] )
       rescue ActiveRecord::RecordNotFound
