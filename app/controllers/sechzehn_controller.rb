@@ -38,7 +38,7 @@ class SechzehnController < ApplicationController
         @play = false
         # Highscores of the month
         @which = '1'
-        sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
+        count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
         @scores = ActiveRecord::Base.connection.execute(sql)
       else
         # Active player
@@ -53,7 +53,7 @@ class SechzehnController < ApplicationController
       @play = false
       session['game_id'] = nil
       @which = '1'
-      sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
+      count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
       @scores = ActiveRecord::Base.connection.execute(sql)
     end
     @field = init_field
@@ -161,28 +161,29 @@ class SechzehnController < ApplicationController
   end
 
   def highscore_elo
-    @scores = highscore(' ORDER BY u.elo DESC, cpoints DESC, cwords DESC')
-    render 'highscore', locals: { highscore_type: 'elo' }
+    offset = params['offset']
+    count, @scores = highscore(' ORDER BY u.elo DESC, cpoints DESC, cwords DESC')
+    render 'highscore', locals: { highscore_type: 'elo', count: count }
   end
 
   def highscore_points
-    @scores = highscore(' ORDER BY cpoints DESC, u.elo DESC, cwords DESC')
-    render 'highscore', locals: { highscore_type: 'cpoints' }
+    count, @scores = highscore(' ORDER BY cpoints DESC, u.elo DESC, cwords DESC')
+    render 'highscore', locals: { highscore_type: 'cpoints', count: count }
   end
 
   def highscore_points_percent
-    @scores = highscore(' ORDER BY ppoints DESC, u.elo DESC, cwords DESC')
-    render 'highscore', locals: { highscore_type: 'ppoints' }
+    count, @scores = highscore(' ORDER BY ppoints DESC, u.elo DESC, cwords DESC')
+    render 'highscore', locals: { highscore_type: 'ppoints', count: count }
   end
 
   def highscore_words
-    @scores = highscore(' ORDER BY cwords DESC, cpoints DESC, u.elo DESC')
-    render 'highscore', locals: { highscore_type: 'cwords' }
+    count, @scores = highscore(' ORDER BY cwords DESC, cpoints DESC, u.elo DESC')
+    render 'highscore', locals: { highscore_type: 'cwords', count: count }
   end
 
   def highscore_words_percent
-    @scores = highscore(' ORDER BY pwords DESC, ppoints DESC, u.elo DESC')
-    render 'highscore', locals: { highscore_type: 'pwords' }
+    count, @scores = highscore(' ORDER BY pwords DESC, ppoints DESC, u.elo DESC')
+    render 'highscore', locals: { highscore_type: 'pwords', count: count }
   end
 
   def highscore(order_by)
@@ -191,8 +192,9 @@ class SechzehnController < ApplicationController
     @description = 'Sechzehn ist ein Wortspiel wie Boggle. Finde innerhalb von 3 Minuten mehr deutsche Wörter in einem Quadrat mit 16 zufälligen Buchstaben als deine Mitspieler.'
     @description = 'Als registrierter Spieler von Sechzehn, kannst Du in diesen täglichen, wöchentlichen und monatlichen, sowie in einer ewigen Rangliste um Plätze kämpfen.'
     @which = params[:which]
+    @offset = params[:offset] ? params[:offset].to_i : 0
 
-    sql = highscore_sql(order_by, false)
+    count, sql = highscore_sql(order_by, false)
     case @which
     when '3'
       # daily
@@ -212,60 +214,68 @@ class SechzehnController < ApplicationController
       @subtitle = 'ewige Rangliste'
 
     end
-    ActiveRecord::Base.connection.execute(sql)
+    [count, ActiveRecord::Base.connection.execute(sql)]
   end
 
   def highscore_sql(order_by, homepage)
     case @which
     when '3'
       # daily
-      sql = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints' +
-          '  FROM users u' +
+      select = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints'
+      where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.to_s + '\'' +
           ' WHERE u.elo > 0'
+      group = ''
 
     when '2'
       # weekly
-      sql = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints' +
-          '  FROM users u' +
+      select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints'
+      where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.beginning_of_week.to_s + '\'' +
-          ' WHERE u.elo > 0' +
-          ' GROUP BY u.id, u.name, u.elo, s.user_id'
+          ' WHERE u.elo > 0'
+      group = ' GROUP BY u.id, u.name, u.elo, s.user_id'
 
     when '1'
       # monthly
-      sql = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints' +
-          '  FROM users u' +
+      select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints'
+      where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.beginning_of_month.to_s + '\'' +
-          ' WHERE u.elo > 0' +
-          ' GROUP BY u.id, u.name, u.elo, s.user_id'
+          ' WHERE u.elo > 0'
+      group = ' GROUP BY u.id, u.name, u.elo, s.user_id'
 
     else
       # all time
-      sql = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints' +
-          '  FROM users u' +
+      select = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints'
+      where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:all_time].to_s +
           ' WHERE u.elo > 0'
+      group = ''
 
     end
-    sql = sql + order_by
-    if homepage
-      sql = sql + " LIMIT 10"
+    result = ActiveRecord::Base.connection.execute('SELECT COUNT(DISTINCT u.id) AS count ' + where)
+    if result.count == 1
+      count = result[0]["count"].to_i
     else
-#     sql = sql + " LIMIT #{@limit} OFFSET " + (params['offset'].to_i).to_s
+      count = 0
     end
-    sql
+    Rails.logger.info("Count: #{count}")
+    if homepage
+      sql = select + where + group + order_by + " LIMIT 10"
+    else
+      sql = select + where + group + order_by + " LIMIT 100 OFFSET " + @offset.to_s
+    end
+    [count, sql]
   end
 
   def maintenance

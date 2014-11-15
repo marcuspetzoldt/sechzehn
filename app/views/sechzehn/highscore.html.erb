@@ -30,12 +30,13 @@
       <tbody>
       <% old_score = 0 %>
       <% @scores.each_with_index do |score, i| %>
+        <% rank = i + @offset %>
         <% if signed_in? %>
           <% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
         <% end %>
         <tr>
           <% if old_score != score[highscore_type] %>
-            <td class="<%= fat %>"><%= i+1 %>.</td>
+            <td class="<%= fat %>"><%= rank+1 %>.</td>
             <% old_score = score[highscore_type] %>
           <% else %>
             <td class="<%= fat %>">&nbsp;</td>
@@ -49,14 +50,39 @@
       <% end %>
       </tbody>
     </table>
-    <!--
-    <nav>
-      <ul class="pagination">
-        <li class="disabled"><a href="#">&laquo;</a></li>
-        <li class="active"><a href="#">1</a></li>
-        <li class="active"><a href="#">&raquo;</a></li>
-      </ul>
-    </nav>
-    -->
+    <% step = 100 %>
+    <% if count > step %>
+      <nav>
+        <ul class="pagination">
+          <% case highscore_type %>
+          <% when 'cwords' then link = highscore_words_path(which: @which) %>
+          <% when 'pwords' then link = highscore_words_percent_path(which: @which) %>
+          <% when 'cpoints' then link = highscore_points_path(which: @which) %>
+          <% when 'ppoints' then link = highscore_points_percent_path(which: @which) %>
+          <% else %>
+            <% link = highscore_elo_path(which: @which) %>
+          <% end %>
+
+          <% if @offset >= step %>
+            <li class="active"><%= link_to link + "&offset=#{@offset-step}" do %>&laquo;<% end %></li>
+          <% else %>
+            <li class="disabled"><a>&laquo;</a></li>
+          <% end %>
+          <% 0.upto(count/step-1) do |i| %>
+            <% if i*step != @offset %>
+              <li class="active"><%= link_to((i+1).to_s, link + "&offset=#{i*step}") %></li>
+            <% else %>
+              <li class="disabled"><a><%= i+1 %></a></li>
+            <% end %>
+          <% end %>
+          <% if @offset < count-step %>
+            <li class="active"><%= link_to link + "&offset=#{@offset+step}" do %>&raquo;<% end %></li>
+          <% else %>
+            <li class="disabled"><a>&raquo;</a></li>
+          <% end %>
+
+        </ul>
+      </nav>
+    <% end %>
   </div>
 </div>
