@@ -60,7 +60,6 @@ class SechzehnController < ApplicationController
   end
 
   def solution
-    Rails.logger.info("Solution")
     @tpoints = 0
     @twords = 0
     @cpoints = 0
@@ -269,11 +268,10 @@ class SechzehnController < ApplicationController
     else
       count = 0
     end
-    Rails.logger.info("Count: #{count}")
     if homepage
       sql = select + where + group + order_by + " LIMIT 10"
     else
-      sql = select + where + group + order_by + " LIMIT 100 OFFSET " + @offset.to_s
+      sql = select + where + group + order_by + " LIMIT 3 OFFSET " + @offset.to_s
     end
     [count, sql]
   end
@@ -332,7 +330,6 @@ class SechzehnController < ApplicationController
       end
 
       if session['game_id'] > score.game_id and !session['game_id'].nil?
-        Rails.logger.info("Computing ELO")
         score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
         score.pwords = (score.pwords * score.count + (@cwords * 100 / @twords)) / (score.count + 1)
         score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)

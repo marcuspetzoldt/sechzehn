@@ -50,7 +50,7 @@
       <% end %>
       </tbody>
     </table>
-    <% step = 100 %>
+    <% step = 3 %>
     <% if count > step %>
       <nav>
         <ul class="pagination">
@@ -68,11 +68,11 @@
           <% else %>
             <li class="disabled"><a>&laquo;</a></li>
           <% end %>
-          <% 0.upto(count/step-1) do |i| %>
+          <% 0.upto(count/step - 1 + (count.modulo(step) == 0 ? 0 : 1)) do |i| %>
             <% if i*step != @offset %>
               <li class="active"><%= link_to((i+1).to_s, link + "&offset=#{i*step}") %></li>
             <% else %>
-              <li class="disabled"><a><%= i+1 %></a></li>
+              <li class="disabled"><a><%= (i+1).to_s %></a></li>
             <% end %>
           <% end %>
           <% if @offset < count-step %>
