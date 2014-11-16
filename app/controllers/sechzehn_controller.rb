@@ -264,14 +264,14 @@ class SechzehnController < ApplicationController
     end
     result = ActiveRecord::Base.connection.execute('SELECT COUNT(DISTINCT u.id) AS count ' + where)
     if result.count == 1
-      count = result[0]["count"].to_i
+      count = result[0]['count'].to_i
     else
       count = 0
     end
     if homepage
-      sql = select + where + group + order_by + " LIMIT 10"
+      sql = select + where + group + order_by + ' LIMIT 10'
     else
-      sql = select + where + group + order_by + " LIMIT 3 OFFSET " + @offset.to_s
+      sql = select + where + group + order_by + ' LIMIT 3 OFFSET ' + @offset.to_s
     end
     [count, sql]
   end
