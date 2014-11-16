@@ -1,6 +1,4 @@
 class ChatController < ApplicationController
-  def new
-  end
 
   def save
     c = Chat.new(user_id: current_user.id, chat: params[:chat][:chat])
