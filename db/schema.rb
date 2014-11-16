@@ -11,10 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140302104930) do
+ActiveRecord::Schema.define(version: 20141116123544) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "chats", force: true do |t|
+    t.integer  "user_id"
+    t.text     "chat"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "games", force: true do |t|
     t.string   "letters"
@@ -73,5 +80,11 @@ ActiveRecord::Schema.define(version: 20140302104930) do
   end
 
   add_index "words", ["word"], name: "index_words_on_word", unique: true, using: :btree
+
+  create_table "words_new", force: true do |t|
+    t.string "word"
+  end
+
+  add_index "words_new", ["word"], name: "index_words_new_on_word", unique: true, using: :btree
 
 end

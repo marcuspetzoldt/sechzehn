@@ -32,6 +32,7 @@ class SechzehnController < ApplicationController
     @cpoints = 0
     @guesses = []
     @scores = []
+    @chats = Chat.where("created_at > '#{Time.now.utc - 30.minutes}'").order(:created_at)
     if signed_in?
       @user = current_user
       if params[:what]

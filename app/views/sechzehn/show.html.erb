@@ -13,6 +13,17 @@
         </div>
       </div>
     <% end %>
+    <div id="chat">
+      <%= form_for :chat, remote: true, url: chat_path do |form| %>
+        <div id="resizable-chat">
+          <%= render partial: 'chat/chat', collection: @chats %>
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon"><%= @user.name %></span>
+          <%= form.text_field :chat, class: 'form-control' %>
+        </div>
+      <% end %>
+    </div>
   </div>
   <div class="col-md-4">
     <% if @play %>

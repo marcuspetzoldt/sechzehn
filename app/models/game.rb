@@ -4,6 +4,7 @@ class Game < ActiveRecord::Base
   after_create :find_words
   has_many :solutions, dependent: :destroy
   has_many :guesses, dependent: :destroy
+  has_many :chats, dependent: :destroy
 
   validates :letters, presence: true
 

@@ -154,6 +154,8 @@ snake = (field, word, x, y) ->
 clock = () ->
   t = 0
   window.gameTimer--
+  if (window.gameTimer % 5 == 0)
+    $.get('/chat/messages')
   if (window.gameTimer <= 0)
     window.gameMode = 'sync'
     $('input#words').val('Spiel auswerten ...')
