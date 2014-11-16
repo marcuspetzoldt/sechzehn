@@ -331,7 +331,8 @@ class SechzehnController < ApplicationController
         score_daily = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:daily], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0, created_at: Date.today)
       end
 
-      if session['game_id'] != score.game_id and !session['game_id'].nil?
+      if session['game_id'] > score.game_id and !session['game_id'].nil?
+        Rails.logger.info("Computing ELO")
         score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
         score.pwords = (score.pwords * score.count + (@cwords * 100 / @twords)) / (score.count + 1)
         score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)

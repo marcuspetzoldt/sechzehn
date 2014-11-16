@@ -18,6 +18,20 @@ form {
   padding-bottom: 8px;
 }
 
+nav {
+  text-align: center;
+}
+
+.pagination {
+  > li {
+    &.active > a {
+      background-color: $sechzehn-bkgnd;
+      border-color: #ddd;
+      color: #428BCA;
+    }
+  }
+}
+
 .fifty-percent {
   width: 50%;
 }
