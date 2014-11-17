@@ -272,7 +272,7 @@ class SechzehnController < ApplicationController
     if homepage
       sql = select + where + group + order_by + ' LIMIT 10'
     else
-      sql = select + where + group + order_by + ' LIMIT 3 OFFSET ' + @offset.to_s
+      sql = select + where + group + order_by + ' LIMIT 100 OFFSET ' + @offset.to_s
     end
     [count, sql]
   end
