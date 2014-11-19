@@ -11,6 +11,7 @@ $(document).on('focus', 'form#form_signin input', () ->
 
 $(document).ready(() ->
   window.___gcfg = {lang: 'de'};
+  window.chatDelta = Math.floor(Math.random()*5)
   if $('input#words').length > 0
     sync()
   else
@@ -154,8 +155,6 @@ snake = (field, word, x, y) ->
 clock = () ->
   t = 0
   window.gameTimer--
-  if (window.gameTimer % 5 == 0)
-    $.get('/chat/messages')
   if (window.gameTimer <= 0)
     window.gameMode = 'sync'
     $('input#words').val('Spiel auswerten ...')
@@ -181,6 +180,8 @@ clock = () ->
           $('input#words').val('Spiel auswerten ...')
           disableGame()
   $('span#timer').html( ((t/60)|0).toString() + ':' + ('0' + (t%60).toString())[-2..])
+  if (window.gameTimer % 5 == window.chatDelta)
+    $.get('/chat/messages')
   return true
 
 sync = () ->
