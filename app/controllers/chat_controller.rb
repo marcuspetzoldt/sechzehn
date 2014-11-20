@@ -8,7 +8,12 @@ class ChatController < ApplicationController
   end
 
   def messages
-    @chats = Chat.where("created_at > '#{Time.now.utc - 30.minutes}'").order(:created_at)
+    @chat = nil
+    max_id = Chat.maximum(:id)
+    if session['most_recent_chat'].nil? or session['most_recent_chat'] != max_id
+      session['most_recent_chat'] = max_id
+      @chats = Chat.where("created_at > '#{Time.now.utc - 30.minutes}'").order(:created_at)
+    end
   end
 
   def show
