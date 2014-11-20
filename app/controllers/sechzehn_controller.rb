@@ -11,8 +11,13 @@ class SechzehnController < ApplicationController
       # start a new game
       session['game_id'] = game_id
       if signed_in?
-        current_user.guesses.where("(points <> 0 OR game_id IS null) and game_id < #{game_id-1}").destroy_all if signed_in?
-        current_user.update_attribute(:elo, current_user.new_elo)
+        Rails.logger.info('Update User without timestamp')
+        User.record_timestamps = false
+        begin
+          current_user.update_attribute(:elo, current_user.new_elo)
+        ensure
+          User.record_timestamps = true
+        end
       end
       response.headers['X-Refreshed'] = '0'
     else
