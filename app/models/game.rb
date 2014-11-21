@@ -38,7 +38,8 @@ class Game < ActiveRecord::Base
       @words.uniq!
       ActiveRecord::Base.transaction do
         @words.each do |word|
-          self.solutions.create(word: word)
+#         self.solutions.create(word: word)
+          ActiveRecord::Base.connection.execute("INSERT INTO solutions (game_id, word) VALUES (#{self.id}, '#{word}')")
         end
       end
 
