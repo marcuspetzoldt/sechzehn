@@ -212,9 +212,10 @@ startGame = () ->
       $('div#guesses').html('')
       $('td#cwords').html('0')
       $('td#cpoints').html('0')
-    $('input#words').removeAttr('disabled')
-    $('input#words').val('')
-    $('input#words').focus()
+    $('input#words')
+      .removeAttr('disabled')
+      .val('')
+      .focus()
     getSolution()
   )
 

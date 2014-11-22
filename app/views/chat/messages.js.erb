@@ -1,4 +1,5 @@
 <% unless @chats.nil? %>
-$('#resizable-chat').html("<%= j render partial: 'chat', collection: @chats %>")
-$('#resizable-chat').scrollTop($('#resizable-chat')[0].scrollHeight);
+$('#resizable-chat')
+  .html("<%= j render partial: 'chat', collection: @chats %>")
+  .scrollTop($('#resizable-chat')[0].scrollHeight);
 <% end %>
