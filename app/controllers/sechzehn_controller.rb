@@ -11,7 +11,6 @@ class SechzehnController < ApplicationController
       # start a new game
       session['game_id'] = game_id
       if signed_in?
-        Rails.logger.info('Update User without timestamp')
         User.record_timestamps = false
         begin
           current_user.update_attribute(:elo, current_user.new_elo)
