@@ -96,7 +96,10 @@ class Game < ActiveRecord::Base
       word = word + @field[y][x][1]
 
       # break, if no word starts with 'word%'
-      return if Word.where("word >= '#{word}' AND word <= '#{word + 'zzzzzzzzzzzzzzz'}'").empty?
+      return if ActiveRecord::Base.connection.execute(
+          "SELECT 1 WHERE EXISTS" +
+          " (SELECT id FROM words WHERE word BETWEEN '#{word}' and '#{word}zzzzzzzzzzzzzzz')"
+        ).count == 0
 
       # mark letter as used
       @field[y][x][0] = 1
