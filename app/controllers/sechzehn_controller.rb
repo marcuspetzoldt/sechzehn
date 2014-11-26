@@ -148,14 +148,17 @@ class SechzehnController < ApplicationController
     game_id = Game.maximum(:id)
     time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
     if time_left <= 0
+      Rails.logger.info('GAMECREATION: Start')
       if Lock.find_by(lock: 2).nil?
-        Game.create
+        g = Game.create
+        time_left = 210 - (Time.now - g.updated_at)
       else
         render text: 'maintenance'
         return
       end
+      Rails.logger.info('GAMECREATION: End')
     end
-    render text: "#{time_left.to_i}"
+    render text: time_left.to_s
   end
 
   def help

@@ -11,15 +11,20 @@ class Game < ActiveRecord::Base
   private
 
     def roll_dice
+      Rails.logger.info("GAMECREATION: Roll Dice Start")
       vowels = 0
+      n = 0
       # at least two vowels, but not more than six
       until (2..6) === vowels
         self.letters = (0.upto(15).map { |i| draw_letter }).join
         vowels = self.letters.count('aeiou')
+        n = n + 1
       end
+      Rails.logger.info("GAMECREATION: Roll Dice End after #{n} tries")
     end
 
     def find_words
+      Rails.logger.info("GAMECREATION: Solve Start")
       @words = []
       @field = []
 
@@ -30,22 +35,29 @@ class Game < ActiveRecord::Base
         end
       end
 
+      ActiveRecord::Base.connection.raw_connection.prepare('validWordStart', 'SELECT 1 WHERE EXISTS (SELECT id FROM words WHERE word BETWEEN $1 AND $2)')
+      ActiveRecord::Base.connection.raw_connection.prepare('validWord', 'SELECT id FROM words WHERE word = $1')
       0.upto(3) do |y|
         0.upto(3) do |x|
           solve('', x, y)
         end
       end
+      ActiveRecord::Base.connection.execute('DEALLOCATE "validWordStart"')
+      ActiveRecord::Base.connection.execute('DEALLOCATE "validWord"')
       @words.uniq!
+      ActiveRecord::Base.connection.raw_connection.prepare('validWordInsert', 'INSERT INTO solutions (game_id, word) VALUES ($1, $2)')
       ActiveRecord::Base.transaction do
         @words.each do |word|
-#         self.solutions.create(word: word)
-          ActiveRecord::Base.connection.execute("INSERT INTO solutions (game_id, word) VALUES (#{self.id}, '#{word}')")
+#         ActiveRecord::Base.connection.execute("INSERT INTO solutions (game_id, word) VALUES (#{self.id}, '#{word}')")
+          ActiveRecord::Base.connection.raw_connection.exec_prepared('validWordInsert', [self.id, word])
         end
       end
+      ActiveRecord::Base.connection.execute('DEALLOCATE "validWordInsert"')
 
       @words = nil
       @field = nil
       self.touch
+      Rails.logger.info("GAMECREATION: Solve End")
     end
 
     def draw_letter
@@ -96,17 +108,14 @@ class Game < ActiveRecord::Base
       word = word + @field[y][x][1]
 
       # break, if no word starts with 'word%'
-      return if ActiveRecord::Base.connection.execute(
-          "SELECT 1 WHERE EXISTS" +
-          " (SELECT id FROM words WHERE word BETWEEN '#{word}' and '#{word}zzzzzzzzzzzzzzz')"
-        ).count == 0
+      return if ActiveRecord::Base.connection.raw_connection.exec_prepared('validWordStart', [word, word+'zzzzzzzzzzzzzzzz']).count == 0
 
       # mark letter as used
       @field[y][x][0] = 1
       # only words longer than 2 letters are valid
       if word.length > 2
         # add word to solution if it can be found in the word list
-        @words << word unless Word.find_by(word: word).nil?
+        @words << word unless ActiveRecord::Base.connection.raw_connection.exec_prepared('validWord', [word]).count == 0
       end
 
       # create words, using adjacent letters
