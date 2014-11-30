@@ -34,7 +34,7 @@ $(document).on('mousedown touchstart', 'canvas#field', (event) ->
     letter = $(this).attr('data-letters')[y*4+x]
     $('input#words').val($('input#words').val() + letter)
     drawLetter(context, x, y, letter, '#dfdf00')
-    window.mouseIn = []
+    window.mouseIn = new Array()
     window.mouseIn.push([x, y])
     window.mouseDown = true
   return true
@@ -95,7 +95,7 @@ $(document).on('mouseup touchend', 'body', () ->
   return true
 )
 
-$(document).on('keypress', 'input#words', (event) ->
+$(document).on('keydown', 'input#words', (event) ->
   if event.which == 8
     # Backspace
     w = this.value[0..-2]
@@ -132,7 +132,7 @@ $(document).on('keypress', 'input#words', (event) ->
 
   window.snake = false
   showDice(true)
-  snakeCoords = []
+  snakeCoords = new Array()
   for i in [0..w.length-1]
     snakeCoords.push([-1, -1])
   for x in [0..3]
