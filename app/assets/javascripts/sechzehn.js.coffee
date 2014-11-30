@@ -217,8 +217,8 @@ showDice = (enable) ->
 drawLetter = (context, x, y, letter, color) ->
   context.beginPath()
   context.strokeStyle = '#aaa'
-  context.lineWidth = 6
-  context.arc(x*70+35, y*70+35, 27, 27, 0, 2*Math.PI, false)
+  context.lineWidth = 4
+  context.arc(x*70+35, y*70+35, 28, 28, 0, 2*Math.PI, false)
   context.stroke()
   context.closePath()
   context.beginPath()
@@ -226,7 +226,7 @@ drawLetter = (context, x, y, letter, color) ->
   if color == '#ffffff'
     context.fillRect(x*70+1, y*70+1, 68, 68)
   else
-    context.arc(x*70+35, y*70+35, 26, 26, 0, 2*Math.PI, false)
+    context.arc(x*70+35, y*70+35, 27, 27, 0, 2*Math.PI, false)
   context.fill()
   context.closePath()
   context.beginPath()
