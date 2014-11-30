@@ -75,30 +75,38 @@ class SechzehnController < ApplicationController
     game_id = Game.maximum(:id)
     time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
     game_id = game_id - 1
-    @words = Game.find_by(id: game_id).solutions.map do |s|
-      format = 0
-      found = Guess.where(word: s.word, game_id: game_id)
-      unless found.empty?
-        if found.find_by(user_id: current_user.id)
-          if found.count == 1
-            # no one but Player found the word
-            format = 3
-          else
-            # Player and others found the word
-            format = 2
-          end
+    @words = ActiveRecord::Base.connection.execute(
+        "SELECT s.word AS word, array_agg(g.user_id=#{current_user.id}) AS format" +
+        "  FROM solutions s" +
+        "  LEFT JOIN guesses g" +
+        "    ON s.word = g.word" +
+        "   AND s.game_id = g.game_id" +
+        " WHERE s.game_id = #{game_id}" +
+        " GROUP BY s.word" +
+        " ORDER BY length(s.word) DESC, s.word ASC"
+    ).map do |s|
+      @tpoints = @tpoints + letter_score[s['word'].length]
+      if s['format'] =~ /t/
+        @cwords = @cwords + 1
+        @cpoint = @cpoints + letter_score[s['word'].length]
+        if s['format'] =~ /f/
+          format = 2
         else
-          # other Player found the word
+          format = 3
+        end
+      else
+        if s['format'] =~ /f/
           format = 1
+        else
+          format = 0
         end
       end
-      @tpoints = @tpoints + letter_score[s.word.length]
-      [s.word, s.word.length, letter_score[s.word.length], format]
+      [s['word'], s['word'].length, letter_score[s['word'].length], format]
     end
 
     # Player score
     @twords = @words.length
-    @cwords, @cpoints = get_score
+#   @cwords, @cpoints = get_score
 
     # All player's score
     @scores = ActiveRecord::Base.connection.execute(
@@ -113,13 +121,6 @@ class SechzehnController < ApplicationController
       ' ORDER BY SUM(b.points) DESC')
 
     if time_left.to_i > 180
-      @words.sort! do |a, b|
-        if b[1] == a[1]
-          a[0] <=> b[0]
-        else
-          b[1] <=> a[1]
-        end
-      end
       compute_highscore if @cpoints > 0
     else
       @words = nil
@@ -310,8 +311,14 @@ class SechzehnController < ApplicationController
 
     def get_score
       if signed_in?
-        guesses = Guess.where("user_id = ? AND game_id = ? AND points > 0", current_user.id, session['game_id'])
-        [guesses.count, guesses.sum(:points)]
+        guesses = ActiveRecord::Base.connection.execute(
+            "SELECT count(id) AS count, sum(points) AS sum" +
+            "  FROM guesses" +
+            " WHERE user_id = #{current_user.id.to_i}" +
+            "   AND game_id = #{session['game_id'].to_i}" +
+            "   AND points > 0"
+        )
+        [guesses[0]['count'].to_i, guesses[0]['sum'].to_i]
       else
         [0, 0]
       end
