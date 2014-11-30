@@ -23,8 +23,7 @@ class SechzehnController < ApplicationController
       # continue a game
       response.headers['X-Refreshed'] = '2'
     end
-    @field = init_field
-    render partial: 'layouts/show_dice'
+    render inline: init_field
   end
 
   def show
@@ -37,6 +36,7 @@ class SechzehnController < ApplicationController
     @guesses = []
     @scores = []
     @chats = Chat.where("created_at > '#{Time.now.utc - 30.minutes}'").order(:created_at)
+    @letters = init_field
     if signed_in?
       @user = current_user
       if params[:what]
@@ -61,7 +61,6 @@ class SechzehnController < ApplicationController
       count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
       @scores = ActiveRecord::Base.connection.execute(sql)
     end
-    @field = init_field
   end
 
   def solution
@@ -296,16 +295,10 @@ class SechzehnController < ApplicationController
 
     def init_field
       if session['game_id']
-        letters = Game.find_by(id: session['game_id']).letters
+        letters = Game.find_by(id: session['game_id']).letters.upcase()
       else
         letters = 'RPOESECHZEHNDTEE'
       end
-      [
-        [['nw', letters[0]], ['', letters[1]], ['', letters[2]], ['ne', letters[3]]],
-        [['', letters[4]], ['', letters[5]], ['', letters[6]], ['', letters[7]]],
-        [['', letters[8]], ['', letters[9]], ['', letters[10]], ['', letters[11]]],
-        [['sw', letters[12]], ['', letters[13]], ['', letters[14]], ['se', letters[15]]]
-      ]
     end
 
     def get_score

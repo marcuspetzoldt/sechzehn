@@ -1,9 +1,7 @@
 <div class="row">
   <div class="col-md-4">
     <div class="sechzehn-color">
-      <div id="field" class="sechzehn-field">
-        <%= render 'layouts/show_dice' %>
-      </div>
+      <canvas id="field" data-letters="<%= @letters %>" class="sechzehn-field" width="280" height="280"></canvas>
     </div>
     <% if @play %>
       <div id="guess" class="form-group">

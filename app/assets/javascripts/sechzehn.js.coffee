@@ -12,51 +12,72 @@ $(document).on('focus', 'form#form_signin input', () ->
 $(document).ready(() ->
   window.___gcfg = {lang: 'de'};
   window.chatDelta = Math.floor(Math.random()*5)
+  showDice(true)
   if $('input#words').length > 0
     sync()
   else
-    $('div#l04').css('background-color', '#ffff00')
-    $('div#l05').css('background-color', '#ffff00')
-    $('div#l06').css('background-color', '#ffff00')
-    $('div#l07').css('background-color', '#ffff00')
-    $('div#l08').css('background-color', '#ffff00')
-    $('div#l09').css('background-color', '#ffff00')
-    $('div#l10').css('background-color', '#ffff00')
-    $('div#l11').css('background-color', '#dfdd00')
+    # Sechzehn auf Homepage hervorheben
+    canvas = $('canvas#field')
+    context = canvas[0].getContext('2d')
+    letter = canvas.attr('data-letters')
+    for y in [1..2]
+      for x in [0..3]
+          drawLetter(context, x, y, letter[y*4+x], '#ffff00')
 )
 
-$(document).on('mousedown touchstart', 'div.letter', (event) ->
+$(document).on('mousedown touchstart', 'canvas#field', (event) ->
   event.preventDefault()
   if $('input#words:disabled').length == 0
-    $('input#words').val($('input#words').val() + $(this).text().trim())
-    $(this).css('background-color', '#dfdf00')
-    window.mouseDown = 1
-    window.mouseIn = this.id
+    x = Math.floor((event.clientX - $(this).offset().left) / 70)
+    y = Math.floor((event.clientY - $(this).offset().top) / 70)
+    context = this.getContext('2d')
+    letter = $(this).attr('data-letters')[y*4+x]
+    $('input#words').val($('input#words').val() + letter)
+    drawLetter(context, x, y, letter, '#dfdf00')
+    window.mouseIn = []
+    window.mouseIn.push([x, y])
+    window.mouseDown = true
   return true
 )
 
-$(document).on('mousemove touchmove', 'div.letter', (event) ->
+$(document).on('mousemove touchmove', 'canvas#field', (event) ->
   event.preventDefault()
   if window.mouseDown
     if event.originalEvent.touches
       dX = event.originalEvent.touches[0].clientX - $(this).offset().left
       dY = event.originalEvent.touches[0].clientY - $(this).offset().top
-      divX = Math.abs(dX % 70)
-      divY = Math.abs(dY % 70)
-      id = document.elementFromPoint(event.originalEvent.touches[0].clientX, event.originalEvent.touches[0].clientY).id
     else
-      divX = event.clientX - $(this).offset().left
-      divY = event.clientY - $(this).offset().top
-      id = this.id
-    if id != window.mouseIn[-3..]
-      if divX > 10 and divX < 60 and divY > 10 and divY < 60
-        while window.mouseIn.indexOf(id) > -1
-          $('div#'+window.mouseIn[-3..]).css('background-color', '#ffffff')
-          window.mouseIn = window.mouseIn[0..-4]
-          $('input#words').val($('input#words').val()[..-2])
-        $('div#'+window.mouseIn[-3..]).css('background-color', '#ffff00')
-        window.mouseIn = window.mouseIn + id
-        $('div#'+id).css('background-color', '#dfdf00')
+      dX = event.clientX - $(this).offset().left
+      dY = event.clientY - $(this).offset().top
+    if Math.abs(dX % 70) > 16 and Math.abs(dY %70) > 16
+      x = Math.floor(dX / 70)
+      y = Math.floor(dY / 70)
+      unless x == window.mouseIn[window.mouseIn.length-1][0] and y == window.mouseIn[window.mouseIn.length-1][1]
+        context = this.getContext('2d')
+        letters = $(this).attr('data-letters')
+        truncate = false
+        word = $('input#words').val()
+        for coord, index in window.mouseIn
+          if coord[0] == x and coord[1] == y
+            truncate = true
+            break
+        if truncate
+          window.mouseIn = window.mouseIn[0..index]
+          word = word[0..index]
+          $('input#words').val(word)
+        else
+          window.mouseIn.push([x,y])
+          $('input#words').val(word + letters[y*4+x])
+        showDice(true)
+        if window.mouseIn.length > 1
+          for i in [1..window.mouseIn.length-1]
+            drawLine(context, window.mouseIn[i-1], window.mouseIn[i])
+        if window.mouseIn.length > 1
+          for i in [0..window.mouseIn.length-2]
+            drawLetter(context, window.mouseIn[i][0], window.mouseIn[i][1], letters[window.mouseIn[i][1]*4+window.mouseIn[i][0]], '#ffff00')
+
+        if window.mouseIn.length > 0
+          drawLetter(context, window.mouseIn[window.mouseIn.length-1][0], window.mouseIn[window.mouseIn.length-1][1], letters[window.mouseIn[window.mouseIn.length-1][1]*4+window.mouseIn[window.mouseIn.length-1][0]], '#dfdf00')
         $('input#words').val($('input#words').val() + $('div#'+id).text().trim())
   return true
 )
@@ -70,7 +91,7 @@ $(document).on('mouseup touchend', 'body', () ->
         $.ajax({ url: '/guess', data: 'words=' + w })
     $('input#words').val('')
     window.mouseDown = 0
-    $('div.letter').css('background-color', '#ffffff')
+    showDice(true)
   return true
 )
 
@@ -94,11 +115,14 @@ $(document).on('keypress', 'input#words', (event) ->
       if event.which > 0
         w = w + String.fromCharCode(event.which)
 
+  canvas = $("canvas#field")
+  letters = canvas.attr("data-letters")
+  context = canvas[0].getContext("2d")
   f = [
-    [[0, $('div#l00').text().trim()[0]], [0, $('div#l01').text().trim()[0]], [0, $('div#l02').text().trim()[0]], [0, $('div#l03').text().trim()[0]]],
-    [[0, $('div#l04').text().trim()[0]], [0, $('div#l05').text().trim()[0]], [0, $('div#l06').text().trim()[0]], [0, $('div#l07').text().trim()[0]]],
-    [[0, $('div#l08').text().trim()[0]], [0, $('div#l09').text().trim()[0]], [0, $('div#l10').text().trim()[0]], [0, $('div#l11').text().trim()[0]]],
-    [[0, $('div#l12').text().trim()[0]], [0, $('div#l13').text().trim()[0]], [0, $('div#l14').text().trim()[0]], [0, $('div#l15').text().trim()[0]]]
+    [[0, letters[0]], [0, letters[1]], [0, letters[2]], [0, letters[3]]],
+    [[0, letters[4]], [0, letters[5]], [0, letters[6]], [0, letters[7]]],
+    [[0, letters[8]], [0, letters[9]], [0, letters[10]], [0, letters[11]]],
+    [[0, letters[12]], [0, letters[13]], [0, letters[14]], [0, letters[15]]]
   ]
   for x in [0..3]
     for y in [0..3]
@@ -107,17 +131,24 @@ $(document).on('keypress', 'input#words', (event) ->
     break if conditionMet
 
   window.snake = false
+  showDice(true)
+  snakeCoords = []
+  for i in [0..w.length-1]
+    snakeCoords.push([-1, -1])
   for x in [0..3]
     for y in [0..3]
-      switch f[y][x][0]
-        when 1
-          window.snake = true
-          $('div#l' + ('0' + (x + y*4).toString())[-2..]).css('background-color', '#ffffa0')
-        when 2
-          window.snake = true
-          $('div#l' + ('0' + (x + y*4).toString())[-2..]).css('background-color', '#dfdf00')
-        else $('div#l' + ('0' + (x + y*4).toString())[-2..]).css('background-color', '#ffffff')
+      if f[y][x][0] > 0
+        window.snake = true
+        snakeCoords[f[y][x][0]-1] = [x, y]
+  if w.length > 1
+    for i in [1..w.length-1]
+      drawLine(context, snakeCoords[i-1], snakeCoords[i])
+  if w.length > 1
+    for i in [1..w.length-1]
+      drawLetter(context, snakeCoords[i][0], snakeCoords[i][1], f[snakeCoords[i][1]][snakeCoords[i][0]][1], '#ffff00')
 
+  if w.length > 0
+    drawLetter(context, snakeCoords[0][0], snakeCoords[0][1], f[snakeCoords[0][1]][snakeCoords[0][0]][1], '#dfdf00')
   return true
 )
 
@@ -139,7 +170,7 @@ snake = (field, word, x, y) ->
   return false if field[y][x][0] > 0
 
   if field[y][x][1] == word[0]
-    field[y][x][0] = if word.length == 1 then 2 else 1
+    field[y][x][0] = word.length
     for dx in [-1..1]
       for dy in [-1..1]
         if dx == 0 and dy == 0
@@ -151,6 +182,70 @@ snake = (field, word, x, y) ->
     return true if conditionMet
     field[y][x][0] = 0
   return false
+
+
+showDice = (enable) ->
+  canvas = $("canvas#field")
+  context = canvas[0].getContext("2d")
+  letters = canvas.attr('data-letters')
+  context.beginPath()
+  if enable
+    context.fillStyle = '#ffffff'
+  else
+    context.fillStyle = '#eeeeee'
+  context.fillRect(0, 0, 280, 280)
+  context.lineWidth = 1
+  for i in [1..3]
+    context.moveTo(i*70, 0)
+    context.lineTo(i*70, 280)
+    context.moveTo(0, i*70)
+    context.lineTo(280, i*70)
+  context.strokeStyle = "#000"
+  context.stroke()
+  context.font = '600 300% sans-serif'
+  context.textAlign = 'center'
+  context.textBaseline = 'middle'
+  if enable
+    context.fillStyle = '#000000'
+  else
+    context.fillStyle = '#999999'
+  for i in [0..3]
+    for j in [0..3]
+      context.fillText(letters[j*4+i], 35+i*70, 35+j*70 )
+  context.closePath()
+
+drawLetter = (context, x, y, letter, color) ->
+  context.beginPath()
+  context.strokeStyle = '#aaa'
+  context.lineWidth = 6
+  context.arc(x*70+35, y*70+35, 27, 27, 0, 2*Math.PI, false)
+  context.stroke()
+  context.closePath()
+  context.beginPath()
+  context.fillStyle = color
+  if color == '#ffffff'
+    context.fillRect(x*70+1, y*70+1, 68, 68)
+  else
+    context.arc(x*70+35, y*70+35, 26, 26, 0, 2*Math.PI, false)
+  context.fill()
+  context.closePath()
+  context.beginPath()
+  context.font = '600 300% sans-serif'
+  context.textAlign = 'center'
+  context.textBaseline = 'middle'
+  context.fillStyle = '#000000'
+  context.fillText(letter, 35+x*70, 35+y*70 )
+  context.closePath()
+
+drawLine = (context, startPoint, endPoint) ->
+  if startPoint
+    context.lineWidth = 6
+    context.strokeStyle = '#aaa'
+    context.beginPath()
+    context.moveTo(startPoint[0]*70+35, startPoint[1]*70+35)
+    context.lineTo(endPoint[0]*70+35, endPoint[1]*70+35)
+    context.stroke()
+    context.closePath()
 
 clock = () ->
   t = 0
@@ -206,12 +301,14 @@ startGame = () ->
     window.Location.href='/'
     window.location.reload()
     return
-  $('div#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->
+  $('canvas#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->
     if XMLHttpRequest.getResponseHeader('X-Refreshed') == '0'
       $('div#solution').html('')
       $('div#guesses').html('')
       $('td#cwords').html('0')
       $('td#cpoints').html('0')
+    $("canvas#field").attr("data-letters", responseText)
+    showDice(true)
     $('input#words')
       .removeAttr('disabled')
       .val('')
@@ -222,7 +319,7 @@ startGame = () ->
 disableGame = () ->
   window.mouseDown = 0
   $('input#words').attr('disabled', 'disabled')
-  $('div.letter').css({'background-color' : '#eeeeee', 'color' : '#999999'})
+  showDice(false)
 
 # Length hint
 $(document).on('focus', 'input[maxlength]', () ->

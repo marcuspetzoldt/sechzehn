@@ -78,13 +78,18 @@ div#guess {
 .sechzehn-color {
   background-color: $sechzehn-bkgnd;
   clear: both;
+  text-align: center;
+  padding-top: 32px;
+  padding-bottom: 32px;
 }
 
 .sechzehn-field {
-  padding-top: 32px;
-  padding-bottom: 32px;
   margin: auto;
-  width: 280px;
+  border: 1px solid black;
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+  border-radius: 12px;
+  background-color: white;
 }
 
 .sechzehn-red {
