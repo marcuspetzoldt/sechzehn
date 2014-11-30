@@ -87,7 +87,7 @@ class SechzehnController < ApplicationController
       @tpoints = @tpoints + letter_score[s['word'].length]
       if s['format'] =~ /t/
         @cwords = @cwords + 1
-        @cpoint = @cpoints + letter_score[s['word'].length]
+        @cpoints = @cpoints + letter_score[s['word'].length]
         if s['format'] =~ /f/
           format = 2
         else
