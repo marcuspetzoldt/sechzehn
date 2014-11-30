@@ -106,7 +106,6 @@ class SechzehnController < ApplicationController
 
     # Player score
     @twords = @words.length
-#   @cwords, @cpoints = get_score
 
     # All player's score
     @scores = ActiveRecord::Base.connection.execute(
