@@ -9,6 +9,7 @@ class SechzehnController < ApplicationController
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
     if game_id != session['game_id'].to_i
       # start a new game
+      session['game_id'] = game_id
       if signed_in?
         User.record_timestamps = false
         begin
@@ -17,7 +18,6 @@ class SechzehnController < ApplicationController
           User.record_timestamps = true
         end
       end
-      session['game_id'] = Game.maximum(:id)
       response.headers['X-Refreshed'] = '0'
     else
       # continue a game
@@ -46,6 +46,8 @@ class SechzehnController < ApplicationController
         count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
         @scores = ActiveRecord::Base.connection.execute(sql)
       else
+        # Active player
+        session['game_id'] = nil if Game.maximum(:id) != session['game_id']
         @cwords, @cpoints = get_score
         @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
           [guess.word, guess.points]
@@ -56,7 +58,7 @@ class SechzehnController < ApplicationController
       @play = false
       session['game_id'] = nil
       @which = '1'
-      sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
+      count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
       @scores = ActiveRecord::Base.connection.execute(sql)
     end
     @field = init_field
@@ -67,42 +69,43 @@ class SechzehnController < ApplicationController
     @twords = 0
     @cpoints = 0
     @cwords = 0
-    @words = []
     @scores = []
+    @words = []
 
-    return if session['game_id'].nil?
-
-    @words = Game.find_by(id: session['game_id']).solutions.map do |s|
-      format = 0
-      found = Guess.where(word: s.word, game_id: session['game_id'])
-      unless found.empty?
-        if found.find_by(user_id: current_user.id)
-          if found.count == 1
-            # no one but Player found the word
-            format = 3
-          else
-            # Player and others found the word
-            format = 2
-          end
+    game_id = Game.maximum(:id)
+    time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
+    game_id = game_id - 1
+    @words = ActiveRecord::Base.connection.execute(
+        "SELECT s.word AS word, array_agg(g.user_id=#{current_user.id}) AS format" +
+        "  FROM solutions s" +
+        "  LEFT JOIN guesses g" +
+        "    ON s.word = g.word" +
+        "   AND s.game_id = g.game_id" +
+        " WHERE s.game_id = #{game_id}" +
+        " GROUP BY s.word" +
+        " ORDER BY length(s.word) DESC, s.word ASC"
+    ).map do |s|
+      @tpoints = @tpoints + letter_score[s['word'].length]
+      if s['format'] =~ /t/
+        @cwords = @cwords + 1
+        @cpoint = @cpoints + letter_score[s['word'].length]
+        if s['format'] =~ /f/
+          format = 2
         else
-          # other Player found the word
+          format = 3
+        end
+      else
+        if s['format'] =~ /f/
           format = 1
+        else
+          format = 0
         end
       end
-      @tpoints = @tpoints + letter_score[s.word.length]
-      [s.word, s.word.length, letter_score[s.word.length], format]
-    end
-    @words.sort! do |a, b|
-      if b[1] == a[1]
-        a[0] <=> b[0]
-      else
-        b[1] <=> a[1]
-      end
+      [s['word'], s['word'].length, letter_score[s['word'].length], format]
     end
 
     # Player score
     @twords = @words.length
-    @cwords, @cpoints = get_score
 
     # All player's score
     @scores = ActiveRecord::Base.connection.execute(
@@ -110,24 +113,30 @@ class SechzehnController < ApplicationController
       '  FROM guesses b' +
       '  JOIN users a' +
       '    ON a.id = b.user_id' +
-      ' WHERE b.game_id = ' + session['game_id'].to_s +
+      ' WHERE b.game_id = ' + game_id.to_s +
       '   AND b.points > 0' +
       ' GROUP BY a.id ' +
       'HAVING SUM(b.points) > 0' +
       ' ORDER BY SUM(b.points) DESC')
 
-    compute_highscore if @cpoints > 0
+    if time_left.to_i > 180
+      compute_highscore if @cpoints > 0
+    else
+      @words = nil
+    end
+
   end
 
   def guess
+    game_id = Game.maximum(:id)
     @word = params['words'].downcase
-    if Solution.find_by(game_id: session['game_id'], word: @word).nil?
+    if Solution.find_by(game_id: game_id, word: @word).nil?
       @guess = 0
     else
       @guess = letter_score[@word.length]
     end
-    if Guess.find_by(user_id: current_user.id, game_id: session['game_id'], word: @word).nil?
-      Guess.create(user_id: current_user.id, game_id: session['game_id'], word: @word, points: @guess)
+    if Guess.find_by(user_id: current_user.id, game_id: game_id, word: @word).nil?
+      Guess.create(user_id: current_user.id, game_id: game_id, word: @word, points: @guess)
     else
       @guess = nil
     end
@@ -135,24 +144,21 @@ class SechzehnController < ApplicationController
   end
 
   def sync
-    # Most recent game is older than 215 seconds (180 game + 30 pause + 10 sync)
-    time_left = get_time_left
+    # Most recent game is older than 210 seconds (180 game + 30 pause)
+    game_id = Game.maximum(:id)
+    time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
     if time_left <= 0
+      Rails.logger.info('GAMECREATION: Start')
       if Lock.find_by(lock: 2).nil?
-        begin
-          l = Lock.create
-          g = Game.create
-          l.destroy
-        rescue
-          # ignore unique index constraint violation and sync again
-          # another player already computes the next game
-        end
+        g = Game.create
+        time_left = 210 - (Time.now - g.updated_at)
       else
         render text: 'maintenance'
         return
       end
+      Rails.logger.info('GAMECREATION: End')
     end
-    render text: "#{time_left.to_i}"
+    render text: time_left.to_s
   end
 
   def help
@@ -162,28 +168,29 @@ class SechzehnController < ApplicationController
   end
 
   def highscore_elo
-    @scores = highscore(' ORDER BY u.elo DESC, cpoints DESC, cwords DESC')
-    render 'highscore', locals: { highscore_type: 'elo' }
+    offset = params['offset']
+    count, @scores = highscore(' ORDER BY u.elo DESC, cpoints DESC, cwords DESC')
+    render 'highscore', locals: { highscore_type: 'elo', count: count }
   end
 
   def highscore_points
-    @scores = highscore(' ORDER BY cpoints DESC, u.elo DESC, cwords DESC')
-    render 'highscore', locals: { highscore_type: 'cpoints' }
+    count, @scores = highscore(' ORDER BY cpoints DESC, u.elo DESC, cwords DESC')
+    render 'highscore', locals: { highscore_type: 'cpoints', count: count }
   end
 
   def highscore_points_percent
-    @scores = highscore(' ORDER BY ppoints DESC, u.elo DESC, cwords DESC')
-    render 'highscore', locals: { highscore_type: 'ppoints' }
+    count, @scores = highscore(' ORDER BY ppoints DESC, u.elo DESC, cwords DESC')
+    render 'highscore', locals: { highscore_type: 'ppoints', count: count }
   end
 
   def highscore_words
-    @scores = highscore(' ORDER BY cwords DESC, cpoints DESC, u.elo DESC')
-    render 'highscore', locals: { highscore_type: 'cwords' }
+    count, @scores = highscore(' ORDER BY cwords DESC, cpoints DESC, u.elo DESC')
+    render 'highscore', locals: { highscore_type: 'cwords', count: count }
   end
 
   def highscore_words_percent
-    @scores = highscore(' ORDER BY pwords DESC, ppoints DESC, u.elo DESC')
-    render 'highscore', locals: { highscore_type: 'pwords' }
+    count, @scores = highscore(' ORDER BY pwords DESC, ppoints DESC, u.elo DESC')
+    render 'highscore', locals: { highscore_type: 'pwords', count: count }
   end
 
   def highscore(order_by)
@@ -192,8 +199,9 @@ class SechzehnController < ApplicationController
     @description = 'Sechzehn ist ein Wortspiel wie Boggle. Finde innerhalb von 3 Minuten mehr deutsche Wörter in einem Quadrat mit 16 zufälligen Buchstaben als deine Mitspieler.'
     @description = 'Als registrierter Spieler von Sechzehn, kannst Du in diesen täglichen, wöchentlichen und monatlichen, sowie in einer ewigen Rangliste um Plätze kämpfen.'
     @which = params[:which]
+    @offset = params[:offset] ? params[:offset].to_i : 0
 
-    sql = highscore_sql(order_by, false)
+    count, sql = highscore_sql(order_by, false)
     case @which
     when '3'
       # daily
@@ -213,52 +221,67 @@ class SechzehnController < ApplicationController
       @subtitle = 'ewige Rangliste'
 
     end
-    ActiveRecord::Base.connection.execute(sql)
+    [count, ActiveRecord::Base.connection.execute(sql)]
   end
 
   def highscore_sql(order_by, homepage)
     case @which
     when '3'
       # daily
-      sql = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints' +
-          '  FROM users u' +
+      select = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints'
+      where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
-          '   AND s.created_at >= \'' + Date.today.to_s + '\''
+          '   AND s.created_at >= \'' + Date.today.to_s + '\'' +
+          ' WHERE u.elo > 0'
+      group = ''
 
     when '2'
       # weekly
-      sql = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints' +
-          '  FROM users u' +
+      select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints'
+      where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.beginning_of_week.to_s + '\'' +
-          ' GROUP BY u.id, u.name, u.elo, s.user_id'
+          ' WHERE u.elo > 0'
+      group = ' GROUP BY u.id, u.name, u.elo, s.user_id'
 
     when '1'
       # monthly
-      sql = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints' +
-          '  FROM users u' +
+      select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints'
+      where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.beginning_of_month.to_s + '\'' +
-          ' GROUP BY u.id, u.name, u.elo, s.user_id'
+          ' WHERE u.elo > 0'
+      group = ' GROUP BY u.id, u.name, u.elo, s.user_id'
 
     else
       # all time
-      sql = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints' +
-          '  FROM users u' +
+      select = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints'
+      where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
-          '   AND s.score_type = ' + Score.score_types[:all_time].to_s
+          '   AND s.score_type = ' + Score.score_types[:all_time].to_s +
+          ' WHERE u.elo > 0'
+      group = ''
 
     end
-    sql = sql + order_by
-    sql = sql + "  LIMIT 10" if homepage
-    sql
+    result = ActiveRecord::Base.connection.execute('SELECT COUNT(DISTINCT u.id) AS count ' + where)
+    if result.count == 1
+      count = result[0]['count'].to_i
+    else
+      count = 0
+    end
+    if homepage
+      sql = select + where + group + order_by + ' LIMIT 10'
+    else
+      sql = select + where + group + order_by + ' LIMIT 100 OFFSET ' + @offset.to_s
+    end
+    [count, sql]
   end
 
   def maintenance
@@ -287,8 +310,14 @@ class SechzehnController < ApplicationController
 
     def get_score
       if signed_in?
-        guesses = Guess.where("user_id = ? AND game_id = ? AND points > 0", current_user.id, session['game_id'])
-        [guesses.count, guesses.sum(:points)]
+        guesses = ActiveRecord::Base.connection.execute(
+            "SELECT count(id) AS count, sum(points) AS sum" +
+            "  FROM guesses" +
+            " WHERE user_id = #{current_user.id.to_i}" +
+            "   AND game_id = #{session['game_id'].to_i}" +
+            "   AND points > 0"
+        )
+        [guesses[0]['count'].to_i, guesses[0]['sum'].to_i]
       else
         [0, 0]
       end
@@ -298,6 +327,9 @@ class SechzehnController < ApplicationController
 
       # cleanup
       Score.where("user_id=? and score_type=? and created_at<?", current_user.id, Score.score_types[:daily], Date.today-1.month).destroy_all
+
+      # Player played a game
+      current_user.touch
 
       begin
         score = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:all_time] )
@@ -311,7 +343,7 @@ class SechzehnController < ApplicationController
         score_daily = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:daily], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0, created_at: Date.today)
       end
 
-      if session['game_id'] != score.game_id and !session['game_id'].nil?
+      if session['game_id'] > score.game_id and !session['game_id'].nil?
         score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
         score.pwords = (score.pwords * score.count + (@cwords * 100 / @twords)) / (score.count + 1)
         score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
@@ -369,11 +401,6 @@ class SechzehnController < ApplicationController
           30
         end
       end
-    end
-
-    def get_time_left()
-      game_id = Game.maximum(:id)
-      220 - (Time.now - Game.find_by(id: game_id).created_at)
     end
 
 end
