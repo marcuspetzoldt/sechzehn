@@ -48,36 +48,39 @@ $(document).on('mousemove touchmove', 'canvas#field', (event) ->
     else
       dX = event.clientX - $(this).offset().left
       dY = event.clientY - $(this).offset().top
-    if Math.abs(dX % 70) > 16 and Math.abs(dY %70) > 16
-      x = Math.floor(dX / 70)
-      y = Math.floor(dY / 70)
-      unless x == window.mouseIn[window.mouseIn.length-1][0] and y == window.mouseIn[window.mouseIn.length-1][1]
-        context = this.getContext('2d')
-        letters = $(this).attr('data-letters')
-        truncate = false
-        word = $('input#words').val()
-        for coord, index in window.mouseIn
-          if coord[0] == x and coord[1] == y
-            truncate = true
-            break
-        if truncate
-          window.mouseIn = window.mouseIn[0..index]
-          word = word[0..index]
-          $('input#words').val(word)
-        else
-          window.mouseIn.push([x,y])
-          $('input#words').val(word + letters[y*4+x])
-        showDice(true)
-        if window.mouseIn.length > 1
-          for i in [1..window.mouseIn.length-1]
-            drawLine(context, window.mouseIn[i-1], window.mouseIn[i])
-        if window.mouseIn.length > 1
-          for i in [0..window.mouseIn.length-2]
-            drawLetter(context, window.mouseIn[i][0], window.mouseIn[i][1], letters[window.mouseIn[i][1]*4+window.mouseIn[i][0]], '#ffff00')
+    dXZone = Math.abs(dX % 70)
+    dYZone = Math.abs(dY % 70)
+    x = Math.floor(dX / 70)
+    y = Math.floor(dY / 70)
+    if Math.abs(x-window.mouseIn[window.mouseIn.length-1][0]) < 2 and Math.abs(y-window.mouseIn[window.mouseIn.length-1][1]) < 2
+      if dXZone > 12 and dXZone < 58 and dYZone > 12 and dYZone < 58
+        unless x == window.mouseIn[window.mouseIn.length-1][0] and y == window.mouseIn[window.mouseIn.length-1][1]
+          context = this.getContext('2d')
+          letters = $(this).attr('data-letters')
+          truncate = false
+          word = $('input#words').val()
+          for coord, index in window.mouseIn
+            if coord[0] == x and coord[1] == y
+              truncate = true
+              break
+          if truncate
+            window.mouseIn = window.mouseIn[0..index]
+            word = word[0..index]
+            $('input#words').val(word)
+          else
+            window.mouseIn.push([x,y])
+            $('input#words').val(word + letters[y*4+x])
+          showDice(true)
+          if window.mouseIn.length > 1
+            for i in [1..window.mouseIn.length-1]
+              drawLine(context, window.mouseIn[i-1], window.mouseIn[i])
+          if window.mouseIn.length > 1
+            for i in [0..window.mouseIn.length-2]
+              drawLetter(context, window.mouseIn[i][0], window.mouseIn[i][1], letters[window.mouseIn[i][1]*4+window.mouseIn[i][0]], '#ffff00')
 
-        if window.mouseIn.length > 0
-          drawLetter(context, window.mouseIn[window.mouseIn.length-1][0], window.mouseIn[window.mouseIn.length-1][1], letters[window.mouseIn[window.mouseIn.length-1][1]*4+window.mouseIn[window.mouseIn.length-1][0]], '#dfdf00')
-        $('input#words').val($('input#words').val() + $('div#'+id).text().trim())
+          if window.mouseIn.length > 0
+            drawLetter(context, window.mouseIn[window.mouseIn.length-1][0], window.mouseIn[window.mouseIn.length-1][1], letters[window.mouseIn[window.mouseIn.length-1][1]*4+window.mouseIn[window.mouseIn.length-1][0]], '#dfdf00')
+          $('input#words').val($('input#words').val() + $('div#'+id).text().trim())
   return true
 )
 
@@ -189,10 +192,10 @@ showDice = (enable) ->
   letters = canvas.attr('data-letters')
   context.beginPath()
   if enable
-    context.fillStyle = '#ffffff'
+    context.clearRect(0, 0, 280, 280)
   else
     context.fillStyle = '#eeeeee'
-  context.fillRect(0, 0, 280, 280)
+    context.fillRect(0, 0, 280, 280)
   context.lineWidth = 1
   for i in [1..3]
     context.moveTo(i*70, 0)
@@ -222,14 +225,11 @@ drawLetter = (context, x, y, letter, color) ->
   context.closePath()
   context.beginPath()
   context.fillStyle = color
-  if color == '#ffffff'
-    context.fillRect(x*70+1, y*70+1, 68, 68)
-  else
-    context.arc(x*70+35, y*70+35, 27, 27, 0, 2*Math.PI, false)
+  context.arc(x*70+35, y*70+35, 27, 27, 0, 2*Math.PI, false)
   context.fill()
   context.closePath()
   context.beginPath()
-  context.font = '600 300% sans-serif'
+  context.font = 'normal normal 600 42px sans-serif'
   context.textAlign = 'center'
   context.textBaseline = 'middle'
   context.fillStyle = '#000000'
