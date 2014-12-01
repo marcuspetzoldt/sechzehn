@@ -34,8 +34,7 @@ $(document).on('mousedown touchstart', 'canvas#field', (event) ->
     letter = $(this).attr('data-letters')[y*4+x]
     $('input#words').val($('input#words').val() + letter)
     drawLetter(context, x, y, letter, '#dfdf00')
-    window.mouseIn = new Array()
-    window.mouseIn.push([x, y])
+    window.mouseIn = [[x, y]]
     window.mouseDown = true
   return true
 )
