@@ -28,8 +28,12 @@ $(document).ready(() ->
 $(document).on('mousedown touchstart', 'canvas#field', (event) ->
   event.preventDefault()
   if $('input#words:disabled').length == 0
-    x = Math.floor((event.clientX - $(this).offset().left) / 70)
-    y = Math.floor((event.clientY - $(this).offset().top) / 70)
+    if event.originalEvent.touches
+      x = Math.floor((event.originalEvent.touches[0].clientX - $(this).offset().left) / 70)
+      y = Math.floor((event.originalEvent.touches[0].clientY - $(this).offset().top) / 70)
+    else
+      x = Math.floor((event.clientX - $(this).offset().left) / 70)
+      y = Math.floor((event.clientY - $(this).offset().top) / 70)
     context = this.getContext('2d')
     letter = $(this).attr('data-letters')[y*4+x]
     $('input#words').val($('input#words').val() + letter)
@@ -55,32 +59,35 @@ $(document).on('mousemove touchmove', 'canvas#field', (event) ->
     if Math.abs(x-window.mouseIn[window.mouseIn.length-1][0]) < 2 and Math.abs(y-window.mouseIn[window.mouseIn.length-1][1]) < 2
       if dXZone > 12 and dXZone < 58 and dYZone > 12 and dYZone < 58
         unless x == window.mouseIn[window.mouseIn.length-1][0] and y == window.mouseIn[window.mouseIn.length-1][1]
-          context = this.getContext('2d')
-          letters = $(this).attr('data-letters')
           truncate = false
+          backspace = false
           word = $('input#words').val()
           for coord, index in window.mouseIn
             if coord[0] == x and coord[1] == y
-              truncate = true
+              if index == window.mouseIn.length-2
+                backspace = true
+              else
+                truncate = true
               break
-          if truncate
-            window.mouseIn = window.mouseIn[0..index]
-            word = word[0..index]
-            $('input#words').val(word)
-          else
-            window.mouseIn.push([x,y])
-            $('input#words').val(word + letters[y*4+x])
-          showDice(true)
-          if window.mouseIn.length > 1
-            for i in [1..window.mouseIn.length-1]
-              drawLine(context, window.mouseIn[i-1], window.mouseIn[i])
-          if window.mouseIn.length > 1
-            for i in [0..window.mouseIn.length-2]
-              drawLetter(context, window.mouseIn[i][0], window.mouseIn[i][1], letters[window.mouseIn[i][1]*4+window.mouseIn[i][0]], '#ffff00')
+          unless truncate
+            context = this.getContext('2d')
+            letters = $(this).attr('data-letters')
+            if backspace
+              window.mouseIn.pop()
+              $('input#words').val(word[0..-2])
+            else
+              window.mouseIn.push([x,y])
+              $('input#words').val(word + letters[y*4+x])
+            showDice(true)
+            if window.mouseIn.length > 1
+              for i in [1..window.mouseIn.length-1]
+                drawLine(context, window.mouseIn[i-1], window.mouseIn[i])
+            if window.mouseIn.length > 1
+              for i in [0..window.mouseIn.length-2]
+                drawLetter(context, window.mouseIn[i][0], window.mouseIn[i][1], letters[window.mouseIn[i][1]*4+window.mouseIn[i][0]], '#ffff00')
 
-          if window.mouseIn.length > 0
-            drawLetter(context, window.mouseIn[window.mouseIn.length-1][0], window.mouseIn[window.mouseIn.length-1][1], letters[window.mouseIn[window.mouseIn.length-1][1]*4+window.mouseIn[window.mouseIn.length-1][0]], '#dfdf00')
-          $('input#words').val($('input#words').val() + $('div#'+id).text().trim())
+            if window.mouseIn.length > 0
+              drawLetter(context, window.mouseIn[window.mouseIn.length-1][0], window.mouseIn[window.mouseIn.length-1][1], letters[window.mouseIn[window.mouseIn.length-1][1]*4+window.mouseIn[window.mouseIn.length-1][0]], '#dfdf00')
   return true
 )
 
