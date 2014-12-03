@@ -16,7 +16,7 @@ $(document).ready(() ->
   if $('input#words').length > 0
     sync()
   else
-    # Sechzehn auf Homepage hervorheben
+    # Highlight SECHZEHN on homepage
     canvas = $('canvas#field')
     context = canvas[0].getContext('2d')
     letter = canvas.attr('data-letters')
@@ -35,11 +35,12 @@ $(document).on('mousedown touchstart', 'canvas#field', (event) ->
       x = Math.floor((event.clientX - $(this).offset().left) / 70)
       y = Math.floor((event.clientY - $(this).offset().top) / 70)
     context = this.getContext('2d')
-    letter = $(this).attr('data-letters')[y*4+x]
-    $('input#words').val($('input#words').val() + letter)
-    drawLetter(context, x, y, letter, '#dfdf00')
-    window.mouseIn = [[x, y]]
+    letters = $(this).attr('data-letters')
+    $('input#words').val(letters[y*4+x])
+    window.snake = [[x, y]]
     window.mouseDown = true
+    showDice(true)
+    showSnake(context, letters)
   return true
 )
 
@@ -56,38 +57,31 @@ $(document).on('mousemove touchmove', 'canvas#field', (event) ->
     dYZone = Math.abs(dY % 70)
     x = Math.floor(dX / 70)
     y = Math.floor(dY / 70)
-    if Math.abs(x-window.mouseIn[window.mouseIn.length-1][0]) < 2 and Math.abs(y-window.mouseIn[window.mouseIn.length-1][1]) < 2
+    if Math.abs(x-window.snake[window.snake.length-1][0]) < 2 and Math.abs(y-window.snake[window.snake.length-1][1]) < 2
       if dXZone > 12 and dXZone < 58 and dYZone > 12 and dYZone < 58
-        unless x == window.mouseIn[window.mouseIn.length-1][0] and y == window.mouseIn[window.mouseIn.length-1][1]
+        unless x == window.snake[window.snake.length-1][0] and y == window.snake[window.snake.length-1][1]
+          letters = $(this).attr('data-letters')
           truncate = false
           backspace = false
           word = $('input#words').val()
-          for coord, index in window.mouseIn
+          for coord, index in window.snake
             if coord[0] == x and coord[1] == y
-              if index == window.mouseIn.length-2
+              if index == window.snake.length-2
                 backspace = true
               else
                 truncate = true
               break
           unless truncate
-            context = this.getContext('2d')
-            letters = $(this).attr('data-letters')
             if backspace
-              window.mouseIn.pop()
+              window.snake.pop()
               $('input#words').val(word[0..-2])
             else
-              window.mouseIn.push([x,y])
+              window.snake.push([x,y])
               $('input#words').val(word + letters[y*4+x])
-            showDice(true)
-            if window.mouseIn.length > 1
-              for i in [1..window.mouseIn.length-1]
-                drawLine(context, window.mouseIn[i-1], window.mouseIn[i])
-            if window.mouseIn.length > 1
-              for i in [0..window.mouseIn.length-2]
-                drawLetter(context, window.mouseIn[i][0], window.mouseIn[i][1], letters[window.mouseIn[i][1]*4+window.mouseIn[i][0]], '#ffff00')
 
-            if window.mouseIn.length > 0
-              drawLetter(context, window.mouseIn[window.mouseIn.length-1][0], window.mouseIn[window.mouseIn.length-1][1], letters[window.mouseIn[window.mouseIn.length-1][1]*4+window.mouseIn[window.mouseIn.length-1][0]], '#dfdf00')
+            context = this.getContext('2d')
+            showDice(true)
+            showSnake(context, letters)
   return true
 )
 
@@ -113,7 +107,7 @@ $(document).on('keydown', 'input#words', (event) ->
     if event.which == 13
       if w.length > 2
         if $('span#word_' + w).length == 0
-          if window.snake
+          if window.snake.length > 0
             $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
             $.ajax({ url: '/guess', data: 'words=' + w })
           else
@@ -133,31 +127,15 @@ $(document).on('keydown', 'input#words', (event) ->
     [[0, letters[8]], [0, letters[9]], [0, letters[10]], [0, letters[11]]],
     [[0, letters[12]], [0, letters[13]], [0, letters[14]], [0, letters[15]]]
   ]
+  window.snake = []
   for x in [0..3]
     for y in [0..3]
       conditionMet = snake f, withoutQu(w.toUpperCase()), x, y
       break if conditionMet
     break if conditionMet
 
-  window.snake = false
   showDice(true)
-  snakeCoords = new Array()
-  for i in [0..w.length-1]
-    snakeCoords.push([-1, -1])
-  for x in [0..3]
-    for y in [0..3]
-      if f[y][x][0] > 0
-        window.snake = true
-        snakeCoords[f[y][x][0]-1] = [x, y]
-  if w.length > 1
-    for i in [1..w.length-1]
-      drawLine(context, snakeCoords[i-1], snakeCoords[i])
-  if w.length > 1
-    for i in [1..w.length-1]
-      drawLetter(context, snakeCoords[i][0], snakeCoords[i][1], f[snakeCoords[i][1]][snakeCoords[i][0]][1], '#ffff00')
-
-  if w.length > 0
-    drawLetter(context, snakeCoords[0][0], snakeCoords[0][1], f[snakeCoords[0][1]][snakeCoords[0][0]][1], '#dfdf00')
+  showSnake(context, letters)
   return true
 )
 
@@ -179,7 +157,8 @@ snake = (field, word, x, y) ->
   return false if field[y][x][0] > 0
 
   if field[y][x][1] == word[0]
-    field[y][x][0] = word.length
+    window.snake.push([x, y])
+    field[y][x][0] = 1 #word.length
     for dx in [-1..1]
       for dy in [-1..1]
         if dx == 0 and dy == 0
@@ -189,6 +168,7 @@ snake = (field, word, x, y) ->
         break if conditionMet
       break if conditionMet
     return true if conditionMet
+    window.snake.pop()
     field[y][x][0] = 0
   return false
 
@@ -197,12 +177,8 @@ showDice = (enable) ->
   canvas = $("canvas#field")
   context = canvas[0].getContext("2d")
   letters = canvas.attr('data-letters')
+  context.clearRect(0, 0, 280, 280)
   context.beginPath()
-  if enable
-    context.clearRect(0, 0, 280, 280)
-  else
-    context.fillStyle = '#eeeeee'
-    context.fillRect(0, 0, 280, 280)
   context.lineWidth = 1
   for i in [1..3]
     context.moveTo(i*70, 0)
@@ -252,6 +228,48 @@ drawLine = (context, startPoint, endPoint) ->
     context.lineTo(endPoint[0]*70+35, endPoint[1]*70+35)
     context.stroke()
     context.closePath()
+
+showSnake = (context, letters) ->
+  if window.snake.length > 1
+    # Junctions
+    context.lineWidth = 6
+    context.strokeStyle = '#aaa'
+    context.beginPath()
+    context.moveTo(window.snake[0][0]*70+35, window.snake[0][1]*70+35)
+    for i in [1..window.snake.length-1]
+      context.lineTo(window.snake[i][0]*70+35, window.snake[i][1]*70+35)
+    context.stroke()
+    context.closePath()
+    # Circles
+    context.beginPath()
+    context.strokeStyle = '#aaa'
+    context.fillStyle = '#ffff00'
+    context.lineWidth = 4
+    for i in [0..window.snake.length-2]
+      context.moveTo(window.snake[i][0]*70+7, window.snake[i][1]*70+35)
+      context.arc(window.snake[i][0]*70+35, window.snake[i][1]*70+35, 28, 28, 0, 2*Math.PI, false)
+    context.closePath()
+    context.fill()
+    context.stroke()
+  # Last circle
+  context.beginPath()
+  context.strokeStyle = '#aaa'
+  context.fillStyle = '#dfdf00'
+  context.lineWidth = 4
+  context.moveTo(window.snake[window.snake.length-1][0]*70+7, window.snake[window.snake.length-1][1]*70+35)
+  context.arc(window.snake[window.snake.length-1][0]*70+35, window.snake[window.snake.length-1][1]*70+35, 28, 28, 0, 2*Math.PI, false)
+  context.closePath()
+  context.fill()
+  context.stroke()
+  # Letters
+  context.beginPath()
+  context.font = 'normal normal 600 42px sans-serif'
+  context.textAlign = 'center'
+  context.textBaseline = 'middle'
+  context.fillStyle = '#000000'
+  for i in [0..window.snake.length-1]
+    context.fillText(letters[window.snake[i][1]*4+window.snake[i][0]], 35+window.snake[i][0]*70, 35+window.snake[i][1]*70)
+  context.closePath()
 
 clock = () ->
   t = 0
@@ -313,7 +331,9 @@ startGame = () ->
       $('div#guesses').html('')
       $('td#cwords').html('0')
       $('td#cpoints').html('0')
-    $("canvas#field").attr("data-letters", responseText)
+    $("canvas#field")
+      .attr("data-letters", responseText)
+      .css('background-color', '#ffffff')
     showDice(true)
     $('input#words')
       .removeAttr('disabled')
@@ -325,6 +345,7 @@ startGame = () ->
 disableGame = () ->
   window.mouseDown = 0
   $('input#words').attr('disabled', 'disabled')
+  $('canvas#field').css('background-color', '#eee')
   showDice(false)
 
 # Length hint
