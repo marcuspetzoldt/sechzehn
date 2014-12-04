@@ -19,10 +19,10 @@ $(document).ready(() ->
     # Highlight SECHZEHN on homepage
     canvas = $('canvas#field')
     context = canvas[0].getContext('2d')
-    letter = canvas.attr('data-letters')
+    letters = canvas.attr('data-letters')
     for y in [1..2]
       for x in [0..3]
-          drawLetter(context, x, y, letter[y*4+x], '#ffff00')
+        drawLetter(context, x, y, letters[y*4+x], '#ffff00')
 )
 
 $(document).on('mousedown touchstart', 'canvas#field', (event) ->
@@ -187,7 +187,9 @@ showDice = (enable) ->
     context.lineTo(280, i*70)
   context.strokeStyle = "#000"
   context.stroke()
-  context.font = '600 300% sans-serif'
+  context.closePath()
+  context.beginPath()
+  context.font = 'normal normal 600 42px sans-serif'
   context.textAlign = 'center'
   context.textBaseline = 'middle'
   if enable
