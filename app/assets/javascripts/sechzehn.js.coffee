@@ -115,7 +115,7 @@ $(document).on('keydown', 'input#words', (event) ->
         $('input#words').val('')
         w = ''
     else
-      if event.which > 0
+      if event.which > 64 and event.which < 91
         w = w + String.fromCharCode(event.which)
 
   canvas = $("canvas#field")
@@ -202,14 +202,11 @@ showDice = (enable) ->
 drawLetter = (context, x, y, letter, color) ->
   context.beginPath()
   context.strokeStyle = '#aaa'
+  context.fillStyle = color
   context.lineWidth = 4
   context.arc(x*70+35, y*70+35, 28, 28, 0, 2*Math.PI, false)
-  context.stroke()
-  context.closePath()
-  context.beginPath()
-  context.fillStyle = color
-  context.arc(x*70+35, y*70+35, 27, 27, 0, 2*Math.PI, false)
   context.fill()
+  context.stroke()
   context.closePath()
   context.beginPath()
   context.font = 'normal normal 600 42px sans-serif'
@@ -218,16 +215,6 @@ drawLetter = (context, x, y, letter, color) ->
   context.fillStyle = '#000000'
   context.fillText(letter, 35+x*70, 35+y*70 )
   context.closePath()
-
-drawLine = (context, startPoint, endPoint) ->
-  if startPoint
-    context.lineWidth = 6
-    context.strokeStyle = '#aaa'
-    context.beginPath()
-    context.moveTo(startPoint[0]*70+35, startPoint[1]*70+35)
-    context.lineTo(endPoint[0]*70+35, endPoint[1]*70+35)
-    context.stroke()
-    context.closePath()
 
 showSnake = (context, letters) ->
   if window.snake.length > 1

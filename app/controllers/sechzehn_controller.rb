@@ -36,22 +36,13 @@ class SechzehnController < ApplicationController
     @guesses = []
     @scores = []
     @chats = Chat.where("created_at > '#{Time.now.utc - 30.minutes}'").order(:created_at)
-    @letters = init_field
     if signed_in?
+      # Active player
       @user = current_user
-      if params[:what]
-        @play = false
-        # Highscores of the month
-        @which = '1'
-        count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
-        @scores = ActiveRecord::Base.connection.execute(sql)
-      else
-        # Active player
-        session['game_id'] = nil if Game.maximum(:id) != session['game_id']
-        @cwords, @cpoints = get_score
-        @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
-          [guess.word, guess.points]
-        end
+      session['game_id'] = nil if Game.maximum(:id) > (session['game_id'].to_i+1)
+      @cwords, @cpoints = get_score
+      @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
+        [guess.word, guess.points]
       end
     else
       @user = User.new
@@ -61,6 +52,7 @@ class SechzehnController < ApplicationController
       count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
       @scores = ActiveRecord::Base.connection.execute(sql)
     end
+    @letters = init_field
   end
 
   def solution
