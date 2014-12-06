@@ -22,7 +22,7 @@ $(document).ready(() ->
     letters = canvas.attr('data-letters')
     for y in [1..2]
       for x in [0..3]
-        drawLetter(context, x, y, letters[y*4+x], '#ffff00')
+        highlightLetter(context, x, y, letters[y*4+x])
 )
 
 $(document).on('mousedown touchstart', 'canvas#field', (event) ->
@@ -179,12 +179,12 @@ showDice = (enable) ->
   letters = canvas.attr('data-letters')
   context.clearRect(0, 0, 280, 280)
   context.beginPath()
-  context.lineWidth = 1
   for i in [1..3]
     context.moveTo(i*70, 0)
     context.lineTo(i*70, 280)
     context.moveTo(0, i*70)
     context.lineTo(280, i*70)
+  context.lineWidth = 1
   context.strokeStyle = "#000"
   context.stroke()
   context.closePath()
@@ -201,13 +201,13 @@ showDice = (enable) ->
       context.fillText(letters[j*4+i], 35+i*70, 35+j*70 )
   context.closePath()
 
-drawLetter = (context, x, y, letter, color) ->
+highlightLetter = (context, x, y, letter) ->
   context.beginPath()
-  context.strokeStyle = '#aaa'
-  context.fillStyle = color
-  context.lineWidth = 4
-  context.arc(x*70+35, y*70+35, 28, 28, 0, 2*Math.PI, false)
+  context.arc(x*70+35, y*70+35, 28, 0, 2*Math.PI, false)
+  context.fillStyle = "#ffff00"
   context.fill()
+  context.strokeStyle = '#aaaaaa'
+  context.lineWidth = 4
   context.stroke()
   context.closePath()
   context.beginPath()
@@ -221,35 +221,33 @@ drawLetter = (context, x, y, letter, color) ->
 showSnake = (context, letters) ->
   if window.snake.length > 1
     # Junctions
-    context.lineWidth = 6
-    context.strokeStyle = '#aaa'
     context.beginPath()
     context.moveTo(window.snake[0][0]*70+35, window.snake[0][1]*70+35)
     for i in [1..window.snake.length-1]
       context.lineTo(window.snake[i][0]*70+35, window.snake[i][1]*70+35)
+    context.lineWidth = 6
+    context.strokeStyle = '#aaa'
     context.stroke()
     context.closePath()
     # Circles
-    context.beginPath()
-    context.strokeStyle = '#aaa'
-    context.fillStyle = '#ffff00'
-    context.lineWidth = 4
     for i in [0..window.snake.length-2]
-      context.moveTo(window.snake[i][0]*70+7, window.snake[i][1]*70+35)
-      context.arc(window.snake[i][0]*70+35, window.snake[i][1]*70+35, 28, 28, 0, 2*Math.PI, false)
-    context.closePath()
-    context.fill()
-    context.stroke()
+      context.beginPath()
+      context.arc(window.snake[i][0]*70+35, window.snake[i][1]*70+35, 28, 0, 2*Math.PI, false)
+      context.fillStyle = '#ffff00'
+      context.fill()
+      context.lineWidth = 4
+      context.strokeStyle = '#aaa'
+      context.stroke()
+      context.closePath()
   # Last circle
   context.beginPath()
-  context.strokeStyle = '#aaa'
+  context.arc(window.snake[window.snake.length-1][0]*70+35, window.snake[window.snake.length-1][1]*70+35, 28, 0, 2*Math.PI, false)
   context.fillStyle = '#dfdf00'
   context.lineWidth = 4
-  context.moveTo(window.snake[window.snake.length-1][0]*70+7, window.snake[window.snake.length-1][1]*70+35)
-  context.arc(window.snake[window.snake.length-1][0]*70+35, window.snake[window.snake.length-1][1]*70+35, 28, 28, 0, 2*Math.PI, false)
-  context.closePath()
   context.fill()
+  context.strokeStyle = '#aaa'
   context.stroke()
+  context.closePath()
   # Letters
   context.beginPath()
   context.font = 'normal normal 600 42px sans-serif'
