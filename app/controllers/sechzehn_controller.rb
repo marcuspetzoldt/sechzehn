@@ -4,20 +4,14 @@ class SechzehnController < ApplicationController
 
   def new
     game_id = Game.maximum(:id)
-    response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+    response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
     if game_id != session['game_id'].to_i
       # start a new game
       session['game_id'] = game_id
-      if signed_in?
-        User.record_timestamps = false
-        begin
-          current_user.update_attribute(:elo, current_user.new_elo)
-        ensure
-          User.record_timestamps = true
-        end
-      end
+      # update elo without updating updated_at which is used in a nightly job to determine if player is still actively playing
+      current_user.update_column(:elo, current_user.new_elo) if signed_in?
       response.headers['X-Refreshed'] = '0'
     else
       # continue a game

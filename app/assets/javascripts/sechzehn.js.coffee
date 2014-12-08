@@ -27,7 +27,9 @@ $(document).ready(() ->
 
 $(document).on('mousedown touchstart', 'canvas#field', (event) ->
   event.preventDefault()
-  if $('input#words:disabled').length == 0
+  if $('input#words').length > 0 and $('input#words:disabled').length == 0
+    x = 0
+    y = 0
     if event.originalEvent.touches
       x = Math.floor((event.originalEvent.touches[0].clientX - $(this).offset().left) / 70)
       y = Math.floor((event.originalEvent.touches[0].clientY - $(this).offset().top) / 70)
@@ -47,6 +49,8 @@ $(document).on('mousedown touchstart', 'canvas#field', (event) ->
 $(document).on('mousemove touchmove', 'canvas#field', (event) ->
   event.preventDefault()
   if window.mouseDown
+    dX = 0
+    dY = 0
     if event.originalEvent.touches
       dX = event.originalEvent.touches[0].clientX - $(this).offset().left
       dY = event.originalEvent.touches[0].clientY - $(this).offset().top
@@ -76,7 +80,7 @@ $(document).on('mousemove touchmove', 'canvas#field', (event) ->
               window.snake.pop()
               $('input#words').val(word[0..-2])
             else
-              window.snake.push([x,y])
+              window.snake.push(new Array(x,y))
               $('input#words').val(word + letters[y*4+x])
 
             context = this.getContext('2d')
@@ -99,6 +103,7 @@ $(document).on('mouseup touchend', 'body', () ->
 )
 
 $(document).on('keydown', 'input#words', (event) ->
+  w = ''
   if event.which == 8
     # Backspace
     w = this.value[0..-2]
@@ -157,13 +162,12 @@ snake = (field, word, x, y) ->
   return false if field[y][x][0] > 0
 
   if field[y][x][1] == word[0]
-    window.snake.push([x, y])
+    window.snake.push(new Array(x, y))
     field[y][x][0] = 1 #word.length
     for dx in [-1..1]
       for dy in [-1..1]
-        if dx == 0 and dy == 0
-          conditionMet = false
-        else
+        conditionMet = false
+        unless dx == 0 and dy == 0
           conditionMet = snake field, word[1..], x+dx, y+dy
         break if conditionMet
       break if conditionMet
@@ -174,6 +178,7 @@ snake = (field, word, x, y) ->
 
 
 showDice = (enable) ->
+  i = 0
   canvas = $("canvas#field")
   context = canvas[0].getContext("2d")
   letters = canvas.attr('data-letters')
@@ -219,6 +224,7 @@ highlightLetter = (context, x, y, letter) ->
   context.closePath()
 
 showSnake = (context, letters) ->
+  i = 0
   if window.snake.length > 1
     # Junctions
     context.beginPath()
