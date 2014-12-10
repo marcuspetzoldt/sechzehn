@@ -56,7 +56,7 @@ class UsersController < ApplicationController
     @user = current_user
     if @user.authenticate(params[:password])
       params[:user][:password_confirmation] = params[:user][:password]
-      if !@user.update(user_params)
+      unless @user.update(user_params)
         flash[:error] = @user.errors.messages.values.join('<br />')
         redirect_to root_path what: 'edit'
         return
