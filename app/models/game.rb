@@ -35,7 +35,7 @@ class Game < ActiveRecord::Base
         end
       end
 
-      ActiveRecord::Base.connection.raw_connection.prepare('validWordStart', 'SELECT 1 WHERE EXISTS (SELECT id FROM words WHERE word BETWEEN $1 AND $2)')
+      ActiveRecord::Base.connection.raw_connection.prepare('validWordStart', 'SELECT 1 FROM words WHERE word BETWEEN $1 AND $2 LIMIT 1')
       ActiveRecord::Base.connection.raw_connection.prepare('validWord', 'SELECT id FROM words WHERE word = $1')
       0.upto(3) do |y|
         0.upto(3) do |x|
