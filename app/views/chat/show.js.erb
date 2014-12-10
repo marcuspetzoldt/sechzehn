@@ -1,4 +1,5 @@
-$('#resizable-chat')
+resizable_chat = $('#resizable-chat');
+resizable_chat
   .html("<%= j render partial: 'chat', collection: @chats %>")
-  .scrollTop($('#resizable-chat')[0].scrollHeight);
-$('#chat_chat').val('')
+  .scrollTop(resizable_chat[0].scrollHeight);
+$('#chat_chat').val('');

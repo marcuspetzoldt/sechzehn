@@ -1,4 +1,6 @@
 <% points = 0 %>
+solution_div = $('div#solutiondiv');
+guess_div = $('div#guessesdiv');
 <% if @words %>
   <% html = (@words.map do |w| %>
     <% out = '' %>
@@ -36,16 +38,17 @@
       <% else out + "<span class=\"onlyself\">#{w[0]}</span>" %>
     <% end %>
   <% end).join(' ') %>
-  $('div#solution').html('<%= render inline: html %>')
-  $('td#cwords').html('<%= "#{@cwords}" %>')
-  $('td#cpoints').html('<%= "#{@cpoints}" %>')
-  $('div#solutiondiv').show()
-  $('div#guessesdiv').hide()
+  $('div#solution').html('<%= render inline: html %>');
+  $('td#cwords').html('<%= "#{@cwords}" %>');
+  $('td#cpoints').html('<%= "#{@cpoints}" %>');
+  solution_div.show();
+  guess_div.hide();
 <% else %>
-  $('div#solutiondiv').hide()
-  $('div#guessesdiv').show()
+  solution_div.hide();
+  guess_div.show();
 <% end %>
-$('tbody#score').html('')
+score_table = $('tbody#score');
+score_table.html('');
 <% old_score = 0 %>
 <% @scores.each_with_index do |score, i| %>
   <% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
@@ -53,11 +56,12 @@ $('tbody#score').html('')
     <% old_score = score['sum'] %>
     <% tr = "<tr><td class=\"#{fat}\">#{i+1}.</td>" %>
   <% else %>
-    <% tr = '<tr><td class=\"#{fat}\">&nbsp;</td>' %>
+    <% tr = "<tr><td class=\"#{fat}\">&nbsp;</td>" %>
   <% end %>
   <% tr = tr + "<td class=\"#{fat}\">#{score['name']}</td>" %>
   <% tr = tr + "<td class=\"right #{fat}\">#{score['count']} / #{@twords > 0 ? (100*score['count'].to_i/@twords).round(0) : 0}%</td>" %>
   <% tr = tr + "<td class=\"right #{fat}\">#{score['sum']} / #{@tpoints > 0 ? (100*score['sum'].to_i/@tpoints).round(0) : 0}%</td></tr>" %>
-  $('tbody#score').hide()
-  $('tbody#score').append('<%= render inline: tr %>').show(400)
+  score_table
+      .hide()
+      .append('<%= render inline: tr %>').show(400);
 <% end %>

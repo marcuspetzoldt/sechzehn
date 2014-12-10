@@ -1,9 +1,9 @@
 <div class="row">
   <ul class="nav nav-tabs col-md-12">
-    <li class="<%= @which == '0' ? 'active' : nil %>"><%= link_to 'Ewig', highscore_elo_path(which: 0) %></li>
-    <li class="<%= @which == '1' ? 'active' : nil %>"><%= link_to 'Diesen Monat', highscore_elo_path(which: 1) %></li>
-    <li class="<%= @which == '2' ? 'active' : nil %>"><%= link_to 'Diese Woche', highscore_elo_path(which: 2) %></li>
-    <li class="<%= @which == '3' ? 'active' : nil %>"><%= link_to 'Heute', highscore_elo_path(which: 3) %></li>
+    <li class="<%= @highscore[:which] == 0 ? 'active' : nil %>"><%= link_to 'Ewig', highscore_elo_path(which: 0) %></li>
+    <li class="<%= @highscore[:which] == 1 ? 'active' : nil %>"><%= link_to 'Diesen Monat', highscore_elo_path(which: 1) %></li>
+    <li class="<%= @highscore[:which] == 2 ? 'active' : nil %>"><%= link_to 'Diese Woche', highscore_elo_path(which: 2) %></li>
+    <li class="<%= @highscore[:which] == 3 ? 'active' : nil %>"><%= link_to 'Heute', highscore_elo_path(which: 3) %></li>
   </ul>
 </div>
 <div class="row">
@@ -22,27 +22,28 @@
           <th>Platz</th>
           <th>Name</th>
           <th>Spiele</th>
-          <th><%= highscore_type == 'cwords' ? 'Wörter' : link_to('Wörter', highscore_words_path(which: @which)) %> <%= highscore_type == 'pwords' ? '(%)' : link_to('(%)', highscore_words_percent_path(which: @which)) %></th>
-          <th><%= highscore_type == 'cpoints' ? 'Punkte' : link_to('Punkte', highscore_points_path(which: @which)) %> <%= highscore_type == 'ppoints' ? '(%)' : link_to('(%)', highscore_points_percent_path(which: @which)) %></th>
-          <th><%= highscore_type == 'elo' ? 'Stufe' : link_to('Stufe', highscore_elo_path(which: @which)) %></th>
+          <th><%= @highscore[:type] == 'cwords' ? 'Wörter' : link_to('Wörter', highscore_words_path(which: @highscore[:which])) %> <%= @highscore[:type] == 'pwords' ? '(%)' : link_to('(%)', highscore_words_percent_path(which: @highscore[:which])) %></th>
+          <th><%= @highscore[:type] == 'cpoints' ? 'Punkte' : link_to('Punkte', highscore_points_path(which: @highscore[:which])) %> <%= @highscore[:type] == 'ppoints' ? '(%)' : link_to('(%)', highscore_points_percent_path(which: @highscore[:which])) %></th>
+          <th><%= @highscore[:type] == 'elo' ? 'Stufe' : link_to('Stufe', highscore_elo_path(which: @highscore[:which])) %></th>
         </tr>
       </thead>
       <tbody>
       <% old_score = 0 %>
-      <% @scores.each_with_index do |score, i| %>
-        <% rank = i + @offset %>
+      <% @highscore[:rows].each_with_index do |score, i| %>
+        <% rank = i + @highscore[:offset] %>
+        <% fat = '' %>
         <% if signed_in? %>
           <% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
         <% end %>
         <tr>
-          <% if old_score != score[highscore_type] %>
+          <% if old_score != score[@highscore[:type]] %>
             <td class="<%= fat %>"><%= rank+1 %>.</td>
-            <% old_score = score[highscore_type] %>
+            <% old_score = score[@highscore[:type]] %>
           <% else %>
             <td class="<%= fat %>">&nbsp;</td>
           <% end %>
           <td class="<%= fat %>"><%= score['name'] %></td>
-          <td class="<%= fat %>"><%= score['count'] %></td>
+          <td class="<%= fat %>"><%= score['@highscore[:count]'] %></td>
           <td class="<%= fat %>"><%= score['cwords'].to_f.round(1) %> (<%= score['pwords'].to_f.round(1) %>%)</td>
           <td class="<%= fat %>"><%= score['cpoints'].to_f.round(1) %> (<%= score['ppoints'].to_f.round(1) %>%)</td>
           <td class="<%= fat %>"><%= score['elo'] %></td>
@@ -51,32 +52,32 @@
       </tbody>
     </table>
     <% step = 100 %>
-    <% if count > step %>
+    <% if @highscore[:count] > step %>
       <nav>
         <ul class="pagination">
-          <% case highscore_type %>
-          <% when 'cwords' then link = highscore_words_path(which: @which) %>
-          <% when 'pwords' then link = highscore_words_percent_path(which: @which) %>
-          <% when 'cpoints' then link = highscore_points_path(which: @which) %>
-          <% when 'ppoints' then link = highscore_points_percent_path(which: @which) %>
+          <% case @highscore[:type] %>
+          <% when 'cwords' then link = highscore_words_path(which: @highscore[:which]) %>
+          <% when 'pwords' then link = highscore_words_percent_path(which: @highscore[:which]) %>
+          <% when 'cpoints' then link = highscore_points_path(which: @highscore[:which]) %>
+          <% when 'ppoints' then link = highscore_points_percent_path(which: @highscore[:which]) %>
           <% else %>
-            <% link = highscore_elo_path(which: @which) %>
+            <% link = highscore_elo_path(which: @highscore[:which]) %>
           <% end %>
 
-          <% if @offset >= step %>
-            <li class="active"><%= link_to link + "&offset=#{@offset-step}" do %>&laquo;<% end %></li>
+          <% if @highscore[:offset] >= step %>
+            <li class="active"><%= link_to link + "&offset=#{@highscore[:offset]-step}" do %>&laquo;<% end %></li>
           <% else %>
             <li class="disabled"><a>&laquo;</a></li>
           <% end %>
-          <% 0.upto(count/step - 1 + (count.modulo(step) == 0 ? 0 : 1)) do |i| %>
-            <% if i*step != @offset %>
+          <% 0.upto(@highscore[:count]/step - 1 + (@highscore[:count].modulo(step) == 0 ? 0 : 1)) do |i| %>
+            <% if i*step != @highscore[:offset] %>
               <li class="active"><%= link_to((i+1).to_s, link + "&offset=#{i*step}") %></li>
             <% else %>
               <li class="disabled"><a><%= (i+1).to_s %></a></li>
             <% end %>
           <% end %>
-          <% if @offset < count-step %>
-            <li class="active"><%= link_to link + "&offset=#{@offset+step}" do %>&raquo;<% end %></li>
+          <% if @highscore[:offset] < @highscore[:count]-step %>
+            <li class="active"><%= link_to link + "&offset=#{@highscore[:offset]+step}" do %>&raquo;<% end %></li>
           <% else %>
             <li class="disabled"><a>&raquo;</a></li>
           <% end %>

@@ -11,12 +11,12 @@ class Game < ActiveRecord::Base
   private
 
     def roll_dice
-      Rails.logger.info("GAMECREATION: Roll Dice Start")
+      Rails.logger.info('GAMECREATION: Roll Dice Start')
       vowels = 0
       n = 0
       # at least two vowels, but not more than six
       until (2..6) === vowels
-        self.letters = (0.upto(15).map { |i| draw_letter }).join
+        self.letters = (0.upto(15).map { draw_letter }).join
         vowels = self.letters.count('aeiou')
         n = n + 1
       end
@@ -24,7 +24,7 @@ class Game < ActiveRecord::Base
     end
 
     def find_words
-      Rails.logger.info("GAMECREATION: Solve Start")
+      Rails.logger.info('GAMECREATION: Solve Start')
       @words = []
       @field = []
 
@@ -48,7 +48,6 @@ class Game < ActiveRecord::Base
       ActiveRecord::Base.connection.raw_connection.prepare('validWordInsert', 'INSERT INTO solutions (game_id, word) VALUES ($1, $2)')
       ActiveRecord::Base.transaction do
         @words.each do |word|
-#         ActiveRecord::Base.connection.execute("INSERT INTO solutions (game_id, word) VALUES (#{self.id}, '#{word}')")
           ActiveRecord::Base.connection.raw_connection.exec_prepared('validWordInsert', [self.id, word])
         end
       end
@@ -57,7 +56,7 @@ class Game < ActiveRecord::Base
       @words = nil
       @field = nil
       self.touch
-      Rails.logger.info("GAMECREATION: Solve End")
+      Rails.logger.info('GAMECREATION: Solve End')
     end
 
     def draw_letter

@@ -35,15 +35,14 @@ class SechzehnController < ApplicationController
       @user = current_user
       session['game_id'] = nil if Game.maximum(:id) > (session['game_id'].to_i+1)
       @cwords, @cpoints = get_score
-      @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).reverse.map do |guess|
+      @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).order(id: :desc).map do |guess|
         [guess.word, guess.points]
       end
     else
       @user = User.new
       @play = false
       session['game_id'] = nil
-      @which = '1'
-      count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true)
+      count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true, 1, 0)
       @scores = ActiveRecord::Base.connection.execute(sql)
     end
     @letters = init_field
@@ -114,18 +113,19 @@ class SechzehnController < ApplicationController
 
   def guess
     game_id = Game.maximum(:id)
-    @word = params['words'].downcase
-    if Solution.find_by(game_id: game_id, word: @word).nil?
-      @guess = 0
+    @guess = {}
+    @guess[:word] = params['words'].downcase
+    if Solution.find_by(game_id: game_id, word: @guess[:word]).nil?
+      @guess[:points] = 0
     else
-      @guess = letter_score[@word.length]
+      @guess[:points] = letter_score[@guess[:word].length]
     end
-    if Guess.find_by(user_id: current_user.id, game_id: game_id, word: @word).nil?
-      Guess.create(user_id: current_user.id, game_id: game_id, word: @word, points: @guess)
+    if Guess.find_by(user_id: current_user.id, game_id: game_id, word: @guess[:word]).nil?
+      Guess.create(user_id: current_user.id, game_id: game_id, word: @guess[:word], points: @guess[:points])
     else
       @guess = nil
     end
-    @cwords, @cpoints = get_score
+    @guess[:cwords], @guess[:cpoints] = get_score
   end
 
   def sync
@@ -153,65 +153,62 @@ class SechzehnController < ApplicationController
   end
 
   def highscore_elo
-    offset = params['offset']
-    count, @scores = highscore(' ORDER BY u.elo DESC, cpoints DESC, cwords DESC')
-    render 'highscore', locals: { highscore_type: 'elo', count: count }
+    highscore(' ORDER BY u.elo DESC, cpoints DESC, cwords DESC', 'elo')
   end
 
   def highscore_points
-    count, @scores = highscore(' ORDER BY cpoints DESC, u.elo DESC, cwords DESC')
-    render 'highscore', locals: { highscore_type: 'cpoints', count: count }
+    highscore(' ORDER BY cpoints DESC, u.elo DESC, cwords DESC', 'cpoints')
   end
 
   def highscore_points_percent
-    count, @scores = highscore(' ORDER BY ppoints DESC, u.elo DESC, cwords DESC')
-    render 'highscore', locals: { highscore_type: 'ppoints', count: count }
+    highscore(' ORDER BY ppoints DESC, u.elo DESC, cwords DESC', 'ppoints')
   end
 
   def highscore_words
-    count, @scores = highscore(' ORDER BY cwords DESC, cpoints DESC, u.elo DESC')
-    render 'highscore', locals: { highscore_type: 'cwords', count: count }
+    highscore(' ORDER BY cwords DESC, cpoints DESC, u.elo DESC', 'cwords')
   end
 
   def highscore_words_percent
-    count, @scores = highscore(' ORDER BY pwords DESC, ppoints DESC, u.elo DESC')
-    render 'highscore', locals: { highscore_type: 'pwords', count: count }
+    highscore(' ORDER BY pwords DESC, ppoints DESC, u.elo DESC', 'pwords')
   end
 
-  def highscore(order_by)
+  def highscore(order_by, highscore_type)
     @help = true
     @canonical = 'http://spiele.sechzehn.org/highscore/elo'
     @description = 'Sechzehn ist ein Wortspiel wie Boggle. Finde innerhalb von 3 Minuten mehr deutsche Wörter in einem Quadrat mit 16 zufälligen Buchstaben als deine Mitspieler.'
     @description = 'Als registrierter Spieler von Sechzehn, kannst Du in diesen täglichen, wöchentlichen und monatlichen, sowie in einer ewigen Rangliste um Plätze kämpfen.'
-    @which = params[:which]
-    @offset = params[:offset] ? params[:offset].to_i : 0
 
-    count, sql = highscore_sql(order_by, false)
-    case @which
-    when '3'
+    @highscore = {}
+    @highscore[:which] = params[:which].to_i
+    @highscore[:offset] = params[:offset] ? params[:offset].to_i : 0
+    @highscore[:count], sql = highscore_sql(order_by, false, @highscore[:which], @highscore[:offset])
+    case @highscore[:which]
+    when 3
       # daily
       @subtitle = 'Rangliste für ' + ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'][Date.today.wday]
 
-    when '2'
+    when 2
       # weekly
       @subtitle = 'Rangliste der ' + Date.today.cweek.to_s + '. KW'
 
-    when '1'
+    when 1
       # monthly
       @subtitle = 'Rangliste für ' + ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][Date.today.month-1]
 
     else
       # all time
-      @which = 0
+      @highscore[:which] = 0
       @subtitle = 'ewige Rangliste'
 
     end
-    [count, ActiveRecord::Base.connection.execute(sql)]
+    @highscore[:type] = highscore_type
+    @highscore[:rows] = ActiveRecord::Base.connection.execute(sql)
+    render 'highscore'
   end
 
-  def highscore_sql(order_by, homepage)
-    case @which
-    when '3'
+  def highscore_sql(order_by, homepage, which, offset)
+    case which
+    when 3
       # daily
       select = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints'
       where = '  FROM users u' +
@@ -222,7 +219,7 @@ class SechzehnController < ApplicationController
           ' WHERE u.elo > 0'
       group = ''
 
-    when '2'
+    when 2
       # weekly
       select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints'
       where = '  FROM users u' +
@@ -233,7 +230,7 @@ class SechzehnController < ApplicationController
           ' WHERE u.elo > 0'
       group = ' GROUP BY u.id, u.name, u.elo, s.user_id'
 
-    when '1'
+    when 1
       # monthly
       select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints'
       where = '  FROM users u' +
@@ -264,7 +261,7 @@ class SechzehnController < ApplicationController
     if homepage
       sql = select + where + group + order_by + ' LIMIT 10'
     else
-      sql = select + where + group + order_by + ' LIMIT 100 OFFSET ' + @offset.to_s
+      sql = select + where + group + order_by + ' LIMIT 100 OFFSET ' + offset.to_s
     end
     [count, sql]
   end

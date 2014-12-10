@@ -1,11 +1,11 @@
 <% unless @guess.nil? %>
-  $e = $('span#word_<%= @word %>')
-  <% if @guess > 0 %>
-    $e.append('<%= ":#{@guess}" %>')
-    $e.css('font-size',  '<%= 100 + (@guess-1)*4 %>%')
+  $e = $('span#word_<%= @guess[:word] %>');
+  <% if @guess[:points] > 0 %>
+    $e.append('<%= ":#{@guess[:points]}" %>');
+    $e.css('font-size',  '<%= 100 + (@guess[:points]-1)*4 %>%');
   <% else %>
-    $e.css('color', 'red')
+    $e.css('color', 'red');
   <% end %>
-  $('td#cwords').html('<%= @cwords %>')
-  $('td#cpoints').html('<%= @cpoints %>')
+  $('td#cwords').html('<%= @guess[:cwords] %>');
+  $('td#cpoints').html('<%= @guess[:cpoints] %>');
 <% end %>
