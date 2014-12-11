@@ -25,36 +25,7 @@ class Game < ActiveRecord::Base
 
     def find_words
       Rails.logger.info('GAMECREATION: Solve Start')
-      @words = []
-      @field = []
-
-      0.upto(3) do |y|
-        @field << []
-        0.upto(3) do |x|
-          @field[y][x] = [0, self.letters[y*4+x]]
-        end
-      end
-
-      ActiveRecord::Base.connection.raw_connection.prepare('validWordStart', 'SELECT 1 FROM words WHERE word BETWEEN $1 AND $2 LIMIT 1')
-      ActiveRecord::Base.connection.raw_connection.prepare('validWord', 'SELECT id FROM words WHERE word = $1')
-      0.upto(3) do |y|
-        0.upto(3) do |x|
-          solve('', x, y)
-        end
-      end
-      ActiveRecord::Base.connection.execute('DEALLOCATE "validWordStart"')
-      ActiveRecord::Base.connection.execute('DEALLOCATE "validWord"')
-      @words.uniq!
-      ActiveRecord::Base.connection.raw_connection.prepare('validWordInsert', 'INSERT INTO solutions (game_id, word) VALUES ($1, $2)')
-      ActiveRecord::Base.transaction do
-        @words.each do |word|
-          ActiveRecord::Base.connection.raw_connection.exec_prepared('validWordInsert', [self.id, word])
-        end
-      end
-      ActiveRecord::Base.connection.execute('DEALLOCATE "validWordInsert"')
-
-      @words = nil
-      @field = nil
+      Game.connection.execute("SELECT solve(#{self.id}, '#{self.letters}')")
       self.touch
       Rails.logger.info('GAMECREATION: Solve End')
     end
