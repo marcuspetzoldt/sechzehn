@@ -27,10 +27,16 @@ class AddStoredProcedureSolvexy < ActiveRecord::Migration
 
             -- add word to solution if valid
             IF LENGTH(pword) > 2 THEN
-                SELECT 1 INTO vres FROM solutions WHERE word = pword AND game_id = pid;
-                IF NOT FOUND THEN
-            INSERT INTO solutions (game_id, word) SELECT pid, word FROM words WHERE word = pword;
-                END IF;
+              BEGIN
+                INSERT INTO solutions (game_id, word) select pid, word FROM words WHERE word=pword;
+              EXCEPTION
+                WHEN unique_violation THEN
+                  -- do nothing
+              END;
+              -- SELECT 1 INTO vres FROM solutions WHERE word = pword AND game_id = pid;
+              -- IF NOT FOUND THEN
+              --   INSERT INTO solutions (game_id, word) SELECT pid, word FROM words WHERE word = pword;
+              -- END IF;
             END IF;
 
             -- build word with adjacent letters

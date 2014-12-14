@@ -61,44 +61,6 @@ class Game < ActiveRecord::Base
       when 1..4 then 'x'
       else 'qu'
       end
-
-    end
-
-    def solve(word, x, y)
-
-      # break, if out of bounds
-      return if x < 0
-      return if x > 3
-      return if y < 0
-      return if y > 3
-
-      # break, if letter already used
-      return if @field[y][x][0] == 1
-
-      word = word + @field[y][x][1]
-
-      # break, if no word starts with 'word%'
-      return if ActiveRecord::Base.connection.raw_connection.exec_prepared('validWordStart', [word, word+'zzzzzzzzzzzzzzzz']).count == 0
-
-      # mark letter as used
-      @field[y][x][0] = 1
-      # only words longer than 2 letters are valid
-      if word.length > 2
-        # add word to solution if it can be found in the word list
-        @words << word unless ActiveRecord::Base.connection.raw_connection.exec_prepared('validWord', [word]).count == 0
-      end
-
-      # create words, using adjacent letters
-      solve(word, x-1, y-1)
-      solve(word, x, y-1)
-      solve(word, x+1, y-1)
-      solve(word, x-1, y)
-      solve(word, x+1, y)
-      solve(word, x-1, y+1)
-      solve(word, x, y+1)
-      solve(word, x+1, y+1)
-      @field[y][x][0] = 0
-
     end
 
 end
