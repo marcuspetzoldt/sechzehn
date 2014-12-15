@@ -42,6 +42,7 @@ class SechzehnController < ApplicationController
       @user = User.new
       @play = false
       session['game_id'] = nil
+      @highscore = {which: 1}
       count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true, 1, 0)
       @scores = ActiveRecord::Base.connection.execute(sql)
     end
@@ -61,13 +62,13 @@ class SechzehnController < ApplicationController
     game_id = game_id - 1
     @words = ActiveRecord::Base.connection.execute(
         "SELECT s.word AS word, array_agg(g.user_id=#{current_user.id}) AS format" +
-        "  FROM solutions s" +
-        "  LEFT JOIN guesses g" +
-        "    ON s.word = g.word" +
-        "   AND s.game_id = g.game_id" +
+        '  FROM solutions s' +
+        '  LEFT JOIN guesses g' +
+        '    ON s.word = g.word' +
+        '   AND s.game_id = g.game_id' +
         " WHERE s.game_id = #{game_id}" +
-        " GROUP BY s.word" +
-        " ORDER BY length(s.word) DESC, s.word ASC"
+        ' GROUP BY s.word' +
+        ' ORDER BY length(s.word) DESC, s.word ASC'
     ).map do |s|
       @tpoints = @tpoints + letter_score[s['word'].length]
       if s['format'] =~ /t/
@@ -185,7 +186,7 @@ class SechzehnController < ApplicationController
     case @highscore[:which]
     when 3
       # daily
-      @subtitle = 'Rangliste für ' + ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'][Date.today.wday]
+      @subtitle = 'Rangliste für ' + %w(Sonntag Montag Dienstag Mittwoch Donnerstag Freitag Samstag)[Date.today.wday]
 
     when 2
       # weekly
@@ -193,7 +194,7 @@ class SechzehnController < ApplicationController
 
     when 1
       # monthly
-      @subtitle = 'Rangliste für ' + ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][Date.today.month-1]
+      @subtitle = 'Rangliste für ' + %w(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)[Date.today.month-1]
 
     else
       # all time
@@ -278,20 +279,20 @@ class SechzehnController < ApplicationController
 
     def init_field
       if session['game_id']
-        letters = Game.find_by(id: session['game_id']).letters.upcase()
+        Game.find_by(id: session['game_id']).letters.upcase
       else
-        letters = 'RPOESECHZEHNDTEE'
+        'RPOESECHZEHNDTEE'
       end
     end
 
     def get_score
       if signed_in?
         guesses = ActiveRecord::Base.connection.execute(
-            "SELECT count(id) AS count, sum(points) AS sum" +
-            "  FROM guesses" +
+            'SELECT count(id) AS count, sum(points) AS sum' +
+            '  FROM guesses' +
             " WHERE user_id = #{current_user.id.to_i}" +
             "   AND game_id = #{session['game_id'].to_i}" +
-            "   AND points > 0"
+            '   AND points > 0'
         )
         [guesses[0]['count'].to_i, guesses[0]['sum'].to_i]
       else
@@ -302,7 +303,7 @@ class SechzehnController < ApplicationController
     def compute_highscore
 
       # cleanup
-      Score.where("user_id=? and score_type=? and created_at<?", current_user.id, Score.score_types[:daily], Date.today-1.month).destroy_all
+      Score.where('user_id=? and score_type=? and created_at<?', current_user.id, Score.score_types[:daily], Date.today-1.month).destroy_all
 
       # Player played a game
       current_user.touch
@@ -341,7 +342,7 @@ class SechzehnController < ApplicationController
               r = s['elo'].to_f - current_user.elo.to_f
               r = ((r > 0) ? 400.0 : -400.0) if r.abs > 400.0
               ea = 1.0 / (1.0 + 10.0 ** (r / 400.0))
-              delta_elo = delta_elo + k(score) * (sa(s['sum'].to_i) - ea)
+              delta_elo = delta_elo + k_factor(score) * (sa(s['sum'].to_i) - ea)
             end
           end
         end
@@ -366,7 +367,7 @@ class SechzehnController < ApplicationController
       end
     end
 
-    def k(me)
+    def k_factor(me)
       # casual player: 30, frequent player: 15, frequent very good player: 10
       if current_user.elo > 2400
         10

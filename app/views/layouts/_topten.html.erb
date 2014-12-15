@@ -1,19 +1,19 @@
 <table class="table table-condensed">
   <colgroup>
-    <col />
+    <col class="autosize"/>
     <col class="fifty-percent"/>
     <col />
   </colgroup>
   <thead>
     <tr>
       <th colspan="2">
-        <% case @which %>
-        <% when '3' %>
+        <% case @highscore[:which] %>
+        <% when 3 %>
           Tagesrangliste
-        <% when '2' %>
+        <% when 2 %>
           Wochenrangliste
-        <% when '1' %>
-          <%= ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][Date.today.month-1] + ' Top 10' %>
+        <% when 1 %>
+          <%= %w(Januar Februar März April Mai Juni Juli August September Oktober November Dezember)[Date.today.month-1] + ' Top 10' %>
         <% else %>
           Ewige Rangliste
         <% end %>
