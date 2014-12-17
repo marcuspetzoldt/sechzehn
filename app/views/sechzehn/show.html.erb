@@ -18,7 +18,7 @@
             <%= render partial: 'chat/chat', collection: @chats %>
           </div>
           <div class="input-group">
-            <span class="input-group-addon"><%= @user.name %></span>
+            <span class="input-group-addon"><div class="username"><%= @user.name %></div></span>
             <%= form.text_field :chat, class: 'form-control' %>
           </div>
         <% end %>
@@ -43,7 +43,7 @@
         </thead>
         <tbody>
           <tr>
-            <td id="username"><%= @user.name %></td>
+            <td id="username"><div class="username"><%= @user.name %></div></td>
             <td id="cwords" class="right"><%= @cwords %></td>
             <td id="cpoints" class="right"><%= @cpoints %></td>
           </tr>
@@ -115,7 +115,7 @@
     <% if @play %>
     <table class="table">
       <colgroup>
-        <col />
+        <col class="smallest-possible" />
         <col class="fifty-percent" />
         <col />
         <col />

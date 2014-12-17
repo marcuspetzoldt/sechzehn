@@ -33,6 +33,12 @@ nav {
   width: 50%;
 }
 
+.username {
+  width: 16em;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+
 .smallest-possible {
   width: 1px;
 }

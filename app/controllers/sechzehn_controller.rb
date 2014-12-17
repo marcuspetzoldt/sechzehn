@@ -31,12 +31,20 @@ class SechzehnController < ApplicationController
     @scores = []
     @chats = Chat.where("created_at > '#{Time.now.utc - 30.minutes}'").order(:created_at)
     if signed_in?
-      # Active player
       @user = current_user
-      session['game_id'] = nil if Game.maximum(:id) > (session['game_id'].to_i+1)
-      @cwords, @cpoints = get_score
-      @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).order(id: :desc).map do |guess|
-        [guess.word, guess.points]
+      if params[:what]
+        @play = false
+        # Highscores of the month
+        @highscore = {which: 1}
+        count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true, 1, 0)
+        @scores = ActiveRecord::Base.connection.execute(sql)
+      else
+        # Active player
+        session['game_id'] = nil if Game.maximum(:id) > (session['game_id'].to_i+1)
+        @cwords, @cpoints = get_score
+        @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).order(id: :desc).map do |guess|
+          [guess.word, guess.points]
+        end
       end
     else
       @user = User.new
