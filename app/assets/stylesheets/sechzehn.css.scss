@@ -19,6 +19,9 @@ nav {
   text-align: center;
 }
 
+table {
+  table-layout: fixed;
+}
 .pagination {
   > li {
     &.active > a {
@@ -29,14 +32,24 @@ nav {
   }
 }
 
-.fifty-percent {
-  width: 50%;
+.score {
+  width: 80px;
+}
+
+.wide-score {
+  width: 120px;
+}
+
+.counter {
+  width: 24px;
+}
+
+.wide-counter {
+  width: 48px;
 }
 
 .username {
-  width: 16em;
   word-wrap: break-word;
-  overflow: hidden;
 }
 
 .smallest-possible {

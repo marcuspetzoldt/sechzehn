@@ -59,8 +59,12 @@ score_table.html('');
     <% tr = "<tr><td class=\"#{fat}\">&nbsp;</td>" %>
   <% end %>
   <% tr = tr + "<td class=\"#{fat}\"><div class=\"username\">#{score['name']}</div></td>" %>
-  <% tr = tr + "<td class=\"right #{fat}\">#{score['count']}&nbsp;/&nbsp;#{@twords > 0 ? (100*score['count'].to_i/@twords).round(0) : 0}%</td>" %>
-  <% tr = tr + "<td class=\"right #{fat}\">#{score['sum']}&nbsp;/&nbsp;#{@tpoints > 0 ? (100*score['sum'].to_i/@tpoints).round(0) : 0}%</td></tr>" %>
+  <% if score['count'].to_i > 0 %>
+    <% tr = tr + "<td class=\"right #{fat}\">#{score['count']}&nbsp;/&nbsp;#{@twords > 0 ? (100*score['count'].to_i/@twords).round(0) : 0}%</td>" %>
+    <% tr = tr + "<td class=\"right #{fat}\">#{score['sum']}&nbsp;/&nbsp;#{@tpoints > 0 ? (100*score['sum'].to_i/@tpoints).round(0) : 0}%</td></tr>" %>
+  <% else %>
+    <% tr = tr + "<td class=\"right #{fat} text-muted\" colspan=\"2\">Zuschauer</td></tr>" %>
+  <% end %>
   score_table
       .hide()
       .append('<%= render inline: tr %>').show(400);

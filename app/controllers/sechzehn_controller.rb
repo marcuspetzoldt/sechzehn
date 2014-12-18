@@ -11,7 +11,8 @@ class SechzehnController < ApplicationController
       # start a new game
       session['game_id'] = game_id
       # update elo without updating updated_at which is used in a nightly job to determine if player is still actively playing
-      current_user.update_column(:elo, current_user.new_elo) if signed_in?
+      # update game_id which is used to recognize spectators
+      current_user.update_columns(elo: current_user.new_elo, game_id: game_id) if signed_in?
       response.headers['X-Refreshed'] = '0'
     else
       # continue a game
@@ -103,14 +104,14 @@ class SechzehnController < ApplicationController
     # All player's score
     @scores = ActiveRecord::Base.connection.execute(
       'SELECT a.id, a.guest, a.name, a.elo, count(b.points), sum(b.points)' +
-      '  FROM guesses b' +
-      '  JOIN users a' +
+      '  FROM users a' +
+      ' LEFT JOIN guesses b' +
       '    ON a.id = b.user_id' +
-      ' WHERE b.game_id = ' + game_id.to_s +
+      '   AND b.game_id = ' + game_id.to_s +
       '   AND b.points > 0' +
+      ' WHERE a.game_id >= ' + game_id.to_s +
       ' GROUP BY a.id ' +
-      'HAVING SUM(b.points) > 0' +
-      ' ORDER BY SUM(b.points) DESC')
+      ' ORDER BY SUM(b.points) DESC NULLS LAST, a.name ASC')
 
     if time_left.to_i > 180
       compute_highscore if @cpoints > 0
