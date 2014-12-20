@@ -267,6 +267,7 @@
     <orderEntry type="library" scope="PROVIDED" name="erubis (v2.7.0, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="execjs (v2.2.2, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="hike (v1.2.3, ruby-2.0.0-p247 (1)) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="httpclient (v2.5.3.3, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="i18n (v0.6.11, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jbuilder (v1.5.3, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jquery-rails (v3.1.2, ruby-2.0.0-p247 (1)) [gem]" level="application" />
@@ -277,6 +278,7 @@
     <orderEntry type="library" scope="PROVIDED" name="multi_json (v1.10.1, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="pg (v0.17.1, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="polyglot (v0.3.5, ruby-2.0.0-p247 (1)) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="pusher (v0.14.2, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack (v1.5.2, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-rewrite (v1.5.0, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-test (v0.6.2, ruby-2.0.0-p247 (1)) [gem]" level="application" />
@@ -287,6 +289,7 @@
     <orderEntry type="library" scope="PROVIDED" name="sass (v3.2.19, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sass-rails (v4.0.4, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sdoc (v0.4.1, ruby-2.0.0-p247 (1)) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="signature (v0.1.7, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sprockets (v2.11.0, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sprockets-rails (v2.0.1, ruby-2.0.0-p247 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="thor (v0.19.1, ruby-2.0.0-p247 (1)) [gem]" level="application" />

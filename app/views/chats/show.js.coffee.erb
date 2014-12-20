@@ -1,0 +1,5 @@
+resizable_chat = $('#resizable-chat')
+resizable_chat
+  .html("<%= j render partial: 'chats', collection: @chats %>")
+  .scrollTop(resizable_chat[0].scrollHeight)
+$('#chat_chat').val('')

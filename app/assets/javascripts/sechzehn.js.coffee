@@ -11,8 +11,19 @@ $(document).on('focus', 'form#form_signin input', () ->
 
 $(document).ready(() ->
   window.___gcfg = {lang: 'de'};
-  window.chatDelta = Math.floor(Math.random()*5)
   showDice(true)
+  Pusher.host = 'ws-eu.pusher.com'
+  Pusher.sockjs_host = 'sockjs-eu.pusher.com'
+
+  pusher = new Pusher('a868129077112f4e9130')
+  channel = pusher.subscribe('sechzehn')
+  channel.bind('chats', (data) ->
+    resizable_chat = $('#resizable-chat')
+    resizable_chat
+      .append('<div><span class="username">' + data.user + '</span>' + data.message + '</div>')
+      .scrollTop(resizable_chat[0].scrollHeight)
+    $('#chat_chat').val('')
+  )
   if $('input#words').length > 0
     sync()
   else
@@ -292,8 +303,6 @@ clock = () ->
           $('input#words').val('Spiel auswerten ...')
           disableGame()
   $('span#timer').html( ((t/60)|0).toString() + ':' + ('0' + (t%60).toString())[-2..])
-  if (window.gameTimer % 5 == window.chatDelta)
-    $.get('/chat/messages')
   return true
 
 sync = () ->
