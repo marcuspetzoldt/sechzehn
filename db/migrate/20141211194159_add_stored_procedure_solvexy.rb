@@ -22,6 +22,7 @@ class AddStoredProcedureSolvexy < ActiveRecord::Migration
             pletters := CONCAT(LEFT(pletters, vxy), '0', RIGHT(pletters, 15 - vxy));
             -- no words beginning with word
             pword := CONCAT(pword, vch);
+            IF vch = 'q' THEN pword := CONCAT(pword, 'u'); END IF;
             SELECT 1 INTO vres FROM words WHERE word BETWEEN pword AND pword || 'zzzzzzzzzzzzzzzz' LIMIT 1;
             IF NOT FOUND THEN RETURN 1; END IF;
 
