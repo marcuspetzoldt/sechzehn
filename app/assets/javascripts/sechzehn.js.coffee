@@ -215,7 +215,10 @@ showDice = (enable) ->
     context.fillStyle = '#999999'
   for i in [0..3]
     for j in [0..3]
-      context.fillText(letters[j*4+i], 35+i*70, 35+j*70 )
+      letter = letters[j*4+i]
+      if letter == 'Q'
+        letter = 'Qu'
+      context.fillText(letter, 35+i*70, 35+j*70 )
   context.closePath()
 
 highlightLetter = (context, x, y, letter) ->
@@ -232,6 +235,8 @@ highlightLetter = (context, x, y, letter) ->
   context.textAlign = 'center'
   context.textBaseline = 'middle'
   context.fillStyle = '#000000'
+  if letter == 'Q'
+    letter = 'Qu'
   context.fillText(letter, 35+x*70, 35+y*70 )
   context.closePath()
 
@@ -273,7 +278,10 @@ showSnake = (context, letters) ->
   context.textBaseline = 'middle'
   context.fillStyle = '#000000'
   for i in [0..window.snake.length-1]
-    context.fillText(letters[window.snake[i][1]*4+window.snake[i][0]], 35+window.snake[i][0]*70, 35+window.snake[i][1]*70)
+    letter = letters[window.snake[i][1]*4+window.snake[i][0]]
+    if letter == 'Q'
+      letter = 'Qu'
+    context.fillText(letter, 35+window.snake[i][0]*70, 35+window.snake[i][1]*70)
   context.closePath()
 
 clock = () ->
