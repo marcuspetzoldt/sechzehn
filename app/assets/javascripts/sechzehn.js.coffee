@@ -15,7 +15,8 @@ $(document).ready(() ->
   Pusher.host = 'ws-eu.pusher.com'
   Pusher.sockjs_host = 'sockjs-eu.pusher.com'
 
-  pusher = new Pusher('b13ef993a4c31610988e')
+  pusher_key = $('#resizable-chat').attr('data-pusher-key')
+  pusher = new Pusher(pusher_key)
   channel = pusher.subscribe('sechzehn')
   channel.bind('chats', (data) ->
     resizable_chat = $('#resizable-chat')
