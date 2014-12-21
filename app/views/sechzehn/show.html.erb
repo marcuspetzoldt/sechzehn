@@ -48,19 +48,20 @@
             <td id="cpoints" class="right"><%= @cpoints %></td>
           </tr>
           <tr>
-            <td colspan="3"></td>
+            <td colspan="3">
+              <div id="guesses">
+                <% @guesses.each do |guess| %>
+                  <% if guess[1] > 0 %>
+                    <span id="word_<%= guess[0] %>" style="font-size: <%= 100 + (guess[1]-1)*4 %>%"> <%= guess[0] %>:<%= guess[1] %></span>
+                  <% else %>
+                    <span id="word_<%= guess[0] %>" class="sechzehn-red"> <%= guess[0] %></span>
+                  <% end %>
+                <% end %>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
-      <div id="guesses">
-        <% @guesses.each do |guess| %>
-          <% if guess[1] > 0 %>
-            <span id="word_<%= guess[0] %>" style="font-size: <%= 100 + (guess[1]-1)*4 %>%"> <%= guess[0] %>:<%= guess[1] %></span>
-          <% else %>
-            <span id="word_<%= guess[0] %>" class="sechzehn-red"> <%= guess[0] %></span>
-          <% end %>
-        <% end %>
-      </div>
     </div>
     <div id="solutiondiv" class="sechzehn-hidden">
       <div style="padding-top: 8px; padding-left: 8px"><strong>Lösung</strong></div>

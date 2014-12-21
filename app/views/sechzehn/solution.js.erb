@@ -52,7 +52,7 @@ score_table.html('');
 <% old_score = 0 %>
 <% @scores.each_with_index do |score, i| %>
   <% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
-  <% if score['sum'] != old_score %>
+  <% if score['sum'] != old_score and score['count'].to_i > 0 %>
     <% old_score = score['sum'] %>
     <% tr = "<tr><td class=\"#{fat}\">#{i+1}.</td>" %>
   <% else %>
