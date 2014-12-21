@@ -75,9 +75,6 @@ Sechzehn::Application.configure do
   # Disable automatic flushing of the log to improve performance.
   # config.autoflush_log = false
 
-  # Prevent duplicate log entries caused by 12_factor gem in production.
-  config.logger = Logger.new('/dev/null')
-
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
 end

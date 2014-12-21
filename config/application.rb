@@ -25,5 +25,11 @@ module Sechzehn
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     config.i18n.enforce_available_locales = false
     config.i18n.default_locale = :de
+
+    # Prevent duplicate log entries caused by 12_factor gem in production.
+    if Rails.env.production?
+      config.logger = Logger.new('/dev/null')
+    end
+
   end
 end

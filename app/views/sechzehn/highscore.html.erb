@@ -43,7 +43,7 @@
             <td class="<%= fat %>">&nbsp;</td>
           <% end %>
           <td class="<%= fat %>"><div class="username"><%= score['name'] %></div></td>
-          <td class="<%= fat %>"><%= score['@highscore[:count]'] %></td>
+          <td class="<%= fat %>"><%= score['count'] %></td>
           <td class="<%= fat %>"><%= score['cwords'].to_f.round(1) %> (<%= score['pwords'].to_f.round(1) %>%)</td>
           <td class="<%= fat %>"><%= score['cpoints'].to_f.round(1) %> (<%= score['ppoints'].to_f.round(1) %>%)</td>
           <td class="<%= fat %>"><%= score['elo'] %></td>
