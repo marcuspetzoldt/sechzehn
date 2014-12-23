@@ -111,7 +111,7 @@ class SechzehnController < ApplicationController
       '   AND b.points > 0' +
       ' WHERE a.game_id >= ' + game_id.to_s +
       ' GROUP BY a.id ' +
-      ' ORDER BY SUM(b.points) DESC NULLS LAST, a.name ASC')
+      ' ORDER BY SUM(b.points) DESC NULLS LAST, count(b.points) DESC NULLS LAST, a.name ASC')
 
     if time_left.to_i > 180
       compute_highscore if @cpoints > 0
