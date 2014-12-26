@@ -20,6 +20,7 @@ class Game < ActiveRecord::Base
         vowels = self.letters.count('aeiou')
         n = n + 1
       end
+      self.letters = 'qereinneubleaarr'
       Rails.logger.info("GAMECREATION: Roll Dice End after #{n} tries")
     end
 

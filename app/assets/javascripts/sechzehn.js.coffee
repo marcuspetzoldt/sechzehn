@@ -52,7 +52,10 @@ $(document).on('mousedown touchstart', 'canvas#field', (event) ->
       y = Math.floor((event.clientY - $(this).offset().top) / 70)
     context = this.getContext('2d')
     letters = $(this).attr('data-letters')
-    $('input#words').val(letters[y*4+x])
+    if letters[y*4+x] == 'Q'
+      $('input#words').val('QU')
+    else
+      $('input#words').val(letters[y*4+x])
     window.snake = [[x, y]]
     window.mouseDown = true
     showDice(true)
@@ -92,10 +95,16 @@ $(document).on('mousemove touchmove', 'canvas#field', (event) ->
           unless truncate
             if backspace
               window.snake.pop()
-              $('input#words').val(word[0..-2])
+              if word[word.length-2..-1] == 'QU'
+                $('input#words').val(word[0..-3])
+              else
+                $('input#words').val(word[0..-2])
             else
               window.snake.push(new Array(x,y))
-              $('input#words').val(word + letters[y*4+x])
+              if letters[y*4+x] == 'Q'
+                $('input#words').val(word + 'QU')
+              else
+                $('input#words').val(word + letters[y*4+x])
 
             context = this.getContext('2d')
             showDice(true)
