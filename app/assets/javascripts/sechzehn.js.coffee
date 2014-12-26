@@ -23,7 +23,6 @@ $(document).ready(() ->
     resizable_chat
       .append('<div><span class="username">' + data.user + '</span>' + data.message + '</div>')
       .scrollTop(resizable_chat[0].scrollHeight)
-    $('#chat_chat').val('')
   )
   if $('input#words').length > 0
     sync()
@@ -37,6 +36,9 @@ $(document).ready(() ->
         highlightLetter(context, x, y, letters[y*4+x])
 )
 
+$(document).on('submit', 'form#chat_form', (event) ->
+  $('input#chat_chat').val('')
+)
 $(document).on('mousedown touchstart', 'canvas#field', (event) ->
   event.preventDefault()
   if $('input#words').length > 0 and $('input#words:disabled').length == 0

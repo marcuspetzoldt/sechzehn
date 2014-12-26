@@ -13,7 +13,7 @@
     <% end %>
     <% if @play %>
       <div id="chat">
-        <%= form_for :chat, remote: true, url: chats_path do |form| %>
+        <%= form_for :chat, remote: true, url: chats_path, html: { id: 'chat_form' } do |form| %>
           <div id="resizable-chat" data-pusher-key="<%= Pusher.key %>">
             <%= render @chats %>
           </div>
