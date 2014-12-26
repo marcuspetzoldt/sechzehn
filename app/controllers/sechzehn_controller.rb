@@ -145,8 +145,18 @@ class SechzehnController < ApplicationController
     if time_left <= 0
       Rails.logger.info('GAMECREATION: Start')
       if Lock.find_by(lock: 2).nil?
-        g = Game.create
-        time_left = 210 - (Time.now - g.updated_at)
+        begin
+          l = Lock.create
+          g = Game.create
+          time_left = 210 - (Time.now - g.updated_at)
+          l.destroy
+        rescue ActiveRecord::RecordNotUnique
+          Rails.logger.info("UNIQUE CONSTRAINT VIOLATION")
+          # Another player already computes the next game.
+          # Sync again
+        ensure
+          l.destroy unless l.nil?
+        end
       else
         render text: 'maintenance'
         return

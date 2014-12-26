@@ -12,6 +12,7 @@ gem 'i18n'
 gem 'rack-rewrite'
 gem 'sprockets', '2.11.0'
 gem 'pusher'
+gem 'puma'
 
 group :production do
   gem 'rails_12factor'
