@@ -360,7 +360,7 @@ startGame = () ->
     $('input#words')
       .removeAttr('disabled')
       .val('')
-      .focus()
+    $('input#words').focus() unless $('input#chat_chat').is(':focus')
     getSolution()
   )
 
