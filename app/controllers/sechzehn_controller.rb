@@ -143,13 +143,14 @@ class SechzehnController < ApplicationController
     game_id = Game.maximum(:id)
     time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
     if time_left <= 0
-      Rails.logger.info('GAMECREATION: Start')
       if Lock.find_by(lock: 2).nil?
         begin
           l = Lock.create
+          Rails.logger.info('GAMECREATION: Start')
           g = Game.create
           time_left = 210 - (Time.now - g.updated_at)
           l.destroy
+          Rails.logger.info('GAMECREATION: End')
         rescue ActiveRecord::RecordNotUnique
           Rails.logger.info("UNIQUE CONSTRAINT VIOLATION")
           # Another player already computes the next game.
@@ -161,7 +162,6 @@ class SechzehnController < ApplicationController
         render text: 'maintenance'
         return
       end
-      Rails.logger.info('GAMECREATION: End')
     end
     render text: time_left.to_s
   end
