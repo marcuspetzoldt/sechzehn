@@ -57,6 +57,7 @@ GEM
     mime-types (1.25.1)
     minitest (4.7.5)
     multi_json (1.10.1)
+    newrelic_rpm (3.9.8.273)
     pg (0.17.1-x86-mingw32)
     polyglot (0.3.5)
     puma (2.10.2)
@@ -133,6 +134,7 @@ DEPENDENCIES
   i18n
   jbuilder (~> 1.2)
   jquery-rails
+  newrelic_rpm
   pg
   puma
   pusher
