@@ -138,6 +138,7 @@ class SechzehnController < ApplicationController
     @guess[:cwords], @guess[:cpoints] = get_score
   end
 
+=begin
   def sync
     # Most recent game is older than 210 seconds (180 game + 30 pause)
     game_id = Game.maximum(:id)
@@ -162,6 +163,41 @@ class SechzehnController < ApplicationController
         render text: 'maintenance'
         return
       end
+    end
+    render text: time_left.to_s
+  end
+=end
+
+  def sync
+    if Lock.find_by(lock: 2).nil?
+      if Lock.find_by(lock: 1).nil?
+        game_id = Game.maximum(:id)
+        time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
+        if time_left <= 0
+          begin
+            l = Lock.create
+            Rails.logger.info('GAMECREATION: Start')
+            g = Game.create
+            time_left = 210 - (Time.now - g.updated_at)
+            Rails.logger.info('GAMECREATION: End')
+            l.destroy
+          rescue ActiveRecord::RecordNotUnique
+            # Another player already computes the next game.
+            # Sync again
+            time_left = -1
+            Rails.logger.info("UNIQUE CONSTRAINT VIOLATION")
+          ensure
+            l.destroy unless l.nil?
+          end
+        end
+      else
+        # Another player computes the next game.
+        # Sync again.
+        time_left = -1
+      end
+    else
+      render text: 'maintenance'
+      return
     end
     render text: time_left.to_s
   end
