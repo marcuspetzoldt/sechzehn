@@ -131,10 +131,10 @@ class SechzehnController < ApplicationController
     end
     if Guess.find_by(user_id: current_user.id, game_id: game_id, word: @guess[:word]).nil?
       Guess.create(user_id: current_user.id, game_id: game_id, word: @guess[:word], points: @guess[:points])
+      @guess[:cwords], @guess[:cpoints] = get_score
     else
       @guess = nil
     end
-    @guess[:cwords], @guess[:cpoints] = get_score
   end
 
 =begin

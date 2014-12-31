@@ -134,7 +134,7 @@ $(document).on('keydown', 'input#words', (event) ->
     w = this.value
     if event.which == 13
       if w.length > 2
-        if $('span#word_' + w).length == 0
+        if $('span#word_' + w.toLocaleLowerCase()).length == 0
           if window.snake.length > 0
             $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
             $.ajax({ url: '/guess', data: 'words=' + w })
