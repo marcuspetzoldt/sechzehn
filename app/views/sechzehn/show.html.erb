@@ -14,8 +14,9 @@
     <% if @play %>
       <div id="chat">
         <%= form_for :chat, remote: true, url: chats_path, html: { id: 'chat_form' } do |form| %>
+          <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
           <div id="resizable-chat" data-pusher-key="<%= Pusher.key %>">
-            <%= render @chats %>
+            <%= render Chat.get_newest_messages %>
           </div>
           <div class="input-group">
             <span class="input-group-addon">Chat&nbsp;&gt;</span>
