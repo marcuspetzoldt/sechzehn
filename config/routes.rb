@@ -1,5 +1,11 @@
 Sechzehn::Application.routes.draw do
+  get "errors/file_not_found"
+  get "errors/unprocessable"
+  get "errors/internal_server_error"
   root 'sechzehn#show'
+  match '/404', to: 'errors#file_not_found', via: :all
+  match '/422', to: 'errors#unprocessable', via: :all
+  match '/500', to: 'errors#internal_server_error', via: :all
   resources :users
   get '/guess', to: 'sechzehn#guess'
   get '/solution', to: 'sechzehn#solution'
