@@ -16,6 +16,8 @@
         <%= form_for :chat, remote: true, url: chats_path, html: { id: 'chat_form' } do |form| %>
           <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
           <div id="resizable-chat" data-pusher-key="<%= Pusher.key %>">
+            <script type="text/javascript" src="http://www.skypeassets.com/i/scom/js/skype-uri.js"></script>
+            <em>Wer bei der Pflege des Wörterbuchs mitmachen will, kann sich per <a href="skype:Amy.Soike?chat">Skype bei Jolly Roger</a> melden.</em>
             <%= render Chat.get_newest_messages %>
           </div>
           <div class="input-group">
