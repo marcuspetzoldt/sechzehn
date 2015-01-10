@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
 
   before_action :maintenance?
+  rescue_from ActionController::InvalidAuthenticityToken, with: :please_enable_cookies
 
   def new
     @user = User.new
@@ -75,6 +76,10 @@ class UsersController < ApplicationController
 
   def User.encrypt(token)
     Digest::SHA1.hexdigest(token.to_s)
+  end
+
+  def please_enable_cookies
+    redirect_to please_enable_cookies_path
   end
 
   private

@@ -6,6 +6,7 @@ Sechzehn::Application.routes.draw do
   match '/404', to: 'errors#file_not_found', via: :all
   match '/422', to: 'errors#unprocessable', via: :all
   match '/500', to: 'errors#internal_server_error', via: :all
+  match '/please_enable_cookies', to: 'errors#please_enable_cookies', via: :all
   resources :users
   get '/guess', to: 'sechzehn#guess'
   get '/solution', to: 'sechzehn#solution'
