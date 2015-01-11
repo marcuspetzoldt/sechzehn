@@ -343,8 +343,8 @@ getSolution = () ->
 startGame = () ->
   if window.maintenance
     clearInterval(window.gameInterval) if window.gameInterval
-    alert("Wartungsarbeiten - Sechzehn kann einige Minuten nicht gespielt werden.")
-    window.Location.href='/'
+#   alert("Wartungsarbeiten - Sechzehn kann einige Minuten nicht gespielt werden.")
+    window.Location.href='/maintenance'
     window.location.reload()
     return
   $('canvas#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->

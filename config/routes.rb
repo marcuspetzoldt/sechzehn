@@ -7,6 +7,7 @@ Sechzehn::Application.routes.draw do
   match '/422', to: 'errors#unprocessable', via: :all
   match '/500', to: 'errors#internal_server_error', via: :all
   match '/please_enable_cookies', to: 'errors#please_enable_cookies', via: :all
+  match '/maintenance', to: 'errors#maintenance', via: :all
   resources :users
   get '/guess', to: 'sechzehn#guess'
   get '/solution', to: 'sechzehn#solution'
@@ -21,7 +22,6 @@ Sechzehn::Application.routes.draw do
   get '/highscore/words', to: 'sechzehn#highscore_words'
   get '/highscore/points/percent', to: 'sechzehn#highscore_points_percent'
   get '/highscore/words/percent', to: 'sechzehn#highscore_words_percent'
-  get '/maintenance', to: 'sechzehn#maintenance'
   match '/signout', to: 'users#signout', via: 'delete'
   match '/signup', to: 'users#signup', via: 'get'
   get "sitemap.xml", to: 'sitemap#index', defaults: { format: 'xml' }
