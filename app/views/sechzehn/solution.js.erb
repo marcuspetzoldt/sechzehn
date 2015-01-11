@@ -1,3 +1,8 @@
+<% if current_user.nil? %>
+alert("Das Session-Cookie ist nicht mehr vorhanden, oder kann nicht gelesen werden.");
+window.Location.href='/500';
+window.location.reload();
+<% end %>
 <% points = 0 %>
 solution_div = $('div#solutiondiv');
 guess_div = $('div#guessesdiv');
@@ -47,25 +52,27 @@ guess_div = $('div#guessesdiv');
   solution_div.hide();
   guess_div.show();
 <% end %>
-score_table = $('tbody#score');
-score_table.html('');
-<% old_score = 0 %>
-<% @scores.each_with_index do |score, i| %>
-  <% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
-  <% if score['sum'] != old_score and score['count'].to_i > 0 %>
-    <% old_score = score['sum'] %>
-    <% tr = "<tr><td class=\"#{fat}\">#{i+1}.</td>" %>
-  <% else %>
-    <% tr = "<tr><td class=\"#{fat}\">&nbsp;</td>" %>
+<% if @scores %>
+  score_table = $('tbody#score');
+  score_table.html('');
+  <% old_score = 0 %>
+  <% @scores.each_with_index do |score, i| %>
+    <% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
+    <% if score['sum'] != old_score and score['count'].to_i > 0 %>
+      <% old_score = score['sum'] %>
+      <% tr = "<tr><td class=\"#{fat}\">#{i+1}.</td>" %>
+    <% else %>
+      <% tr = "<tr><td class=\"#{fat}\">&nbsp;</td>" %>
+    <% end %>
+    <% tr = tr + "<td class=\"#{fat}\"><div class=\"username\">#{score['name']}</div></td>" %>
+    <% if score['count'].to_i > 0 %>
+      <% tr = tr + "<td class=\"right #{fat}\">#{score['count']}&nbsp;/&nbsp;#{@twords > 0 ? (100*score['count'].to_i/@twords).round(0) : 0}%</td>" %>
+      <% tr = tr + "<td class=\"right #{fat}\">#{score['sum']}&nbsp;/&nbsp;#{@tpoints > 0 ? (100*score['sum'].to_i/@tpoints).round(0) : 0}%</td></tr>" %>
+    <% else %>
+      <% tr = tr + "<td class=\"right #{fat} text-muted\" colspan=\"2\">Zuschauer</td></tr>" %>
+    <% end %>
+    score_table
+        .hide()
+        .append('<%= render inline: tr %>').show(400);
   <% end %>
-  <% tr = tr + "<td class=\"#{fat}\"><div class=\"username\">#{score['name']}</div></td>" %>
-  <% if score['count'].to_i > 0 %>
-    <% tr = tr + "<td class=\"right #{fat}\">#{score['count']}&nbsp;/&nbsp;#{@twords > 0 ? (100*score['count'].to_i/@twords).round(0) : 0}%</td>" %>
-    <% tr = tr + "<td class=\"right #{fat}\">#{score['sum']}&nbsp;/&nbsp;#{@tpoints > 0 ? (100*score['sum'].to_i/@tpoints).round(0) : 0}%</td></tr>" %>
-  <% else %>
-    <% tr = tr + "<td class=\"right #{fat} text-muted\" colspan=\"2\">Zuschauer</td></tr>" %>
-  <% end %>
-  score_table
-      .hide()
-      .append('<%= render inline: tr %>').show(400);
 <% end %>

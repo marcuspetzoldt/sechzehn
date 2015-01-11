@@ -58,6 +58,9 @@ class SechzehnController < ApplicationController
   end
 
   def solution
+
+    return if current_user.nil?
+
     @tpoints = 0
     @twords = 0
     @cpoints = 0
@@ -121,6 +124,9 @@ class SechzehnController < ApplicationController
   end
 
   def guess
+
+    return if current_user.nil?
+
     game_id = Game.maximum(:id)
     @guess = {}
     @guess[:word] = params['words'].downcase

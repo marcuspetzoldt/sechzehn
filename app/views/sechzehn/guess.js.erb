@@ -9,3 +9,8 @@
   $('td#cwords').html('<%= @guess[:cwords] %>');
   $('td#cpoints').html('<%= @guess[:cpoints] %>');
 <% end %>
+<% if current_user.nil? %>
+  alert("Das Session-Cookie ist nicht mehr vorhanden, oder kann nicht gelesen werden.");
+  window.Location.href='/';
+  window.location.reload();
+<% end %>
