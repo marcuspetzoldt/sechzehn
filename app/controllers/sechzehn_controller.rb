@@ -143,36 +143,6 @@ class SechzehnController < ApplicationController
     end
   end
 
-=begin
-  def sync
-    # Most recent game is older than 210 seconds (180 game + 30 pause)
-    game_id = Game.maximum(:id)
-    time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
-    if time_left <= 0
-      if Lock.find_by(lock: 2).nil?
-        begin
-          l = Lock.create
-          Rails.logger.info('GAMECREATION: Start')
-          g = Game.create
-          time_left = 210 - (Time.now - g.updated_at)
-          l.destroy
-          Rails.logger.info('GAMECREATION: End')
-        rescue ActiveRecord::RecordNotUnique
-          Rails.logger.info("UNIQUE CONSTRAINT VIOLATION")
-          # Another player already computes the next game.
-          # Sync again
-        ensure
-          l.destroy unless l.nil?
-        end
-      else
-        render text: 'maintenance'
-        return
-      end
-    end
-    render text: time_left.to_s
-  end
-=end
-
   def sync
     if Lock.find_by(lock: 2).nil?
       if Lock.find_by(lock: 1).nil?
