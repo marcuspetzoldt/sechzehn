@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 20141218153113) do
 
   create_table "chats", force: true do |t|
     t.integer  "user_id"
-    t.text     "chats"
+    t.text     "chat"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 20141218153113) do
   end
 
   add_index "words", ["word"], name: "index_words_on_word", unique: true, using: :btree
+  add_index "words", ["word"], name: "index_words_on_word_wordlength", using: :btree
 
   create_table "words_new", force: true do |t|
     t.string "word"

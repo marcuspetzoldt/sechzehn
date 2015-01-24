@@ -36,6 +36,26 @@ $(document).ready(() ->
         highlightLetter(context, x, y, letters[y*4+x])
 )
 
+$(document).on('mousedown touchstart', 'div.username', () ->
+  $('span.guess').not('span.'+$(this).attr('data-uid')).fadeTo(400, 0)
+)
+
+$(document).on('mouseup touchend', 'div.username', () ->
+  $('span.guess').fadeTo(0, 1)
+)
+
+$(document).on('mousedown touchstart', 'span.guess', () ->
+  guessed_word = $(this)
+  $('div.username').each( () ->
+    unless guessed_word.hasClass($(this).attr('data-uid'))
+      $(this).hide()
+  )
+)
+
+$(document).on('mouseup touchend', 'span.guess', () ->
+  $('div.username').show()
+)
+
 $(document).on('submit', 'form#chat_form', (event) ->
   $('input#chat_chat').val('')
 )
@@ -44,12 +64,13 @@ $(document).on('mousedown touchstart', 'canvas#field', (event) ->
   if $('input#words').length > 0 and $('input#words:disabled').length == 0
     x = 0
     y = 0
+    rect = this.getBoundingClientRect()
     if event.originalEvent.touches
-      x = Math.floor((event.originalEvent.touches[0].clientX - $(this).offset().left) / 70)
-      y = Math.floor((event.originalEvent.touches[0].clientY - $(this).offset().top) / 70)
+      x = Math.floor((event.originalEvent.touches[0].clientX - rect.left) / 70)
+      y = Math.floor((event.originalEvent.touches[0].clientY - rect.top) / 70)
     else
-      x = Math.floor((event.clientX - $(this).offset().left) / 70)
-      y = Math.floor((event.clientY - $(this).offset().top) / 70)
+      x = Math.floor((event.clientX - rect.left) / 70)
+      y = Math.floor((event.clientY - rect.top) / 70)
     context = this.getContext('2d')
     letters = $(this).attr('data-letters')
     if letters[y*4+x] == 'Q'
@@ -68,12 +89,13 @@ $(document).on('mousemove touchmove', 'canvas#field', (event) ->
   if window.mouseDown
     dX = 0
     dY = 0
+    rect = this.getBoundingClientRect()
     if event.originalEvent.touches
-      dX = event.originalEvent.touches[0].clientX - $(this).offset().left
-      dY = event.originalEvent.touches[0].clientY - $(this).offset().top
+      dX = event.originalEvent.touches[0].clientX - rect.left
+      dY = event.originalEvent.touches[0].clientY - rect.top
     else
-      dX = event.clientX - $(this).offset().left
-      dY = event.clientY - $(this).offset().top
+      dX = event.clientX - rect.left
+      dY = event.clientY - rect.top
     dXZone = Math.abs(dX % 70)
     dYZone = Math.abs(dY % 70)
     x = Math.floor(dX / 70)

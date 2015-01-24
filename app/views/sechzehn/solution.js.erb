@@ -36,12 +36,7 @@ guess_div = $('div#guessesdiv');
           <% out = "<span class=\"pointbadge\">11&nbsp;&#9654;</span> " %>
         <% end %>
       <% end %>
-    <% case w[3] %>
-      <% when 0 then out + "<span class=\"noone\">#{w[0]}</span>" %>
-      <% when 1 then out + "<span class=\"someone\">#{w[0]}</span>" %>
-      <% when 2 then out + "<span class=\"self\">#{w[0]}</span>" %>
-      <% else out + "<span class=\"onlyself\">#{w[0]}</span>" %>
-    <% end %>
+    <% out + "<span class=\"#{w[3]}\">#{w[0]}</span>" %>
   <% end).join(' ') %>
   $('div#solution').html('<%= render inline: html %>');
   $('td#cwords').html('<%= "#{@cwords}" %>');
@@ -64,7 +59,7 @@ guess_div = $('div#guessesdiv');
     <% else %>
       <% tr = "<tr><td class=\"#{fat}\">&nbsp;</td>" %>
     <% end %>
-    <% tr = tr + "<td class=\"#{fat}\"><div class=\"username\">#{score['name']}</div></td>" %>
+    <% tr = tr + "<td class=\"#{fat}\"><div class=\"username usr#{score['id']}\" data-uid=\"usr#{score['id']}\">#{score['name']}</div></td>" %>
     <% if score['count'].to_i > 0 %>
       <% tr = tr + "<td class=\"right #{fat}\">#{score['count']}&nbsp;/&nbsp;#{@twords > 0 ? (100*score['count'].to_i/@twords).round(0) : 0}%</td>" %>
       <% tr = tr + "<td class=\"right #{fat}\">#{score['sum']}&nbsp;/&nbsp;#{@tpoints > 0 ? (100*score['sum'].to_i/@tpoints).round(0) : 0}%</td></tr>" %>

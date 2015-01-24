@@ -50,6 +50,7 @@ table {
 
 .username {
   word-wrap: break-word;
+  cursor: pointer;
 }
 
 .smallest-possible {
@@ -227,6 +228,15 @@ div#guess {
   background-color: #ffffa0;
   padding-left: 1px;
   padding-right: 1px;
+}
+
+.guess {
+  cursor: pointer;
+}
+
+div#solutionhintdiv {
+  margin-bottom: 8px;
+  padding: 4px;
 }
 
 div#guesses, div#solution {

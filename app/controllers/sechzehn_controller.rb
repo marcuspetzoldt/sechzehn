@@ -72,7 +72,7 @@ class SechzehnController < ApplicationController
     time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
     game_id = game_id - 1
     @words = ActiveRecord::Base.connection.execute(
-        "SELECT s.word AS word, array_agg(g.user_id=#{current_user.id}) AS format" +
+        "SELECT s.word AS word, array_agg(g.user_id) AS format" +
         '  FROM solutions s' +
         '  LEFT JOIN guesses g' +
         '    ON s.word = g.word' +
@@ -82,21 +82,29 @@ class SechzehnController < ApplicationController
         ' ORDER BY length(s.word) DESC, s.word ASC'
     ).map do |s|
       @tpoints = @tpoints + letter_score[s['word'].length]
-      if s['format'] =~ /t/
+      s['format'].gsub!(/[\{\,]/,' usr')
+      s['format'].sub!(/}/, ' ')
+      if s['format'] =~ / usr#{current_user.id} /
         @cwords = @cwords + 1
         @cpoints = @cpoints + letter_score[s['word'].length]
-        if s['format'] =~ /f/
-          format = 2
+        if s['format'] =~ /. ./
+          # Player and others found the word
+          format = 'self '
         else
-          format = 3
+          # Only player found the word
+          format = 'onlyself '
         end
       else
-        if s['format'] =~ /f/
-          format = 1
+        if s['format'] =~ /NULL/
+          # Noone found the word
+          format = 'noone '
+          s['format'] = ''
         else
-          format = 0
+          # Someone found the word
+          format = 'someone '
         end
       end
+      format = ('guess ' + format + s['format']).chop
       [s['word'], s['word'].length, letter_score[s['word'].length], format]
     end
 
