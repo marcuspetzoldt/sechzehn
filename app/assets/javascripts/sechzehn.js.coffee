@@ -37,11 +37,11 @@ $(document).ready(() ->
 )
 
 $(document).on('mousedown touchstart', 'div.username', () ->
-  $('span.guess').not('span.'+$(this).attr('data-uid')).fadeTo(400, 0)
+  $('span.guess').not('span.'+$(this).attr('data-uid')).hide()
 )
 
 $(document).on('mouseup touchend', 'div.username', () ->
-  $('span.guess').fadeTo(0, 1)
+  $('span.guess').show()
 )
 
 $(document).on('mousedown touchstart', 'span.guess', () ->
