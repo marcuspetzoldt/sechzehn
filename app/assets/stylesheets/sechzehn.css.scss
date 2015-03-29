@@ -336,3 +336,27 @@ div#solutionheader {
     }
   }
 }
+
+.donate {
+  padding: 12px 8px 12px 8px;
+  &:hover {
+    background-color: $sechzehn-bkgnd;
+  }
+  & button {
+    background-color: #ffd696 !important;
+    color: #003087;
+    font-style: italic;
+    font-weight: bold;
+    border: #ff9933 1px solid;
+    padding: 2px 4px 2px 4px;
+    border-radius: 12px;
+    background: -webkit-linear-gradient(#ffd696, #ffefd3);
+    background: -o-linear-gradient(#ffd696, #ffefd3);
+    background: -moz-linear-gradient(#ffd696, #ffefd3);
+    background: linear-gradient(#ffd696, #ffefd3);
+  }
+}
+
+span.pay {color: #003087; font-weight: normal;}
+span.pal {color: #009cde; font-weight: normal;}
+
