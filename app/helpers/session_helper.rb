@@ -8,6 +8,7 @@ module SessionHelper
       cookies.permanent[:remember_token] = { value: remember_token, domain: :all }
       user.update_attribute(:remember_token, User.encrypt(remember_token))
     end
+    session[:fail_counter] = 0
     self.current_user = user
   end
 

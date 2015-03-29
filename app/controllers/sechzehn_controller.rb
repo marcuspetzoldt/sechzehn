@@ -140,7 +140,17 @@ class SechzehnController < ApplicationController
     @guess[:word] = params['words'].downcase
     if Solution.find_by(game_id: game_id, word: @guess[:word]).nil?
       @guess[:points] = 0
+      # Tar pit to hamper brute force attack
+      if (session[:fail_counter] += 1) > 5
+        if session[:fail_counter] > 14
+          delay = 1.0
+        else
+          delay = ((session[:fail_counter])-5).to_f * 0.1
+        end
+        sleep delay
+      end
     else
+      session[:fail_counter] = 0
       @guess[:points] = letter_score[@guess[:word].length]
     end
     if Guess.find_by(user_id: current_user.id, game_id: game_id, word: @guess[:word]).nil?
