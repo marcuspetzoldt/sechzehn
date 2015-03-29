@@ -140,7 +140,12 @@ $(document).on('mouseup touchend', 'body', () ->
     if w.length > 2
       if $('span#word_' + w).length == 0
         $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
-        $.ajax({ url: '/guess', data: 'words=' + w })
+        $.ajax(
+          url: '/guess',
+          type: 'POST',
+          beforeSend: (xhr) -> xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content')),
+          data: 'words=' + w
+        )
     $('input#words').val('')
     window.mouseDown = 0
     showDice(true)
@@ -159,7 +164,12 @@ $(document).on('keydown', 'input#words', (event) ->
         if $('span#word_' + w.toLocaleLowerCase()).length == 0
           if window.snake.length > 0
             $('div#guesses').prepend(' <span id="word_' + w + '">' + w + '</span>')
-            $.ajax({ url: '/guess', data: 'words=' + w })
+            $.ajax(
+              url: '/guess',
+              type: 'POST',
+              beforeSend: (xhr) -> xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content')),
+              data: 'words=' + w
+            )
           else
             $('div#guesses').prepend(' <span id="word_' + w + '" style="color:red">' + w + '</span>')
         $('input#words').val('')

@@ -9,7 +9,7 @@ Sechzehn::Application.routes.draw do
   match '/please_enable_cookies', to: 'errors#please_enable_cookies', via: :all
   match '/maintenance', to: 'errors#maintenance', via: :all
   resources :users
-  get '/guess', to: 'sechzehn#guess'
+  post '/guess', to: 'sechzehn#guess'
   get '/solution', to: 'sechzehn#solution'
   get '/new', to: 'sechzehn#new'
   get '/sync', to: 'sechzehn#sync'
