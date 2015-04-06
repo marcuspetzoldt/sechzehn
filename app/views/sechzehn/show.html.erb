@@ -11,7 +11,7 @@
         </div>
       </div>
     <% end %>
-    <% if @play %>
+    <% if @play and current_user.guest.nil? %>
       <div id="chat">
         <%= form_for :chat, remote: true, url: chats_path, html: { id: 'chat_form' } do |form| %>
           <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
