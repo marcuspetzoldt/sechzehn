@@ -10,6 +10,7 @@ class SechzehnController < ApplicationController
     if game_id != session['game_id'].to_i
       # start a new game
       session['game_id'] = game_id
+      session[:fail_counter] = 0
       # update elo without updating updated_at which is used in a nightly job to determine if player is still actively playing
       # update game_id which is used to recognize spectators
       current_user.update_columns(elo: current_user.new_elo, game_id: game_id) if signed_in?
@@ -133,13 +134,11 @@ class SechzehnController < ApplicationController
 
   def guess
 
-    return if current_user.nil?
-
     game_id = Game.maximum(:id)
     @guess = {}
     @guess[:word] = params['words'].downcase
+    @guess[:points] = 0
     if Solution.find_by(game_id: game_id, word: @guess[:word]).nil?
-      @guess[:points] = 0
       # Tar pit to hamper brute force attack
       if (session[:fail_counter] += 1) > 5
         if session[:fail_counter] > 14
