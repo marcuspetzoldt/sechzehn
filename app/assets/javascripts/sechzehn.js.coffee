@@ -12,10 +12,10 @@ $(document).on('focus', 'form#form_signin input', () ->
 $(document).ready(() ->
   window.___gcfg = {lang: 'de'};
   showDice(true)
-  Pusher.host = 'ws-eu.pusher.com'
-  Pusher.sockjs_host = 'sockjs-eu.pusher.com'
 
   if $('div#chat').length > 0
+    Pusher.host = 'ws-eu.pusher.com'
+    Pusher.sockjs_host = 'sockjs-eu.pusher.com'
     pusher_key = $('#resizable-chat').attr('data-pusher-key')
     pusher = new Pusher(pusher_key)
     channel = pusher.subscribe('sechzehn')
