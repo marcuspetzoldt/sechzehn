@@ -13,6 +13,20 @@ $(document).ready(() ->
   window.___gcfg = {lang: 'de'};
   showDice(true)
 
+  myDataRef = new Firebase('https://sizzling-torch-1432.firebaseio.com/')
+  myDataRef = new Firebase('https://luminous-inferno-1701.firebaseio.com/')
+  myDataRef.on('child_changed', (snapshot, prevChildName) ->
+    name = snapshot.child('usr')
+    text = snapshot.child('msg')
+    resizable_chat = $('#resizable-chat')
+    if resizable_chat.size() > 0
+      resizable_chat
+      .append('<div><span class="username">' + name.val() + '</span>' + text.val() + '</div>')
+      .scrollTop(resizable_chat[0].scrollHeight)
+    else
+      $("sup#chat-alert").html('Neu')
+  )
+  ###
   if $('div#chat').length > 0
     Pusher.host = 'ws-eu.pusher.com'
     Pusher.sockjs_host = 'sockjs-eu.pusher.com'
@@ -25,6 +39,7 @@ $(document).ready(() ->
         .append('<div><span class="username">' + data.user + '</span>' + data.message + '</div>')
         .scrollTop(resizable_chat[0].scrollHeight)
     )
+  ###
   if $('input#words').length > 0
     sync()
   else

@@ -26,6 +26,7 @@ GEM
       thread_safe (~> 0.1)
       tzinfo (~> 0.3.37)
     arel (4.0.2)
+    bcrypt-ruby (3.0.1)
     bcrypt-ruby (3.0.1-x86-mingw32)
     bootstrap-sass (3.1.1.0)
       sass (~> 3.2)
@@ -39,6 +40,9 @@ GEM
     coffee-script-source (1.8.0)
     erubis (2.7.0)
     execjs (2.2.2)
+    firebase (0.2.3)
+      httpclient
+      json
     heroku-deflater (0.5.3)
       rack (>= 1.4.5)
     hike (1.2.3)
@@ -130,6 +134,7 @@ DEPENDENCIES
   bcrypt-ruby (= 3.0.1)
   bootstrap-sass (= 3.1.1.0)
   coffee-rails (~> 4.0.0)
+  firebase
   heroku-deflater
   i18n
   jbuilder (~> 1.2)

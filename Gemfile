@@ -14,6 +14,7 @@ gem 'sprockets', '2.11.0'
 gem 'pusher'
 gem 'puma'
 gem 'newrelic_rpm'
+gem 'firebase'
 
 group :production do
   gem 'rails_12factor'
