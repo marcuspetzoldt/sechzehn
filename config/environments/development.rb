@@ -1,5 +1,3 @@
-require 'pusher'
-
 Sechzehn::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -29,8 +27,4 @@ Sechzehn::Application.configure do
   # number of complex assets.
   config.assets.debug = true
 
-  # Pusher
-  Pusher.host = 'api-eu.pusher.com'
-  Pusher.url = 'http://a868129077112f4e9130:efc8d489b37e8bb6c09d@api-eu.pusher.com/apps/100769'
-  Pusher.logger = Rails.logger
 end

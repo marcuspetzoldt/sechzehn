@@ -15,7 +15,7 @@
       <div id="chat">
         <%= form_for :chat, remote: true, url: chats_path, html: { id: 'chat_form' } do |form| %>
           <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
-          <div id="resizable-chat" data-pusher-key="<%= Pusher.key %>">
+          <div id="resizable-chat">
             <script type="text/javascript" src="http://www.skypeassets.com/i/scom/js/skype-uri.js"></script>
             <%= render Chat.get_newest_messages %>
           </div>

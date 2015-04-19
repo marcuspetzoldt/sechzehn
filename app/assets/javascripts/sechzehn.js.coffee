@@ -26,20 +26,6 @@ $(document).ready(() ->
     else
       $("sup#chat-alert").html('Neu')
   )
-  ###
-  if $('div#chat').length > 0
-    Pusher.host = 'ws-eu.pusher.com'
-    Pusher.sockjs_host = 'sockjs-eu.pusher.com'
-    pusher_key = $('#resizable-chat').attr('data-pusher-key')
-    pusher = new Pusher(pusher_key)
-    channel = pusher.subscribe('sechzehn')
-    channel.bind('chats', (data) ->
-      resizable_chat = $('#resizable-chat')
-      resizable_chat
-        .append('<div><span class="username">' + data.user + '</span>' + data.message + '</div>')
-        .scrollTop(resizable_chat[0].scrollHeight)
-    )
-  ###
   if $('input#words').length > 0
     sync()
   else
