@@ -10,7 +10,7 @@ class SechzehnController < ApplicationController
     if game_id != session['game_id'].to_i
       # start a new game
       session['game_id'] = game_id
-      if session[:cap] > 400
+      if session[:cap] && session[:cap] > 400
         Rails.logger.error("Word counter reached #{session[:cap]}")
       end
       session[:cap] = 0
