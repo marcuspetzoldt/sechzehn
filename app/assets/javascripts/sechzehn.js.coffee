@@ -146,6 +146,7 @@ $(document).on('mouseup touchend', 'body', () ->
           url: '/guess',
           type: 'POST',
           beforeSend: (xhr) -> xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content')),
+          success: (data, status) -> guessSuccess(data, status)
           data: 'words=' + w
         )
     $('input#words').val('')
@@ -171,6 +172,7 @@ $(document).on('keydown', 'input#words', (event) ->
               type: 'POST',
               beforeSend: (xhr) -> xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content')),
               data: 'words=' + w
+              success: (data, status) -> guessSuccess(data, status)
             )
           else
             $('div#guesses').prepend(' <span id="word_' + w + '" style="color:red">' + w + '</span>')
@@ -203,6 +205,22 @@ $(document).on('keydown', 'input#words', (event) ->
 
 withoutQu = (word) ->
   return word.replace('QU', 'Q')
+
+guessSuccess = (data, status) ->
+  if data.success
+    span = $('span#word_' + data.word)
+    if data.points > 0
+      span.append(':' + data.points)
+      span.css('font-size',  (100 + (data.points-1)*4).toString() + '%')
+    else
+      span.css('color', 'red')
+    $('td#cwords').html(data.cwords)
+    $('td#cpoints').html(data.cpoints)
+    window.gameTimer = parseInt(data.time)
+  else
+    alert('Das Session-Cookie ist nicht mehr vorhanden, oder kann nicht gelesen werden.')
+    window.Location.href='/'
+    window.location.reload()
 
 snake = (field, word, x, y) ->
 

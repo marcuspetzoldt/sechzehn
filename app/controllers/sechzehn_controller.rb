@@ -139,21 +139,22 @@ class SechzehnController < ApplicationController
 
     unless current_user.nil?
       game_id = Game.maximum(:id)
-      @guess = {}
-      @guess[:word] = params['words'].downcase
-      @guess[:points] = 0
+      word = params['words'].downcase
+      points = 0
+      success = false
       if (session[:cap] += 1) < 400
-        unless Solution.find_by(game_id: game_id, word: @guess[:word]).nil?
-          @guess[:points] = letter_score[@guess[:word].length]
+        unless Solution.find_by(game_id: game_id, word: word).nil?
+          points = letter_score[word.length]
         end
-        if Guess.find_by(user_id: current_user.id, game_id: game_id, word: @guess[:word]).nil?
-          Guess.create(user_id: current_user.id, game_id: game_id, word: @guess[:word], points: @guess[:points])
-          @guess[:cwords], @guess[:cpoints] = get_score
-        else
-          @guess = nil
+        if Guess.find_by(user_id: current_user.id, game_id: game_id, word: word).nil?
+          Guess.create(user_id: current_user.id, game_id: game_id, word: word, points: points)
+          cwords, cpoints = get_score
+          success = true
         end
       end
     end
+    time_left = 210 - (Time.now - Game.find_by(id: session[:game_id]).updated_at)
+    render json: {success: success, word: word, points: points, cwords: cwords, cpoints: cpoints, time: time_left.to_i}
   end
 
   def sync
