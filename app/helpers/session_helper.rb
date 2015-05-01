@@ -8,7 +8,8 @@ module SessionHelper
       cookies.permanent[:remember_token] = { value: remember_token, domain: :all }
       user.update_attribute(:remember_token, User.encrypt(remember_token))
     end
-    start_game
+    game_id = Game.maximum(:id)
+    start_game(game_id)
     self.current_user = user
   end
 
