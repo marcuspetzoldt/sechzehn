@@ -7,13 +7,12 @@ class SechzehnController < ApplicationController
     response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
-    if game_id != session['game_id'].to_i
+    if game_id != session[:game_id].to_i
       # start a new game
-      session['game_id'] = game_id
+      start_game(game_id)
       if session[:cap] && session[:cap] > 400
         Rails.logger.error("Word counter reached #{session[:cap]}")
       end
-      session[:cap] = 0
       # update elo without updating updated_at which is used in a nightly job to determine if player is still actively playing
       # update game_id which is used to recognize spectators
       current_user.update_columns(elo: current_user.new_elo, game_id: game_id) if signed_in?
@@ -44,16 +43,22 @@ class SechzehnController < ApplicationController
         @scores = ActiveRecord::Base.connection.execute(sql)
       else
         # Active player
-        session['game_id'] = nil if Game.maximum(:id) > (session['game_id'].to_i+1)
+        game_id = Game.maximum(:id)
+        if game_id > (session[:game_id].to_i+1)
+          start_game(game_id)
+        end
         @cwords, @cpoints = get_score
-        @guesses = Guess.where(game_id: session['game_id'], user_id: @user.id).order(id: :desc).map do |guess|
+        session[:word_count] = @cwords
+        session[:points] = @cpoints
+        @guesses = Guess.where(game_id: session[:game_id], user_id: @user.id).order(id: :desc).map do |guess|
           [guess.word, guess.points]
         end
       end
     else
       @user = User.new
       @play = false
-      session['game_id'] = nil
+      game_id = Game.maximum(:id)
+      start_game(game_id)
       @highscore = {which: 1}
       count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true, 1, 0)
       @scores = ActiveRecord::Base.connection.execute(sql)
@@ -137,24 +142,25 @@ class SechzehnController < ApplicationController
 
   def guess
 
+    success = false
     unless current_user.nil?
+      success = true
       game_id = Game.maximum(:id)
       word = params['words'].downcase
       points = 0
-      success = false
       if (session[:cap] += 1) < 400
         unless Solution.find_by(game_id: game_id, word: word).nil?
           points = letter_score[word.length]
         end
         if Guess.find_by(user_id: current_user.id, game_id: game_id, word: word).nil?
           Guess.create(user_id: current_user.id, game_id: game_id, word: word, points: points)
-          cwords, cpoints = get_score
-          success = true
+          session[:word_count] += 1
+          session[:points] += points
         end
       end
     end
-    time_left = 210 - (Time.now - Game.find_by(id: session[:game_id]).updated_at)
-    render json: {success: success, word: word, points: points, cwords: cwords, cpoints: cpoints, time: time_left.to_i}
+    time_left = 210 - (Time.now - session[:start_time])
+    render json: {success: success, word: word, points: points, cwords: session[:word_count], cpoints: session[:points], time: time_left.to_i}
   end
 
   def sync
@@ -174,7 +180,6 @@ class SechzehnController < ApplicationController
             # Another player already computes the next game.
             # Sync again
             time_left = -1
-            Rails.logger.info("UNIQUE CONSTRAINT VIOLATION")
           ensure
             l.destroy unless l.nil?
           end
@@ -322,8 +327,8 @@ class SechzehnController < ApplicationController
     end
 
     def init_field
-      if session['game_id']
-        Game.find_by(id: session['game_id']).letters.upcase
+      if session[:game_id]
+        Game.find_by(id: session[:game_id]).letters.upcase
       else
         'RPOESECHZEHNDTEE'
       end
@@ -335,7 +340,7 @@ class SechzehnController < ApplicationController
             'SELECT count(id) AS count, sum(points) AS sum' +
             '  FROM guesses' +
             " WHERE user_id = #{current_user.id.to_i}" +
-            "   AND game_id = #{session['game_id'].to_i}" +
+            "   AND game_id = #{session[:game_id].to_i}" +
             '   AND points > 0'
         )
         [guesses[0]['count'].to_i, guesses[0]['sum'].to_i]
@@ -364,20 +369,20 @@ class SechzehnController < ApplicationController
         score_daily = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:daily], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0, created_at: Date.today)
       end
 
-      if session['game_id'] > score.game_id and !session['game_id'].nil?
+      if !session[:game_id].nil? and session[:game_id] > score.game_id
         score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
         score.pwords = (score.pwords * score.count + (@cwords * 100 / @twords)) / (score.count + 1)
         score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
         score.ppoints = (score.ppoints * score.count + (@cpoints * 100 / @tpoints)) / (score.count + 1)
         score.count = score.count + 1
-        score.game_id = session['game_id']
+        score.game_id = session[:game_id]
 
         score_daily.cwords = (score_daily.cwords * score_daily.count + @cwords) / (score_daily.count + 1)
         score_daily.pwords = (score_daily.pwords * score_daily.count + (@cwords * 100 / @twords)) / (score_daily.count + 1)
         score_daily.cpoints = (score_daily.cpoints * score_daily.count + @cpoints) / (score_daily.count + 1)
         score_daily.ppoints = (score_daily.ppoints * score_daily.count + (@cpoints * 100 / @tpoints)) / (score_daily.count + 1)
         score_daily.count = score_daily.count + 1
-        score_daily.game_id = session['game_id']
+        score_daily.game_id = session[:game_id]
 
         delta_elo = 0
         @scores.each do |s|

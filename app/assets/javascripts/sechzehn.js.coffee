@@ -13,7 +13,6 @@ $(document).ready(() ->
   window.___gcfg = {lang: 'de'};
   showDice(true)
 
-  myDataRef = new Firebase('https://sizzling-torch-1432.firebaseio.com/')
   myDataRef = new Firebase('https://luminous-inferno-1701.firebaseio.com/')
   myDataRef.on('child_changed', (snapshot, prevChildName) ->
     name = snapshot.child('usr')

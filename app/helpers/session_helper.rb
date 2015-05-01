@@ -8,7 +8,7 @@ module SessionHelper
       cookies.permanent[:remember_token] = { value: remember_token, domain: :all }
       user.update_attribute(:remember_token, User.encrypt(remember_token))
     end
-    session[:cap] = 0
+    start_game
     self.current_user = user
   end
 
@@ -42,6 +42,14 @@ module SessionHelper
 
   def registered_user?
     current_user ? current_user.guest.nil? : false
+  end
+
+  def start_game(game_id)
+    session[:cap] = 0
+    session[:word_count] = 0
+    session[:points] = 0
+    session[:game_id] = game_id
+    session[:start_time] = Game.find_by(id: game_id).updated_at
   end
 
  end
