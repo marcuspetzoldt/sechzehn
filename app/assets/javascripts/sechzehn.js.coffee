@@ -392,7 +392,6 @@ sync = () ->
 getSolution = () ->
   if window.maintenance
     clearInterval(window.gameInterval) if window.gameInterval
-#   alert("Wartungsarbeiten - Sechzehn kann einige Minuten nicht gespielt werden.")
     window.Location.href='/maintenance'
     window.location.reload()
     return
@@ -401,7 +400,6 @@ getSolution = () ->
 startGame = () ->
   if window.maintenance
     clearInterval(window.gameInterval) if window.gameInterval
-#   alert("Wartungsarbeiten - Sechzehn kann einige Minuten nicht gespielt werden.")
     window.Location.href='/maintenance'
     window.location.reload()
     return

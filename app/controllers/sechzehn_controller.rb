@@ -9,10 +9,10 @@ class SechzehnController < ApplicationController
     response.headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
     if game_id != session[:game_id].to_i
       # start a new game
-      start_game(game_id)
       if session[:cap] && session[:cap] > 400
         Rails.logger.error("Word counter reached #{session[:cap]}")
       end
+      start_game(game_id)
       # update elo without updating updated_at which is used in a nightly job to determine if player is still actively playing
       # update game_id which is used to recognize spectators
       current_user.update_columns(elo: current_user.new_elo, game_id: game_id) if signed_in?
@@ -46,6 +46,7 @@ class SechzehnController < ApplicationController
         game_id = Game.maximum(:id)
         if game_id > (session[:game_id].to_i+1)
           start_game(game_id)
+          current_user.update_columns(elo: current_user.new_elo, game_id: game_id)
         end
         @cwords, @cpoints = get_score
         session[:word_count] = @cwords
@@ -79,7 +80,8 @@ class SechzehnController < ApplicationController
 
     game_id = Game.maximum(:id)
     time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
-    game_id = game_id - 1
+    # during a game, show scores of last game
+    game_id -= 1
     @words = ActiveRecord::Base.connection.execute(
         "SELECT s.word AS word, array_agg(g.user_id) AS format" +
         '  FROM solutions s' +
