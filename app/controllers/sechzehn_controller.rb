@@ -43,11 +43,6 @@ class SechzehnController < ApplicationController
         @scores = ActiveRecord::Base.connection.execute(sql)
       else
         # Active player
-        game_id = Game.maximum(:id)
-        if game_id > (session[:game_id].to_i+1)
-          start_game(game_id)
-          current_user.update_columns(elo: current_user.new_elo, game_id: game_id)
-        end
         @cwords, @cpoints = get_score
         session[:word_count] = @cwords
         session[:points] = @cpoints
@@ -58,8 +53,6 @@ class SechzehnController < ApplicationController
     else
       @user = User.new
       @play = false
-      game_id = Game.maximum(:id)
-      start_game(game_id)
       @highscore = {which: 1}
       count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true, 1, 0)
       @scores = ActiveRecord::Base.connection.execute(sql)
