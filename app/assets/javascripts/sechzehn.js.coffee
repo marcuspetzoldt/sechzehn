@@ -15,15 +15,19 @@ $(document).ready(() ->
 
   myDataRef = new Firebase('https://luminous-inferno-1701.firebaseio.com/')
   myDataRef.on('child_changed', (snapshot, prevChildName) ->
+    sys = snapshot.child('sys')
     name = snapshot.child('usr')
     text = snapshot.child('msg')
     resizable_chat = $('#resizable-chat')
-    if resizable_chat.size() > 0
+    if sys is 0
       resizable_chat
-      .append('<div><span class="username">' + name.val() + '</span>' + text.val() + '</div>')
-      .scrollTop(resizable_chat[0].scrollHeight)
+        .append('<div><span class="username">' + name.val() + '</span>' + text.val() + '</div>')
+        .scrollTop(resizable_chat[0].scrollHeight)
     else
-      $("sup#chat-alert").html('Neu')
+      resizable_chat
+        .append('<div><span class="username">' + name.val() + '</span><em>' + text.val() + '<em></div>')
+        .scrollTop(resizable_chat[0].scrollHeight)
+      getSolution()
   )
   if $('input#words').length > 0
     sync()

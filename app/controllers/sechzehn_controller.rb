@@ -15,6 +15,10 @@ class SechzehnController < ApplicationController
       start_game(game_id)
       # update elo without updating updated_at which is used in a nightly job to determine if player is still actively playing
       # update game_id which is used to recognize spectators
+      if current_user.game_id < (game_id-1)
+        firebase = Firebase::Client.new('https://luminous-inferno-1701.firebaseio.com/', '5mGdZZ5NoMqtEam3KwY8ZfB5QXOeG0RfvgAf3NK2')
+        firebase.set('chat', { usr: current_user.name, msg: 'spielt jetzt mit.', sys: 1 })
+      end
       current_user.update_columns(elo: current_user.new_elo, game_id: game_id) if signed_in?
       response.headers['X-Refreshed'] = '0'
     else
@@ -146,11 +150,11 @@ class SechzehnController < ApplicationController
       if (session[:cap] += 1) < 400
         unless Solution.find_by(game_id: game_id, word: word).nil?
           points = letter_score[word.length]
-        end
-        if Guess.find_by(user_id: current_user.id, game_id: game_id, word: word).nil?
-          Guess.create(user_id: current_user.id, game_id: game_id, word: word, points: points)
-          session[:word_count] += 1
-          session[:points] += points
+          if Guess.find_by(user_id: current_user.id, game_id: game_id, word: word).nil?
+            Guess.create(user_id: current_user.id, game_id: game_id, word: word, points: points)
+            session[:word_count] += 1
+            session[:points] += points
+          end
         end
       end
     end
