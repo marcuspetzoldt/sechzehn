@@ -19,7 +19,7 @@ $(document).ready(() ->
     name = snapshot.child('usr')
     text = snapshot.child('msg')
     resizable_chat = $('#resizable-chat')
-    if sys is 0
+    if sys.val() is 0
       resizable_chat
         .append('<div><span class="username">' + name.val() + '</span>' + text.val() + '</div>')
         .scrollTop(resizable_chat[0].scrollHeight)
