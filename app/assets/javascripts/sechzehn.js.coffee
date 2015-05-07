@@ -25,7 +25,7 @@ $(document).ready(() ->
         .scrollTop(resizable_chat[0].scrollHeight)
     else
       resizable_chat
-        .append('<div><span class="username">' + name.val() + '</span><em class="text-muted">' + text.val() + '<em></div>')
+        .append('<div><em class="text-muted">' + name.val() + ' ' + text.val() + '<em></div>')
         .scrollTop(resizable_chat[0].scrollHeight)
       getSolution()
   )
