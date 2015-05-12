@@ -11,6 +11,7 @@ Sechzehn::Application.routes.draw do
   resources :users
   post '/guess', to: 'sechzehn#guess'
   get '/solution', to: 'sechzehn#solution'
+  get '/leaderboard', to: 'sechzehn#leaderboard'
   get '/new', to: 'sechzehn#new'
   get '/sync', to: 'sechzehn#sync'
   get '/help', to: 'sechzehn#help'

@@ -27,7 +27,7 @@ $(document).ready(() ->
       resizable_chat
         .append('<div><em class="text-muted">' + name.val() + ' ' + text.val() + '<em></div>')
         .scrollTop(resizable_chat[0].scrollHeight)
-      getSolution()
+      getLeaderboard()
   )
   if $('input#words').length > 0
     sync()
@@ -371,6 +371,7 @@ clock = () ->
           window.gameMode = 'score'
           $('input#words').val('Spiel startet in ...')
           disableGame()
+          getLeaderboard()
           getSolution()
       else
         if (window.gameMode != 'limbo')
@@ -401,12 +402,17 @@ getSolution = () ->
     return
   $.get('/solution')
 
+getLeaderboard = () ->
+  $.get('/leaderboard')
+
 startGame = () ->
   if window.maintenance
     clearInterval(window.gameInterval) if window.gameInterval
     window.Location.href='/maintenance'
     window.location.reload()
     return
+  $('div#solutiondiv').hide()
+  $('div#guessesdiv').show()
   $('canvas#field').load('/new', null, (responseText, textStatus, XMLHttpRequest) ->
     if XMLHttpRequest.getResponseHeader('X-Refreshed') == '0'
       $('div#solution').html('')
@@ -421,13 +427,15 @@ startGame = () ->
       .removeAttr('disabled')
       .val('')
     $('input#words').focus() unless $('input#chat_chat').is(':focus')
-    getSolution()
+    getLeaderboard()
   )
 
 disableGame = () ->
   window.mouseDown = 0
   $('input#words').attr('disabled', 'disabled')
   $('canvas#field').css('background-color', '#eee')
+  $('div#solutiondiv').show()
+  $('div#guessesdiv').hide()
   showDice(false)
 
 # Length hint

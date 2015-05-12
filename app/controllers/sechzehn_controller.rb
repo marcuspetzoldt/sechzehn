@@ -16,8 +16,7 @@ class SechzehnController < ApplicationController
       # update elo without updating updated_at which is used in a nightly job to determine if player is still actively playing
       # update game_id which is used to recognize spectators
       if current_user.game_id < (game_id-1)
-        firebase = Firebase::Client.new('https://luminous-inferno-1701.firebaseio.com/', '5mGdZZ5NoMqtEam3KwY8ZfB5QXOeG0RfvgAf3NK2')
-        firebase.set('chat', { usr: current_user.name, msg: 'spielt jetzt mit.', sys: 1 })
+        firebase_say(current_user.name, 'spielt jetzt mit', 1) if Rails.env.production?
       end
       current_user.update_columns(elo: current_user.new_elo, game_id: game_id) if signed_in?
       response.headers['X-Refreshed'] = '0'
@@ -64,19 +63,41 @@ class SechzehnController < ApplicationController
     @letters = init_field
   end
 
+  def leaderboard
+
+    @leaderboard = {}
+    game_id = Game.maximum(:id) - 1
+    total = get_totals(game_id)
+    @leaderboard[:total_words] = total[:words]
+    @leaderboard[:total_points] = total[:points]
+    # All player's score
+    @leaderboard[:scores] = ActiveRecord::Base.connection.execute(
+      'SELECT a.id, a.guest, a.name, a.elo, count(b.points), sum(b.points)' +
+      '  FROM users a' +
+      ' LEFT JOIN guesses b' +
+      '    ON a.id = b.user_id' +
+      '   AND b.game_id = ' + game_id.to_s +
+      '   AND b.points > 0' +
+      ' WHERE a.game_id >= ' + game_id.to_s +
+      ' GROUP BY a.id ' +
+      ' ORDER BY SUM(b.points) DESC NULLS LAST, count(b.points) DESC NULLS LAST, a.name ASC')
+
+  end
+
   def solution
 
-    return if current_user.nil?
+    if current_user.nil?
+      render nothing: true
+      return
+    end
 
-    @tpoints = 0
-    @twords = 0
     @cpoints = 0
     @cwords = 0
     @scores = []
     @words = []
 
     game_id = Game.maximum(:id)
-    time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
+    time_left = 210 - (Time.now - Game.find(game_id).updated_at)
     # during a game, show scores of last game
     game_id -= 1
     @words = ActiveRecord::Base.connection.execute(
@@ -89,7 +110,6 @@ class SechzehnController < ApplicationController
         ' GROUP BY s.word' +
         ' ORDER BY length(s.word) DESC, s.word ASC'
     ).map do |s|
-      @tpoints = @tpoints + letter_score[s['word'].length]
       s['format'].gsub!(/[\{\,]/,' usr')
       s['format'].sub!(/}/, ' ')
       if s['format'] =~ / usr#{current_user.id} /
@@ -116,25 +136,9 @@ class SechzehnController < ApplicationController
       [s['word'], s['word'].length, letter_score[s['word'].length], format]
     end
 
-    # Player score
-    @twords = @words.length
-
-    # All player's score
-    @scores = ActiveRecord::Base.connection.execute(
-      'SELECT a.id, a.guest, a.name, a.elo, count(b.points), sum(b.points)' +
-      '  FROM users a' +
-      ' LEFT JOIN guesses b' +
-      '    ON a.id = b.user_id' +
-      '   AND b.game_id = ' + game_id.to_s +
-      '   AND b.points > 0' +
-      ' WHERE a.game_id >= ' + game_id.to_s +
-      ' GROUP BY a.id ' +
-      ' ORDER BY SUM(b.points) DESC NULLS LAST, count(b.points) DESC NULLS LAST, a.name ASC')
-
-    if time_left.to_i > 180
-      compute_highscore if @cpoints > 0
-    else
-      @words = nil
+    if (@cpoints > 0) and (time_left.to_i > 180)
+      total = get_totals(game_id)
+      compute_highscore(total[:words], total[:points])
     end
 
   end
@@ -348,7 +352,7 @@ class SechzehnController < ApplicationController
       end
     end
 
-    def compute_highscore
+    def compute_highscore(twords, tpoints)
 
       # cleanup
       Score.where('user_id=? and score_type=? and created_at<?', current_user.id, Score.score_types[:daily], Date.today-1.month).destroy_all
@@ -370,16 +374,16 @@ class SechzehnController < ApplicationController
 
       if !session[:game_id].nil? and session[:game_id] > score.game_id
         score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
-        score.pwords = (score.pwords * score.count + (@cwords * 100 / @twords)) / (score.count + 1)
+        score.pwords = (score.pwords * score.count + (@cwords * 100 / twords)) / (score.count + 1)
         score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
-        score.ppoints = (score.ppoints * score.count + (@cpoints * 100 / @tpoints)) / (score.count + 1)
+        score.ppoints = (score.ppoints * score.count + (@cpoints * 100 / tpoints)) / (score.count + 1)
         score.count = score.count + 1
         score.game_id = session[:game_id]
 
         score_daily.cwords = (score_daily.cwords * score_daily.count + @cwords) / (score_daily.count + 1)
-        score_daily.pwords = (score_daily.pwords * score_daily.count + (@cwords * 100 / @twords)) / (score_daily.count + 1)
+        score_daily.pwords = (score_daily.pwords * score_daily.count + (@cwords * 100 / twords)) / (score_daily.count + 1)
         score_daily.cpoints = (score_daily.cpoints * score_daily.count + @cpoints) / (score_daily.count + 1)
-        score_daily.ppoints = (score_daily.ppoints * score_daily.count + (@cpoints * 100 / @tpoints)) / (score_daily.count + 1)
+        score_daily.ppoints = (score_daily.ppoints * score_daily.count + (@cpoints * 100 / tpoints)) / (score_daily.count + 1)
         score_daily.count = score_daily.count + 1
         score_daily.game_id = session[:game_id]
 
@@ -424,6 +428,15 @@ class SechzehnController < ApplicationController
           30
         end
       end
+    end
+
+    def get_totals(game_id)
+      total = ActiveRecord::Base.connection.execute(
+          'SELECT count(word) as words, sum(points) as points' +
+              '  FROM solutions' +
+              ' WHERE game_id = ' + game_id.to_s
+      )
+      { words: total[0]['words'].to_i, points: total[0]['points'].to_i }
     end
 
 end
