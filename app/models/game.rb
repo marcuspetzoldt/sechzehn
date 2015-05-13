@@ -59,7 +59,7 @@ class Game < ActiveRecord::Base
       when 9..35 then 'j'
       when 5..8 then 'y'
       when 1..4 then 'x'
-      else 'qu'
+      else 'q'
       end
     end
 
