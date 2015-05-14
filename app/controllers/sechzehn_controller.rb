@@ -217,12 +217,20 @@ class SechzehnController < ApplicationController
     highscore(' ORDER BY ppoints DESC, u.elo DESC, cwords DESC', 'ppoints')
   end
 
+  def highscore_points_rate
+    highscore(' ORDER BY perfp DESC, perfw DESC, u.elo DESC', 'perfp')
+  end
+
   def highscore_words
     highscore(' ORDER BY cwords DESC, cpoints DESC, u.elo DESC', 'cwords')
   end
 
   def highscore_words_percent
     highscore(' ORDER BY pwords DESC, ppoints DESC, u.elo DESC', 'pwords')
+  end
+
+  def highscore_words_rate
+    highscore(' ORDER BY perfw DESC, perfp DESC, u.elo DESC', 'perfw')
   end
 
   def highscore(order_by, highscore_type)
@@ -260,10 +268,11 @@ class SechzehnController < ApplicationController
   end
 
   def highscore_sql(order_by, homepage, which, offset)
+    # todo activate word/points rate for weekly and monthly scores
     case which
     when 3
       # daily
-      select = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints'
+      select = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints, s.perfw as perfw, s.perfp as perfp'
       where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
@@ -274,7 +283,8 @@ class SechzehnController < ApplicationController
 
     when 2
       # weekly
-      select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints'
+      select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints, 0 as perfw, 0 as perfp'
+      #select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints, sum(s.perfw*s.perfc)/sum(s.perfc) as perfw, sum(s.perfp*s.perfc)/sum(s.perfc) as perfp'
       where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
@@ -285,7 +295,8 @@ class SechzehnController < ApplicationController
 
     when 1
       # monthly
-      select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints'
+      select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints, 0 as perfw, 0 as perfp'
+      #select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints, sum(s.perfw*s.perfc)/sum(s.perfc) as perfw, sum(s.perfp*s.perfc)/sum(s.perfc) as perfp'
       where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
@@ -296,7 +307,7 @@ class SechzehnController < ApplicationController
 
     else
       # all time
-      select = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints'
+      select = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints, s.perfw as perfw, s.perfp as perfp'
       where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
