@@ -354,6 +354,9 @@ class SechzehnController < ApplicationController
 
     def compute_highscore(twords, tpoints)
 
+      average_words = 113.8432
+      average_points = 235.3976
+
       # cleanup
       Score.where('user_id=? and score_type=? and created_at<?', current_user.id, Score.score_types[:daily], Date.today-1.month).destroy_all
 
@@ -363,13 +366,13 @@ class SechzehnController < ApplicationController
       begin
         score = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:all_time] )
       rescue ActiveRecord::RecordNotFound
-        score = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:all_time], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0)
+        score = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:all_time], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0, perfw: 0, perfp: 0, perfc: 0)
       end
 
       begin
         score_daily = Score.find_by!(user_id: current_user.id, score_type: Score.score_types[:daily], created_at: Date.today )
       rescue ActiveRecord::RecordNotFound
-        score_daily = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:daily], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0, created_at: Date.today)
+        score_daily = Score.new(user_id: current_user.id, game_id: 0, score_type: Score.score_types[:daily], count: 0, cwords: 0, pwords: 0, cpoints: 0, ppoints: 0, perfw: 0, perfp: 0, perfc: 0, created_at: Date.today)
       end
 
       if !session[:game_id].nil? and session[:game_id] > score.game_id
@@ -377,14 +380,29 @@ class SechzehnController < ApplicationController
         score.pwords = (score.pwords * score.count + (@cwords * 100 / twords)) / (score.count + 1)
         score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
         score.ppoints = (score.ppoints * score.count + (@cpoints * 100 / tpoints)) / (score.count + 1)
-        score.count = score.count + 1
+
+        # new performance calculation (will replace elo after a few weeks)
+        perfw = (average_words * @cwords.to_f * 1000.0) / (average_words * average_words)
+        score.perfw = (score.perfw * score.perfc + perfw) / (score.perfc + 1)
+        perfp = (average_points * @cpoints.to_f * 1000.0) / (average_points * average_points)
+        score.perfp = (score.perfp * score.perfc + perfp) / (score.perfc + 1)
+
+        score.count += 1
+        score.perfc += 1
         score.game_id = session[:game_id]
 
         score_daily.cwords = (score_daily.cwords * score_daily.count + @cwords) / (score_daily.count + 1)
         score_daily.pwords = (score_daily.pwords * score_daily.count + (@cwords * 100 / twords)) / (score_daily.count + 1)
         score_daily.cpoints = (score_daily.cpoints * score_daily.count + @cpoints) / (score_daily.count + 1)
         score_daily.ppoints = (score_daily.ppoints * score_daily.count + (@cpoints * 100 / tpoints)) / (score_daily.count + 1)
-        score_daily.count = score_daily.count + 1
+
+        perfw = (average_words * @cwords.to_f * 1000.0) / (average_words * average_words)
+        score_daily.perfw = (score.perfw * score_daily.perfc + perfw) / (score_daily.perfc + 1)
+        perfp = (average_points * @cpoints.to_f * 1000.0) / (average_points * average_points)
+        score_daily.perfp = (score.perfp * score_daily.perfc + perfp) / (score_daily.perfc + 1)
+
+        score_daily.count += 1
+        score_daily.perfc += 1
         score_daily.game_id = session[:game_id]
 
         delta_elo = 0
