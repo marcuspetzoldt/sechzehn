@@ -2,21 +2,19 @@ score_table = $('tbody#score');
 score_table.html('');
 <% old_score = 0 %>
 <% @leaderboard[:scores].each_with_index do |score, i| %>
-<% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
-<% if score['sum'] != old_score and score['count'].to_i > 0 %>
-<% old_score = score['sum'] %>
-<% tr = "<tr><td class=\"#{fat}\">#{i+1}.</td>" %>
-<% else %>
-<% tr = "<tr><td class=\"#{fat}\">&nbsp;</td>" %>
-<% end %>
-<% tr = tr + "<td class=\"#{fat}\"><div class=\"username usr#{score['id']}\" data-uid=\"usr#{score['id']}\">#{score['name']}</div></td>" %>
-<% if score['count'].to_i > 0 %>
-<% tr = tr + "<td class=\"right #{fat}\">#{score['count']}&nbsp;/&nbsp;#{@leaderboard[:total_words] > 0 ? (100*score['count'].to_i/@leaderboard[:total_words]).round(0) : 0}%</td>" %>
-<% tr = tr + "<td class=\"right #{fat}\">#{score['sum']}&nbsp;/&nbsp;#{@leaderboard[:total_points] > 0 ? (100*score['sum'].to_i/@leaderboard[:total_points]).round(0) : 0}%</td></tr>" %>
-<% else %>
-<% tr = tr + "<td class=\"right #{fat} text-muted\" colspan=\"2\">Zuschauer</td></tr>" %>
-<% end %>
-score_table
-    .hide()
-    .append('<%= render inline: tr %>').show(400);
+  <% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
+  <% if score['sum'] != old_score and score['count'].to_i > 0 %>
+    <% old_score = score['sum'] %>
+    <% tr = "<tr><td class=\"#{fat}\">#{i+1}.</td>" %>
+  <% else %>
+    <% tr = "<tr><td class=\"#{fat}\">&nbsp;</td>" %>
+  <% end %>
+  <% tr = tr + "<td class=\"#{fat}\"><div class=\"username usr#{score['id']}\" data-uid=\"usr#{score['id']}\">#{score['name']}</div></td>" %>
+  <% if score['count'].to_i > 0 %>
+    <% tr = tr + "<td class=\"right #{fat}\">#{score['count']}&nbsp;/&nbsp;#{@leaderboard[:total_words] > 0 ? (100*score['count'].to_i/@leaderboard[:total_words]).round(0) : 0}%</td>" %>
+    <% tr = tr + "<td class=\"right #{fat}\">#{score['sum']}&nbsp;/&nbsp;#{@leaderboard[:total_points] > 0 ? (100*score['sum'].to_i/@leaderboard[:total_points]).round(0) : 0}%</td></tr>" %>
+  <% else %>
+    <% tr = tr + "<td class=\"right #{fat} text-muted\" colspan=\"2\">Zuschauer</td></tr>" %>
+  <% end %>
+  score_table.append('<%= render inline: tr %>');
 <% end %>
