@@ -13,12 +13,10 @@ class SechzehnController < ApplicationController
         Rails.logger.error("Word counter reached #{session[:cap]}")
       end
       start_game(game_id)
-      # update elo without updating updated_at which is used in a nightly job to determine if player is still actively playing
       # update game_id which is used to recognize spectators
       if current_user.game_id < (game_id-1)
         firebase_say(current_user.name, 'spielt jetzt mit', 1) if Rails.env.production?
       end
-      current_user.update_columns(elo: current_user.new_elo, game_id: game_id) if signed_in?
       response.headers['X-Refreshed'] = '0'
     else
       # continue a game
@@ -42,7 +40,7 @@ class SechzehnController < ApplicationController
         @play = false
         # Highscores of the month
         @highscore = {which: 1}
-        count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true, 1, 0)
+        count, sql = highscore_sql('ppoints', true, 1, 0)
         @scores = ActiveRecord::Base.connection.execute(sql)
       else
         # Active player
@@ -57,7 +55,7 @@ class SechzehnController < ApplicationController
       @user = User.new
       @play = false
       @highscore = {which: 1}
-      count, sql = highscore_sql(' ORDER BY ppoints DESC, cpoints DESC, cwords DESC', true, 1, 0)
+      count, sql = highscore_sql('ppoints', true, 1, 0)
       @scores = ActiveRecord::Base.connection.execute(sql)
     end
     @letters = init_field
@@ -72,7 +70,7 @@ class SechzehnController < ApplicationController
     @leaderboard[:total_points] = total[:points]
     # All player's score
     @leaderboard[:scores] = ActiveRecord::Base.connection.execute(
-      'SELECT a.id, a.guest, a.name, a.elo, count(b.points), sum(b.points)' +
+      'SELECT a.id, a.guest, a.name, count(b.points), sum(b.points)' +
       '  FROM users a' +
       ' LEFT JOIN guesses b' +
       '    ON a.id = b.user_id' +
@@ -205,45 +203,32 @@ class SechzehnController < ApplicationController
     @description = 'Hier findest Du die die Regeln von Sechzehn, sowie eine Erklärung der Bedienung von Sechzehn, und das Impressum.'
   end
 
-  def highscore_elo
-    highscore(' ORDER BY u.elo DESC, cpoints DESC, cwords DESC', 'elo')
+  def highscore_daily
+    highscore(3)
   end
 
-  def highscore_points
-    highscore(' ORDER BY cpoints DESC, u.elo DESC, cwords DESC', 'cpoints')
+  def highscore_weekly
+    highscore(2)
   end
 
-  def highscore_points_percent
-    highscore(' ORDER BY ppoints DESC, u.elo DESC, cwords DESC', 'ppoints')
+  def highscore_monthly
+    highscore(1)
   end
 
-  def highscore_points_rate
-    highscore(' ORDER BY perfp DESC, perfw DESC, u.elo DESC', 'perfp')
+  def highscore_eternal
+    highscore(0)
   end
 
-  def highscore_words
-    highscore(' ORDER BY cwords DESC, cpoints DESC, u.elo DESC', 'cwords')
-  end
-
-  def highscore_words_percent
-    highscore(' ORDER BY pwords DESC, ppoints DESC, u.elo DESC', 'pwords')
-  end
-
-  def highscore_words_rate
-    highscore(' ORDER BY perfw DESC, perfp DESC, u.elo DESC', 'perfw')
-  end
-
-  def highscore(order_by, highscore_type)
+  def highscore(interval)
     @help = true
-    @canonical = 'http://spiele.sechzehn.org/highscore/elo'
+    @canonical = 'http://spiele.sechzehn.org/highscore/points/percent'
     @description = 'Sechzehn ist ein Wortspiel wie Boggle. Finde innerhalb von 3 Minuten mehr deutsche Wörter in einem Quadrat mit 16 zufälligen Buchstaben als deine Mitspieler.'
     @description = 'Als registrierter Spieler von Sechzehn, kannst Du in diesen täglichen, wöchentlichen und monatlichen, sowie in einer ewigen Rangliste um Plätze kämpfen.'
 
     @highscore = {}
-    @highscore[:which] = params[:which].to_i
+    @highscore[:interval] = interval
     @highscore[:offset] = params[:offset] ? params[:offset].to_i : 0
-    @highscore[:count], sql = highscore_sql(order_by, false, @highscore[:which], @highscore[:offset])
-    case @highscore[:which]
+    case @highscore[:interval]
     when 3
       # daily
       @subtitle = 'Rangliste für ' + %w(Sonntag Montag Dienstag Mittwoch Donnerstag Freitag Samstag)[Date.today.wday]
@@ -258,61 +243,91 @@ class SechzehnController < ApplicationController
 
     else
       # all time
-      @highscore[:which] = 0
+      @highscore[:interval] = 0
       @subtitle = 'ewige Rangliste'
-
     end
-    @highscore[:type] = highscore_type
-    @highscore[:rows] = ActiveRecord::Base.connection.execute(sql)
+    # Show points % per default
+    @highscore[:category] = 1
+    @highscore[:category] = params[:category] if params[:category]
+    @highscore[:count], sql = highscore_sql(@highscore[:category], false, @highscore[:interval], @highscore[:offset])
+    rank = 0
+    old_value = 0
+    @highscore[:rows] = ActiveRecord::Base.connection.execute(sql).map do |score|
+      rank = rank + 1
+      if old_value != score['value']
+        old_value = score['value']
+        rank_string = rank.to_s
+      else
+        rank_string = ''
+      end
+      case @highscore[:category].to_i
+      when 1, 3
+        value = "#{score['value'].to_f.round(2)} %"
+        count = score['count'].to_s
+      else
+        value = score['value'].to_f.round(2).to_s
+        count = score['count'].to_s
+      end
+      {rank: rank_string, name: score['name'], count: count, value: value}
+    end
     render 'highscore'
   end
 
-  def highscore_sql(order_by, homepage, which, offset)
-    # todo activate word/points rate for weekly and monthly scores
-    case which
+  def highscore_sql(category, homepage, interval, offset)
+
+    case category.to_i
+    when 0
+      category_s = 'cpoints'
+
+    when 2
+      category_s = 'cwords'
+
+    when 3
+      category_s = 'pwords'
+
+    else
+      category_s = 'ppoints'
+
+    end
+
+    case interval
     when 3
       # daily
-      select = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints, s.perfw as perfw, s.perfp as perfp'
+      select = "SELECT u.id, u.name, s.#{category_s} as value, s.count as count"
       where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
-          '   AND s.created_at >= \'' + Date.today.to_s + '\'' +
-          ' WHERE u.elo > 0'
+          '   AND s.created_at >= \'' + Date.today.to_s + '\''
       group = ''
 
     when 2
       # weekly
-      select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints, 0 as perfw, 0 as perfp'
-      #select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints, sum(s.perfw*s.perfc)/sum(s.perfc) as perfw, sum(s.perfp*s.perfc)/sum(s.perfc) as perfp'
+      select = "SELECT u.id, u.name, sum(s.#{category_s}*s.count)/sum(s.count) as value, sum(s.count) as count"
       where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
-          '   AND s.created_at >= \'' + Date.today.beginning_of_week.to_s + '\'' +
-          ' WHERE u.elo > 0'
-      group = ' GROUP BY u.id, u.name, u.elo, s.user_id'
+          '   AND s.created_at >= \'' + Date.today.beginning_of_week.to_s + '\''
+      group = ' GROUP BY u.id, u.name'
 
     when 1
       # monthly
-      select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints, 0 as perfw, 0 as perfp'
-      #select = 'SELECT u.id, u.name, u.elo, sum(s.count) as count, sum(s.cwords*s.count)/sum(s.count) as cwords, sum(s.pwords*s.count)/sum(s.count) as pwords, sum(s.cpoints*s.count)/sum(s.count) as cpoints, sum(s.ppoints*s.count)/sum(s.count) as ppoints, sum(s.perfw*s.perfc)/sum(s.perfc) as perfw, sum(s.perfp*s.perfc)/sum(s.perfc) as perfp'
+      select = "SELECT u.id, u.name, sum(s.#{category_s}*s.count)/sum(s.count) as value, sum(s.count) as count"
       where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
-          '   AND s.created_at >= \'' + Date.today.beginning_of_month.to_s + '\'' +
-          ' WHERE u.elo > 0'
-      group = ' GROUP BY u.id, u.name, u.elo, s.user_id'
+          '   AND s.created_at >= \'' + Date.today.beginning_of_month.to_s + '\''
+      group = ' GROUP BY u.id, u.name'
 
     else
       # all time
-      select = 'SELECT u.id, u.name, u.elo, s.count as count, s.cwords as cwords, s.pwords as pwords, s.cpoints as cpoints, s.ppoints as ppoints, s.perfw as perfw, s.perfp as perfp'
+      select = "SELECT u.id, u.name, #{category_s} as value, s.count as count"
       where = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
-          '   AND s.score_type = ' + Score.score_types[:all_time].to_s +
-          ' WHERE u.elo > 0'
+          '   AND s.score_type = ' + Score.score_types[:all_time].to_s
       group = ''
 
     end
@@ -323,9 +338,9 @@ class SechzehnController < ApplicationController
       count = 0
     end
     if homepage
-      sql = select + where + group + order_by + ' LIMIT 10'
+      sql = select + where + group + ' ORDER BY value DESC ' + ' LIMIT 10'
     else
-      sql = select + where + group + order_by + ' LIMIT 100 OFFSET ' + offset.to_s
+      sql = select + where + group + ' ORDER BY value DESC ' + ' LIMIT 100 OFFSET ' + offset.to_s
     end
     [count, sql]
   end
@@ -392,7 +407,6 @@ class SechzehnController < ApplicationController
         score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
         score.ppoints = (score.ppoints * score.count + (@cpoints * 100 / tpoints)) / (score.count + 1)
 
-        # new performance calculation (will replace elo after a few weeks)
         perfw = (average_words * @cwords.to_f * 1000.0) / (average_words * average_words)
         score.perfw = (score.perfw * score.perfc + perfw) / (score.perfc + 1)
         perfp = (average_points * @cpoints.to_f * 1000.0) / (average_points * average_points)
@@ -416,45 +430,9 @@ class SechzehnController < ApplicationController
         score_daily.perfc += 1
         score_daily.game_id = session[:game_id]
 
-        delta_elo = 0
-        @scores.each do |s|
-          if (s['id'].to_i != score.user_id) and (s['guest'].nil?) and (s['sum'].to_i > 0)
-            r = s['elo'].to_f - current_user.elo.to_f
-            r = ((r > 0) ? 400.0 : -400.0) if r.abs > 400.0
-            ea = 1.0 / (1.0 + 10.0 ** (r / 400.0))
-            delta_elo = delta_elo + k_factor(score) * (sa(s['sum'].to_i) - ea)
-          end
-        end
-        new_elo = current_user.elo + delta_elo
-        current_user.update_attribute(:new_elo, new_elo)
         if registered_user?
           score.save
           score_daily.save
-        end
-      end
-    end
-
-    def sa(opponent_points)
-      # win: 1, loss: 0, tie: 0.5
-      case opponent_points <=> @cpoints
-      when -1
-        1
-      when 1
-        0
-      else
-        0.5
-      end
-    end
-
-    def k_factor(me)
-      # casual player: 30, frequent player: 15, frequent very good player: 10
-      if current_user.elo > 2400
-        10
-      else
-        if me.count > 30
-          15
-        else
-          30
         end
       end
     end

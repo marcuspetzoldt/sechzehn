@@ -1,3 +1,4 @@
+# TODO: Stop nightly recalculation of elo
 desc "Called by Heroku scheduler, decreases ELO of inactive players by one per day"
 task :recalculate_elo => :environment do
   puts "Recalculating ELO ..."

@@ -41,6 +41,11 @@ $(document).ready(() ->
         highlightLetter(context, x, y, letters[y*4+x])
 )
 
+$(document).on('change', 'select#category', () ->
+  category = $(this).val()
+  $('tbody#highscores').load('/highscore/' + $(this).attr('data-score-type') + '.js?category=' + category)
+)
+
 $(document).on('mousedown touchstart', 'div.username', () ->
   $('span.guess').not('span.'+$(this).attr('data-uid')).hide()
 )

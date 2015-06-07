@@ -1,9 +1,9 @@
 <div class="row">
   <ul class="nav nav-tabs col-md-12">
-    <li class="<%= @highscore[:which] == 0 ? 'active' : nil %>"><%= link_to 'Ewig', highscore_elo_path(which: 0) %></li>
-    <li class="<%= @highscore[:which] == 1 ? 'active' : nil %>"><%= link_to 'Diesen Monat', highscore_elo_path(which: 1) %></li>
-    <li class="<%= @highscore[:which] == 2 ? 'active' : nil %>"><%= link_to 'Diese Woche', highscore_elo_path(which: 2) %></li>
-    <li class="<%= @highscore[:which] == 3 ? 'active' : nil %>"><%= link_to 'Heute', highscore_elo_path(which: 3) %></li>
+    <li class="<%= @highscore[:which] == 0 ? 'active' : nil %>"><%= link_to 'Ewig', highscore_eternal_path %></li>
+    <li class="<%= @highscore[:which] == 1 ? 'active' : nil %>"><%= link_to 'Diesen Monat', highscore_monthly_path %></li>
+    <li class="<%= @highscore[:which] == 2 ? 'active' : nil %>"><%= link_to 'Diese Woche', highscore_weekly_path %></li>
+    <li class="<%= @highscore[:which] == 3 ? 'active' : nil %>"><%= link_to 'Heute', highscore_daily_path %></li>
   </ul>
 </div>
 <div class="row">
@@ -14,58 +14,35 @@
         <col />
         <col class="wide-score" />
         <col class="wide-score" />
-        <col class="wide-score" />
-        <col class="wide-score" />
       </colgroup>
       <thead>
         <tr>
           <th>Platz</th>
           <th>Name</th>
           <th>Spiele</th>
-          <th><%= @highscore[:type] == 'cwords' ? 'Wörter' : link_to('Wörter', highscore_words_path(which: @highscore[:which])) %> <%= @highscore[:type] == 'pwords' ? '(%)' : link_to('(%)', highscore_words_percent_path(which: @highscore[:which])) %></th>
-          <th><%= @highscore[:type] == 'cpoints' ? 'Punkte' : link_to('Punkte', highscore_points_path(which: @highscore[:which])) %> <%= @highscore[:type] == 'ppoints' ? '(%)' : link_to('(%)', highscore_points_percent_path(which: @highscore[:which])) %></th>
-          <th><%= @highscore[:type] == 'perfw' ? 'Wortrate' : link_to('Wortrate', highscore_words_rate_path(which: @highscore[:which])) %></th>
-          <th><%= @highscore[:type] == 'perfp' ? 'Punktrate' : link_to('Punktrate', highscore_points_rate_path(which: @highscore[:which])) %></th>
-          <th><%= @highscore[:type] == 'elo' ? 'Stufe' : link_to('Stufe', highscore_elo_path(which: @highscore[:which])) %></th>
+          <th>
+            <% options = [['Punkte', 0], ['Punkte %', 1], ['Wörter', 2], ['Wörter %', 3]] %>
+            <%= select_tag :category,
+                           options_for_select(options, @highscore[:category]),
+                           class: 'form-control', id: 'category', 'data-score-type' => ['eternal', 'daily', 'weekly', 'monthly'][@highscore[:interval]]%>
+          </th>
         </tr>
       </thead>
-      <tbody>
-      <% old_score = 0 %>
-      <% @highscore[:rows].each_with_index do |score, i| %>
-        <% rank = i + @highscore[:offset] %>
-        <% fat = '' %>
-        <% if signed_in? %>
-          <% fat = (score['id'].to_i == current_user.id.to_i) ? 'highlight' : nil %>
-        <% end %>
-        <tr>
-          <% if old_score != score[@highscore[:type]] %>
-            <td class="<%= fat %>"><%= rank+1 %>.</td>
-            <% old_score = score[@highscore[:type]] %>
-          <% else %>
-            <td class="<%= fat %>">&nbsp;</td>
-          <% end %>
-          <td class="<%= fat %>"><div class="username"><%= score['name'] %></div></td>
-          <td class="<%= fat %>"><%= score['count'] %></td>
-          <td class="<%= fat %>"><%= score['cwords'].to_f.round(1) %> (<%= score['pwords'].to_f.round(1) %>%)</td>
-          <td class="<%= fat %>"><%= score['cpoints'].to_f.round(1) %> (<%= score['ppoints'].to_f.round(1) %>%)</td>
-          <td class="<%= fat %>"><%= score['perfw'].to_f.round(1) %></td>
-          <td class="<%= fat %>"><%= score['perfp'].to_f.round(1) %></td>
-          <td class="<%= fat %>"><%= score['elo'] %></td>
-        </tr>
-      <% end %>
+      <tbody id="highscores">
+        <%= render partial: 'score', collection: @highscore[:rows] %>
       </tbody>
     </table>
     <% step = 100 %>
     <% if @highscore[:count] > step %>
       <nav>
         <ul class="pagination">
-          <% case @highscore[:type] %>
-          <% when 'cwords' then link = highscore_words_path(which: @highscore[:which]) %>
-          <% when 'pwords' then link = highscore_words_percent_path(which: @highscore[:which]) %>
-          <% when 'cpoints' then link = highscore_points_path(which: @highscore[:which]) %>
-          <% when 'ppoints' then link = highscore_points_percent_path(which: @highscore[:which]) %>
+          <% case @highscore[:interval] %>
+          <% when 0 then link = highscore_daily_path(interval: @highscore[:interval]) %>
+          <% when 1 then link = highscore_weekly_path(interval: @highscore[:interval]) %>
+          <% when 2 then link = highscore_monthly_path(interval: @highscore[:interval]) %>
+          <% when 3 then link = highscore_eternal_path(interval: @highscore[:interval]) %>
           <% else %>
-            <% link = highscore_elo_path(which: @highscore[:which]) %>
+            <% link = highscore_eternal_path(interval: @highscore[:interval]) %>
           <% end %>
 
           <% if @highscore[:offset] >= step %>
