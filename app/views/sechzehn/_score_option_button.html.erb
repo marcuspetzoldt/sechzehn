@@ -1,0 +1,15 @@
+<div class="dropdown pull-right">
+  <% interval_urls = [highscore_eternal_url, highscore_monthly_url, highscore_weekly_url, highscore_daily_url] %>
+  <% options = ['Punkte', 'Punkte %', 'Wörter', 'Wörter %'] %>
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="false">
+    <%= options[@highscore[:category]] %>
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    <% options.each_with_index() do |option, category| %>
+      <li role="presentation">
+        <%= link_to option, interval_urls[@highscore[:interval]] + "?category=#{category}", role: 'menuitem', tabindex: '-1', remote: true %>
+      </li>
+    <% end %>
+  </ul>
+</div>

@@ -1,1 +1,2 @@
-<%= render partial: 'score', collection: @highscore[:rows] %>
+$('tbody#highscores').html('<%= j render partial: 'score', collection: @highscore[:rows] %>')
+$('th#option-button').html('<%= j render partial: 'score_option_button' %>')

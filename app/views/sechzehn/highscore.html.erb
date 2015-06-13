@@ -1,9 +1,10 @@
+<% interval_urls = [highscore_eternal_url, highscore_monthly_url, highscore_weekly_url, highscore_daily_url] %>
 <div class="row">
   <ul class="nav nav-tabs col-md-12">
-    <li class="<%= @highscore[:which] == 0 ? 'active' : nil %>"><%= link_to 'Ewig', highscore_eternal_path %></li>
-    <li class="<%= @highscore[:which] == 1 ? 'active' : nil %>"><%= link_to 'Diesen Monat', highscore_monthly_path %></li>
-    <li class="<%= @highscore[:which] == 2 ? 'active' : nil %>"><%= link_to 'Diese Woche', highscore_weekly_path %></li>
-    <li class="<%= @highscore[:which] == 3 ? 'active' : nil %>"><%= link_to 'Heute', highscore_daily_path %></li>
+    <li class="<%= @highscore[:which] == 0 ? 'active' : nil %>"><%= link_to 'Ewig', interval_urls[0] %></li>
+    <li class="<%= @highscore[:which] == 1 ? 'active' : nil %>"><%= link_to 'Diesen Monat', interval_urls[1] %></li>
+    <li class="<%= @highscore[:which] == 2 ? 'active' : nil %>"><%= link_to 'Diese Woche', interval_urls[2] %></li>
+    <li class="<%= @highscore[:which] == 3 ? 'active' : nil %>"><%= link_to 'Heute', interval_urls[3] %></li>
   </ul>
 </div>
 <div class="row">
@@ -12,19 +13,16 @@
       <colgroup>
         <col class="wide-counter" />
         <col />
-        <col class="wide-score" />
-        <col class="wide-score" />
+        <col />
+        <col />
       </colgroup>
       <thead>
         <tr>
           <th>Platz</th>
           <th>Name</th>
-          <th>Spiele</th>
-          <th>
-            <% options = [['Punkte', 0], ['Punkte %', 1], ['Wörter', 2], ['Wörter %', 3]] %>
-            <%= select_tag :category,
-                           options_for_select(options, @highscore[:category]),
-                           class: 'form-control', id: 'category', 'data-score-type' => ['eternal', 'daily', 'weekly', 'monthly'][@highscore[:interval]]%>
+          <th class="text-right">Spiele</th>
+          <th id="option-button" class="text-right">
+            <%= render partial: 'score_option_button' %>
           </th>
         </tr>
       </thead>

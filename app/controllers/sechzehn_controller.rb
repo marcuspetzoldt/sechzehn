@@ -250,7 +250,7 @@ class SechzehnController < ApplicationController
     end
     # Show points % per default
     @highscore[:category] = 1
-    @highscore[:category] = params[:category] if params[:category]
+    @highscore[:category] = params[:category].to_i if params[:category]
     @highscore[:count], sql = highscore_sql(@highscore[:category], false, @highscore[:interval], @highscore[:offset])
     rank = 0
     old_value = 0
