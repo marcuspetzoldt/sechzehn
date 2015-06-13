@@ -17,6 +17,8 @@ class SechzehnController < ApplicationController
       if current_user.game_id < (game_id-1)
         firebase_say(current_user.name, 'spielt jetzt mit', 1) if Rails.env.production?
       end
+
+      current_user.update_columns(game_id: game_id) if signed_in?
       response.headers['X-Refreshed'] = '0'
     else
       # continue a game
