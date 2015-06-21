@@ -138,7 +138,7 @@ class SechzehnController < ApplicationController
 
     @solution[:total] = get_totals(game_id)
     if (@solution[:cpoints] > 0) and (time_left.to_i > 180)
-      compute_highscore(@solution[:cwords], @solution[:cpoints], @solution[:total][:words], solution[:total][:points])
+      compute_highscore(@solution[:cwords], @solution[:cpoints], @solution[:total][:words], @solution[:total][:points])
     end
 
   end
@@ -390,6 +390,8 @@ class SechzehnController < ApplicationController
     end
 
     def compute_highscore(cwords, cpoints, twords, tpoints)
+
+      Rails.logger.info("#{cwords}, #{cpoints}, #{twords}, #{tpoints}")
 
       average_words = 114.0 # 113.8432
       average_points = 235.0 # 235.3976
