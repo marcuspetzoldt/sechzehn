@@ -266,7 +266,7 @@ class SechzehnController < ApplicationController
       when 1, 3
         value = "#{score['value'].to_f.round(2)} %"
         count = score['count'].to_s
-      when 5, 6
+      when 4, 5
         value = "#{score['value'].to_f.round}"
         count = score['count'].to_s
       else
@@ -289,6 +289,12 @@ class SechzehnController < ApplicationController
 
     when 3
       category_s = 'pwords'
+
+    when 4
+      category_s = 'perfw'
+
+    when 5
+      category_s = 'perfp'
 
     else
       category_s = 'ppoints'
