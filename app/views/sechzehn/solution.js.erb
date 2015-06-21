@@ -4,9 +4,7 @@ window.Location.href='/500';
 window.location.reload();
 <% end %>
 <% points = 0 %>
-solution_div = $('div#solutiondiv');
-guess_div = $('div#guessesdiv');
-<% html = (@words.map do |w| %>
+<% html = (@solution[:words].map do |w| %>
   <% out = '' %>
   <% case w[0].length %>
     <% when 3..4 %>
@@ -38,5 +36,5 @@ guess_div = $('div#guessesdiv');
   <% out + "<span class=\"#{w[3]}\">#{w[0]}</span>" %>
 <% end).join(' ') %>
 $('div#solution').html('<%= render inline: html %>');
-$('td#cwords').html('<%= "#{@cwords}" %>');
-$('td#cpoints').html('<%= "#{@cpoints}" %>');
+$('strong#cwords').html('<%= @solution[:total][:words] %>');
+$('strong#cpoints').html('<%= @solution[:total][:points] %>');

@@ -91,16 +91,16 @@ class SechzehnController < ApplicationController
       return
     end
 
-    @cpoints = 0
-    @cwords = 0
-    @scores = []
-    @words = []
+    @solution = {}
+    @solution[:cwords] = 0
+    @solution[:cpoints] = 0
+    @solution[:words] = []
 
     game_id = Game.maximum(:id)
     time_left = 210 - (Time.now - Game.find(game_id).updated_at)
     # during a game, show scores of last game
     game_id -= 1
-    @words = ActiveRecord::Base.connection.execute(
+    @solution[:words] = ActiveRecord::Base.connection.execute(
         "SELECT s.word AS word, array_agg(g.user_id) AS format" +
         '  FROM solutions s' +
         '  LEFT JOIN guesses g' +
@@ -113,8 +113,8 @@ class SechzehnController < ApplicationController
       s['format'].gsub!(/[\{\,]/,' usr')
       s['format'].sub!(/}/, ' ')
       if s['format'] =~ / usr#{current_user.id} /
-        @cwords = @cwords + 1
-        @cpoints = @cpoints + letter_score[s['word'].length]
+        @solution[:cwords] += 1
+        @solution[:cpoints] += letter_score[s['word'].length]
         if s['format'] =~ /. ./
           # Player and others found the word
           format = 'self '
@@ -136,9 +136,9 @@ class SechzehnController < ApplicationController
       [s['word'], s['word'].length, letter_score[s['word'].length], format]
     end
 
-    if (@cpoints > 0) and (time_left.to_i > 180)
-      total = get_totals(game_id)
-      compute_highscore(total[:words], total[:points])
+    @solution[:total] = get_totals(game_id)
+    if (@solution[:cpoints] > 0) and (time_left.to_i > 180)
+      compute_highscore(@solution[:cwords], @solution[:cpoints], @solution[:total][:words], solution[:total][:points])
     end
 
   end
@@ -389,7 +389,7 @@ class SechzehnController < ApplicationController
       end
     end
 
-    def compute_highscore(twords, tpoints)
+    def compute_highscore(cwords, cpoints, twords, tpoints)
 
       average_words = 114.0 # 113.8432
       average_points = 235.0 # 235.3976
@@ -414,8 +414,8 @@ class SechzehnController < ApplicationController
 
       if !session[:game_id].nil? and session[:game_id] > score.game_id
 
-        performance_words = (@cwords * 100.0 / twords)
-        performance_points = (@cpoints * 100.0 / twords)
+        performance_words = (cwords * 100.0 / twords)
+        performance_points = (cpoints * 100.0 / twords)
 
         capped_words = twords > 2*average_words ? 2*average_words : twords
         capped_points = tpoints > 2*average_points ? 2*average_points : tpoints
@@ -424,9 +424,9 @@ class SechzehnController < ApplicationController
         performance_words_adjusted = performance_words * words_adjust * 100
         performance_points_adjusted = performance_points * points_adjust * 100
 
-        score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
+        score.cwords = (score.cwords * score.count + cwords) / (score.count + 1)
         score.pwords = (score.pwords * score.count + performance_words) / (score.count + 1)
-        score.cpoints = (score.cpoints * score.count + @cpoints) / (score.count + 1)
+        score.cpoints = (score.cpoints * score.count + cpoints) / (score.count + 1)
         score.ppoints = (score.ppoints * score.count + performance_points) / (score.count + 1)
         score.perfw = (score.perfw * score.perfc + performance_words_adjusted) / (score.perfc + 1)
         score.perfp = (score.perfp * score.perfc + performance_points_adjusted) / (score.perfc + 1)
@@ -434,9 +434,9 @@ class SechzehnController < ApplicationController
         score.perfc += 1
         score.game_id = session[:game_id]
 
-        score_daily.cwords = (score_daily.cwords * score_daily.count + @cwords) / (score_daily.count + 1)
+        score_daily.cwords = (score_daily.cwords * score_daily.count + cwords) / (score_daily.count + 1)
         score_daily.pwords = (score_daily.pwords * score_daily.count + performance_words) / (score_daily.count + 1)
-        score_daily.cpoints = (score_daily.cpoints * score_daily.count + @cpoints) / (score_daily.count + 1)
+        score_daily.cpoints = (score_daily.cpoints * score_daily.count + cpoints) / (score_daily.count + 1)
         score_daily.ppoints = (score_daily.ppoints * score_daily.count + performance_points) / (score_daily.count + 1)
         score_daily.perfw = (score.perfw * score_daily.perfc + performance_words_adjusted) / (score_daily.perfc + 1)
         score_daily.perfp = (score.perfp * score_daily.perfc + performance_points_adjusted) / (score_daily.perfc + 1)

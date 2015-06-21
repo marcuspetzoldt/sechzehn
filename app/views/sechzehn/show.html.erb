@@ -74,6 +74,20 @@
         <hr class="row"/>
       </div>
       <div id="solution"></div>
+      <table class="table">
+        <colgroup>
+          <col />
+          <col class="score" />
+          <col class="score" />
+        </colgroup>
+        <tbody>
+        <tr>
+          <td><strong>Gesamt</strong></td>
+          <td class="right">W: <strong id="cwords"></strong></td>
+          <td class="right">P: <strong id="cpoints"></strong></td>
+        </tr>
+        </tbody>
+      </table>
     </div>
     <% else %>
       <% flash.each do |key, value| %>
