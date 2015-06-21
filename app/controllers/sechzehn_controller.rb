@@ -266,6 +266,9 @@ class SechzehnController < ApplicationController
       when 1, 3
         value = "#{score['value'].to_f.round(2)} %"
         count = score['count'].to_s
+      when 5, 6
+        value = "#{score['value'].to_f.round}"
+        count = score['count'].to_s
       else
         value = score['value'].to_f.round(2).to_s
         count = score['count'].to_s
@@ -412,8 +415,8 @@ class SechzehnController < ApplicationController
         capped_points = tpoints > 2*average_points ? 2*average_points : tpoints
         words_adjust = 1.0 - ((average_words - capped_words)/average_words) ** 7
         points_adjust = 1.0 - ((average_points - capped_points)/average_points) ** 7
-        performance_words_adjusted = (performance_words * words_adjust * 100).round
-        performance_points_adjusted = (performance_points * points_adjust * 100).round
+        performance_words_adjusted = performance_words * words_adjust * 100
+        performance_points_adjusted = performance_points * points_adjust * 100
 
         score.cwords = (score.cwords * score.count + @cwords) / (score.count + 1)
         score.pwords = (score.pwords * score.count + performance_words) / (score.count + 1)
