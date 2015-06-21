@@ -48,10 +48,10 @@
       <nav>
         <ul class="pagination">
           <% case @highscore[:interval] %>
-          <% when 0 then link = highscore_daily_path(category: @highscore[:category]) %>
-          <% when 1 then link = highscore_weekly_path(category: @highscore[:category]) %>
-          <% when 2 then link = highscore_monthly_path(category: @highscore[:category]) %>
-          <% when 3 then link = highscore_eternal_path(category: @highscore[:category]) %>
+          <% when 0 then link = highscore_eternal_path(category: @highscore[:category]) %>
+          <% when 1 then link = highscore_monthly_path(category: @highscore[:category]) %>
+          <% when 2 then link = highscore_weekly_path(category: @highscore[:category]) %>
+          <% when 3 then link = highscore_daily_path(category: @highscore[:category]) %>
           <% else %>
             <% link = highscore_eternal_path(category: @highscore[:category]) %>
           <% end %>
