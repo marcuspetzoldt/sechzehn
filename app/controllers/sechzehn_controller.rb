@@ -252,7 +252,7 @@ class SechzehnController < ApplicationController
     @highscore[:category] = 1
     @highscore[:category] = params[:category].to_i if params[:category]
     @highscore[:count], sql = highscore_sql(@highscore[:category], false, @highscore[:interval], @highscore[:offset])
-    rank = 0
+    rank = @highscore[:offset]
     old_value = 0
     @highscore[:rows] = ActiveRecord::Base.connection.execute(sql).map do |score|
       rank = rank + 1
