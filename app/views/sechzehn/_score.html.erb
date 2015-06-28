@@ -1,6 +1,7 @@
 <tr>
-  <td><%= score[:rank] %></td>
-  <td><div class="username"><%= score[:name] %></div></td>
-  <td class="text-right"><%= score[:count] %></td>
-  <td class="text-right"><%= score[:value] %></td>
+  <% fat = current_user_id == score[:id] ? 'highlight' : '' %>
+  <td class="<%= fat %>"><%= score[:rank] %></td>
+  <td class="<%= fat %>"><div class="username"><%= score[:name] %></div></td>
+  <td class="text-right <%= fat %>"><%= score[:count] %></td>
+  <td class="text-right <%= fat %>"><%= score[:value] %></td>
 </tr>

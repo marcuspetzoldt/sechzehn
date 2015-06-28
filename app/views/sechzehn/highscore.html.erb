@@ -23,7 +23,7 @@
           <th id="option-button" class="text-right">
             <div class="dropdown pull-right">
               <% interval_urls = [highscore_eternal_url, highscore_monthly_url, highscore_weekly_url, highscore_daily_url] %>
-              <% options = ['Punkte', 'Punkte %', 'Wörter', 'Wörter %'] %>
+              <% options = ['Punkte', 'Punkte %', 'Punktperformance', 'Wörter', 'Wörter %', 'Wortperformance'] %>
               <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="false">
                 <%= options[@highscore[:category]] %>
                 <span class="caret"></span>
@@ -40,7 +40,7 @@
         </tr>
       </thead>
       <tbody id="highscores">
-        <%= render partial: 'score', collection: @highscore[:rows] %>
+        <%= render partial: 'score', collection: @highscore[:rows], locals: {current_user_id: current_user.id.to_i} %>
       </tbody>
     </table>
     <% step = 100 %>
@@ -48,10 +48,10 @@
       <nav>
         <ul class="pagination">
           <% case @highscore[:interval] %>
-          <% when 0 then link = highscore_eternal_path(category: @highscore[:category]) %>
-          <% when 1 then link = highscore_monthly_path(category: @highscore[:category]) %>
-          <% when 2 then link = highscore_weekly_path(category: @highscore[:category]) %>
           <% when 3 then link = highscore_daily_path(category: @highscore[:category]) %>
+          <% when 2 then link = highscore_weekly_path(category: @highscore[:category]) %>
+          <% when 1 then link = highscore_monthly_path(category: @highscore[:category]) %>
+          <% when 0 then link = highscore_eternal_path(category: @highscore[:category]) %>
           <% else %>
             <% link = highscore_eternal_path(category: @highscore[:category]) %>
           <% end %>

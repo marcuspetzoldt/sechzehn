@@ -248,8 +248,8 @@ class SechzehnController < ApplicationController
       @highscore[:interval] = 0
       @subtitle = 'ewige Rangliste'
     end
-    # Show points % per default
-    @highscore[:category] = 1
+    # Show points performance per default
+    @highscore[:category] = 2
     @highscore[:category] = params[:category].to_i if params[:category]
     @highscore[:count], sql = highscore_sql(@highscore[:category], false, @highscore[:interval], @highscore[:offset])
     rank = @highscore[:offset]
@@ -263,17 +263,17 @@ class SechzehnController < ApplicationController
         rank_string = ''
       end
       case @highscore[:category].to_i
-      when 1, 3
+      when 1, 4
         value = "#{score['value'].to_f.round(2)} %"
         count = score['count'].to_s
-      when 4, 5
+      when 2, 5
         value = "#{score['value'].to_f.round}"
         count = score['count'].to_s
       else
         value = score['value'].to_f.round(2).to_s
         count = score['count'].to_s
       end
-      {rank: rank_string, name: score['name'], count: count, value: value}
+      {id: score['id'].to_i, rank: rank_string, name: score['name'], count: count, value: value}
     end
     render 'highscore'
   end
@@ -284,20 +284,23 @@ class SechzehnController < ApplicationController
     when 0
       category_s = 'cpoints'
 
+    when 1
+      category_s = 'ppoints'
+
     when 2
-      category_s = 'cwords'
-
-    when 3
-      category_s = 'pwords'
-
-    when 4
-      category_s = 'perfw'
-
-    when 5
       category_s = 'perfp'
 
+    when 3
+      category_s = 'cwords'
+
+    when 4
+      category_s = 'pwords'
+
+    when 5
+      category_s = 'perfw'
+
     else
-      category_s = 'ppoints'
+      category_s = 'perfp'
 
     end
 
