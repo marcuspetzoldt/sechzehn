@@ -8,6 +8,23 @@
 </div>
 <div class="row">
   <div class="col-md-12">
+    <br />
+    <p class="alert alert-info">
+      <% case @highscore[:category] %>
+      <% when 0 %>
+        <strong>Punkte:</strong> Der Durchschnitt der pro Spiel erreichten Punkte.
+      <% when 1 %>
+        <strong>Punkte %:</strong> Der Durchschnitt des pro Spiel erreichten Anteils an der Gesamtpunkzahl in Prozent.
+      <% when 2 %>
+        <strong>Punktperformance:</strong> Eine Kennzahl, in deren Berechnung die Schwierigkeit der absolvierten Spiele einfließt.
+      <% when 3 %>
+        <strong>Wörter:</strong> Der Durchschnitt der pro Spiel gefundenen Wörter.
+      <% when 4 %>
+        <strong>Wörter %:</strong> Der Durchschnitt des pro Spiel gefundenen Anteils aller Wörter in Prozent.
+      <% else %>
+        <strong>Wortperformance:</strong> Eine Kennzahl, in deren Berechnung die Schwierigkeit der absolvierten Spiele einfließt.
+      <% end %>
+    </p>
     <table class="table">
       <colgroup>
         <col class="wide-counter" />
