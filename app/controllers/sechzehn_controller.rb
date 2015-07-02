@@ -42,7 +42,7 @@ class SechzehnController < ApplicationController
         @play = false
         # Highscores of the month
         @highscore = {which: 1}
-        count, sql = highscore_sql('ppoints', true, 1, 0)
+        count, sql = highscore_sql(1, true, 1, 0)
         @scores = ActiveRecord::Base.connection.execute(sql)
       else
         # Active player
@@ -57,7 +57,7 @@ class SechzehnController < ApplicationController
       @user = User.new
       @play = false
       @highscore = {which: 1}
-      count, sql = highscore_sql('ppoints', true, 1, 0)
+      count, sql = highscore_sql(1, true, 1, 0)
       @scores = ActiveRecord::Base.connection.execute(sql)
     end
     @letters = init_field
@@ -420,7 +420,7 @@ class SechzehnController < ApplicationController
       if !session[:game_id].nil? and session[:game_id] > score.game_id
 
         performance_words = (cwords * 100.0 / twords)
-        performance_points = (cpoints * 100.0 / twords)
+        performance_points = (cpoints * 100.0 / tpoints)
 
         capped_words = twords > 2*average_words ? 2*average_words : twords
         capped_points = tpoints > 2*average_points ? 2*average_points : tpoints

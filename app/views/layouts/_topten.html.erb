@@ -32,14 +32,14 @@
     <% old_score = 0 %>
     <% @scores.each_with_index do |score, i| %>
       <tr>
-        <% if old_score != score[highscore_type] %>
+        <% if old_score != score['value'] %>
           <td><%= i+1 %>.</td>
-          <% old_score = score[highscore_type] %>
+          <% old_score = score['value'] %>
         <% else %>
           <td>&nbsp;</td>
         <% end %>
         <td><div class="username"><%= score['name'] %></div></td>
-        <td class="right"><%= score[highscore_type].to_f.round(1) %> %</td>
+        <td class="right"><%= score['value'].to_f.round(1) %> %</td>
       </tr>
     <% end %>
   </tbody>
