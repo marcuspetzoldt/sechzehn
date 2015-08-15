@@ -42,7 +42,7 @@ class SechzehnController < ApplicationController
         @play = false
         # Highscores of the month
         @highscore = {which: 1}
-        count, sql = highscore_sql(1, true, 1, 0)
+        count, sql = highscore_sql(1, true, 1, 0, 0)
         @scores = ActiveRecord::Base.connection.execute(sql)
       else
         # Active player
@@ -57,7 +57,7 @@ class SechzehnController < ApplicationController
       @user = User.new
       @play = false
       @highscore = {which: 1}
-      count, sql = highscore_sql(1, true, 1, 0)
+      count, sql = highscore_sql(1, true, 1, 0, 0)
       @scores = ActiveRecord::Base.connection.execute(sql)
     end
     @letters = init_field
@@ -251,7 +251,9 @@ class SechzehnController < ApplicationController
     # Show points performance per default
     @highscore[:category] = 2
     @highscore[:category] = params[:category].to_i if params[:category]
-    @highscore[:count], sql = highscore_sql(@highscore[:category], false, @highscore[:interval], @highscore[:offset])
+    @highscore[:cutoff] = 0
+    @highscore[:cutoff] = params[:cutoff].to_i if params[:cutoff]
+    @highscore[:count], sql = highscore_sql(@highscore[:category], false, @highscore[:interval], @highscore[:offset], @highscore[:cutoff])
     rank = @highscore[:offset]
     old_value = 0
     @highscore[:rows] = ActiveRecord::Base.connection.execute(sql).map do |score|
@@ -278,7 +280,18 @@ class SechzehnController < ApplicationController
     render 'highscore'
   end
 
-  def highscore_sql(category, homepage, interval, offset)
+  def highscore_sql(category, homepage, interval, offset, cutoff_index)
+
+    case cutoff_index
+    when 1
+      cutoff = 10
+    when 2
+      cutoff = 50
+    when 3
+      cutoff = 100
+    else
+      cutoff = 0
+    end
 
     case category.to_i
     when 0
@@ -308,53 +321,63 @@ class SechzehnController < ApplicationController
     when 3
       # daily
       select = "SELECT u.id, u.name, s.#{category_s} as value, s.count as count"
-      where = '  FROM users u' +
+      join = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.to_s + '\''
+      where = " WHERE s.#{category_s} > 0" +
+          " AND s.count > #{cutoff}"
       group = ''
 
     when 2
       # weekly
       select = "SELECT u.id, u.name, sum(s.#{category_s}*s.count)/sum(s.count) as value, sum(s.count) as count"
-      where = '  FROM users u' +
+      join = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.beginning_of_week.to_s + '\''
-      group = ' GROUP BY u.id, u.name'
+      where = ''
+      group = ' GROUP BY u.id, u.name' +
+        " HAVING sum(s.#{category_s}*s.count)/sum(s.count) > 0" +
+        " AND sum(s.count) > #{cutoff}"
 
     when 1
       # monthly
       select = "SELECT u.id, u.name, sum(s.#{category_s}*s.count)/sum(s.count) as value, sum(s.count) as count"
-      where = '  FROM users u' +
+      join = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:daily].to_s +
           '   AND s.created_at >= \'' + Date.today.beginning_of_month.to_s + '\''
-      group = ' GROUP BY u.id, u.name'
+      where = ''
+      group = ' GROUP BY u.id, u.name' +
+          " HAVING sum(s.#{category_s}*s.count)/sum(s.count) > 0" +
+          " AND sum(s.count) > #{cutoff}"
 
     else
       # all time
       select = "SELECT u.id, u.name, #{category_s} as value, s.count as count"
-      where = '  FROM users u' +
+      join = '  FROM users u' +
           '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:all_time].to_s
+      where = " WHERE #{category_s} > 0" +
+          " AND s.count > #{cutoff}"
       group = ''
 
     end
-    result = ActiveRecord::Base.connection.execute('SELECT COUNT(DISTINCT u.id) AS count ' + where)
+    result = ActiveRecord::Base.connection.execute('SELECT COUNT(DISTINCT u.id) AS count ' + join)
     if result.count == 1
       count = result[0]['count'].to_i
     else
       count = 0
     end
     if homepage
-      sql = select + where + group + ' ORDER BY value DESC ' + ' LIMIT 10'
+      sql = select + join + where + group + ' ORDER BY value DESC ' + ' LIMIT 10'
     else
-      sql = select + where + group + ' ORDER BY value DESC ' + ' LIMIT 100 OFFSET ' + offset.to_s
+      sql = select + join + where + group + ' ORDER BY value DESC ' + ' LIMIT 100 OFFSET ' + offset.to_s
     end
     [count, sql]
   end

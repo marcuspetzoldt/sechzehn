@@ -36,7 +36,23 @@
         <tr>
           <th>Platz</th>
           <th>Name</th>
-          <th class="text-right">Spiele</th>
+          <th class="text-right">
+            <div class="dropdown pull-right">
+              <% interval_urls = [highscore_eternal_url, highscore_monthly_url, highscore_weekly_url, highscore_daily_url] %>
+              <% options = ['alle Spiele', 'mehr als 10 Spiele', 'mehr als 50 Spiele', 'mehr als 100 Spiele'] %>
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="false">
+                <%= options[@highscore[:cutoff]] %>
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu2">
+                <% options.each_with_index() do |option, cutoff| %>
+                  <li role="presentation">
+                    <%= link_to option, interval_urls[@highscore[:interval]] + "?category=#{@highscore[:category]}&cutoff=#{cutoff}", role: 'menuitem', tabindex: '-1' %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </th>
           <th id="option-button" class="text-right">
             <div class="dropdown pull-right">
               <% interval_urls = [highscore_eternal_url, highscore_monthly_url, highscore_weekly_url, highscore_daily_url] %>
