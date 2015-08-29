@@ -13,15 +13,25 @@
     <% end %>
     <% if @play %>
       <div id="chat">
-        <%= form_for :chat, remote: true, url: chats_path, html: { id: 'chat_form' } do |form| %>
-          <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
-          <div id="resizable-chat">
-            <script type="text/javascript" src="http://www.skypeassets.com/i/scom/js/skype-uri.js"></script>
-            <%= render Chat.get_newest_messages %>
+        <% if registered_user? %>
+          <%= form_for :chat, remote: true, url: chats_path, html: { id: 'chat_form' } do |form| %>
+            <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+            <div id="resizable-chat">
+              <script type="text/javascript" src="http://www.skypeassets.com/i/scom/js/skype-uri.js"></script>
+              <%= render Chat.get_newest_messages %>
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon">Chat&nbsp;&gt;</span>
+              <%= form.text_field :chat, class: 'form-control' %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="resizable-chat">
+            <p class="text-muted">Als registrieter Nutzer kannst Du mit den anderen Spielern chatten.</p>
           </div>
           <div class="input-group">
             <span class="input-group-addon">Chat&nbsp;&gt;</span>
-            <%= form.text_field :chat, class: 'form-control' %>
+            <%= text_field_tag :chat, nil, disabled: true, class: 'form-control' %>
           </div>
         <% end %>
       </div>
