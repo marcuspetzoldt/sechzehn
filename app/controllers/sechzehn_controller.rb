@@ -377,7 +377,7 @@ class SechzehnController < ApplicationController
     if homepage
       sql = select + join + where + group + ' ORDER BY value DESC ' + ' LIMIT 10'
     else
-      sql = select + join + where + group + ' ORDER BY value DESC ' + ' LIMIT 1 OFFSET ' + offset.to_s
+      sql = select + join + where + group + ' ORDER BY value DESC ' + ' LIMIT 100 OFFSET ' + offset.to_s
     end
     [count, sql]
   end

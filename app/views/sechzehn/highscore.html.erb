@@ -76,7 +76,7 @@
         <%= render partial: 'score', collection: @highscore[:rows], locals: {current_user_id: current_user ? current_user.id.to_i : 0} %>
       </tbody>
     </table>
-    <% step = 1 %>
+    <% step = 100 %>
     <% if @highscore[:count] > step %>
       <nav>
         <ul class="pagination">
