@@ -368,7 +368,7 @@ class SechzehnController < ApplicationController
       group = ''
 
     end
-    result = ActiveRecord::Base.connection.execute('SELECT COUNT(DISTINCT u.id) AS count ' + join)
+    result = ActiveRecord::Base.connection.execute('SELECT COUNT(DISTINCT u.id) AS count ' + join + where)
     if result.count == 1
       count = result[0]['count'].to_i
     else
@@ -377,7 +377,7 @@ class SechzehnController < ApplicationController
     if homepage
       sql = select + join + where + group + ' ORDER BY value DESC ' + ' LIMIT 10'
     else
-      sql = select + join + where + group + ' ORDER BY value DESC ' + ' LIMIT 100 OFFSET ' + offset.to_s
+      sql = select + join + where + group + ' ORDER BY value DESC ' + ' LIMIT 1 OFFSET ' + offset.to_s
     end
     [count, sql]
   end

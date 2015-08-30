@@ -76,17 +76,17 @@
         <%= render partial: 'score', collection: @highscore[:rows], locals: {current_user_id: current_user ? current_user.id.to_i : 0} %>
       </tbody>
     </table>
-    <% step = 100 %>
+    <% step = 1 %>
     <% if @highscore[:count] > step %>
       <nav>
         <ul class="pagination">
           <% case @highscore[:interval] %>
-          <% when 3 then link = highscore_daily_path(category: @highscore[:category]) %>
-          <% when 2 then link = highscore_weekly_path(category: @highscore[:category]) %>
-          <% when 1 then link = highscore_monthly_path(category: @highscore[:category]) %>
-          <% when 0 then link = highscore_eternal_path(category: @highscore[:category]) %>
+          <% when 3 then link = highscore_daily_path(category: @highscore[:category], cutoff: @highscore[:cutoff]) %>
+          <% when 2 then link = highscore_weekly_path(category: @highscore[:category], cutoff: @highscore[:cutoff]) %>
+          <% when 1 then link = highscore_monthly_path(category: @highscore[:category], cutoff: @highscore[:cutoff]) %>
+          <% when 0 then link = highscore_eternal_path(category: @highscore[:category], cutoff: @highscore[:cutoff]) %>
           <% else %>
-            <% link = highscore_eternal_path(category: @highscore[:category]) %>
+            <% link = highscore_eternal_path(category: @highscore[:category], cutoff: @highscore[:cutoff]) %>
           <% end %>
 
           <% if @highscore[:offset] >= step %>
