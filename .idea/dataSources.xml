@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" hash="1368153342">
     <data-source source="LOCAL" name="Rails sechzehn: development" uuid="20855753-5ba1-4836-944f-3cc173fd4cc0">
-      <driver-ref>postgresql</driver-ref>
+      <driver-ref>c177519a-7c2d-4c3c-9af5-d2c9da0c6eb8</driver-ref>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql:sechzehn_development</jdbc-url>
       <libraries>
@@ -15,7 +15,7 @@
       </libraries>
     </data-source>
     <data-source source="LOCAL" name="Rails sechzehn: test" uuid="7da9424c-a96a-455e-9238-fa84b7a5371e">
-      <driver-ref>postgresql</driver-ref>
+      <driver-ref>c177519a-7c2d-4c3c-9af5-d2c9da0c6eb8</driver-ref>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql:sechzehn_test</jdbc-url>
       <libraries>
@@ -28,7 +28,7 @@
       </libraries>
     </data-source>
     <data-source source="LOCAL" name="Rails sechzehn: production" uuid="92f15a5f-50b3-4b04-874b-68f26099dfae">
-      <driver-ref>postgresql</driver-ref>
+      <driver-ref>c177519a-7c2d-4c3c-9af5-d2c9da0c6eb8</driver-ref>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql:sechzehn</jdbc-url>
       <libraries>

@@ -20,7 +20,7 @@ development:
   database: sechzehn_development
   pool: 5
   username: postgres
-  password: eDeHiV,wdaK.64s
+  password: ePzFbdnK.Aws!67s
 
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
@@ -49,7 +49,7 @@ test:
   database: sechzehn_test
   pool: 5
   username: postgres
-  password: eDeHiV,wdaK.64s
+  password: ePzFbdnK.Aws!67s
 
 production:
   adapter: postgresql
