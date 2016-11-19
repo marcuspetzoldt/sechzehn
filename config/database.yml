@@ -49,7 +49,7 @@ test:
   database: sechzehn_test
   pool: 5
   username: postgres
-  password: ePzFbdnK.Aws!67s
+  password: eGDwWh.VkdSn.68s
 
 production:
   adapter: postgresql

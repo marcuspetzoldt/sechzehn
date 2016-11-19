@@ -80,7 +80,7 @@ class SechzehnController < ApplicationController
       '   AND b.points > 0' +
       ' WHERE a.game_id >= ' + game_id.to_s +
       ' GROUP BY a.id ' +
-      ' ORDER BY SUM(b.points) DESC NULLS LAST, count(b.points) DESC NULLS LAST, a.name ASC')
+      ' ORDER BY SUM(b.points) DESC NULLS LAST, count(b.points) ASC NULLS LAST, a.name ASC')
 
   end
 
@@ -416,8 +416,6 @@ class SechzehnController < ApplicationController
     end
 
     def compute_highscore(cwords, cpoints, twords, tpoints)
-
-      Rails.logger.info("#{cwords}, #{cpoints}, #{twords}, #{tpoints}")
 
       average_words = 114.0 # 113.8432
       average_points = 235.0 # 235.3976
