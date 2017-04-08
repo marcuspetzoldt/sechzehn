@@ -57,7 +57,7 @@ class SechzehnController < ApplicationController
       @user = User.new
       @play = false
       @highscore = {which: 1}
-      count, sql = highscore_sql(1, true, 1, 0, 0)
+      count, sql = highscore_sql(1, true, 1, 0, 1)
       @scores = ActiveRecord::Base.connection.execute(sql)
     end
     @letters = init_field
