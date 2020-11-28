@@ -1,5 +1,5 @@
 // Place all the styles related to the sechzehn controller here.
-// They will automatically be included in application.css.
+// They will automatically be included in application.scss.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 $muted-gray: #999999;
@@ -61,7 +61,7 @@ table {
   margin-top: 0;
   display: table-row;
   width: 1px;
-  letter-spacing: 8px;
+  letter-spacing: 10px;
   font-size: 18px;
   text-transform: uppercase;
 }
@@ -122,7 +122,7 @@ div#guess {
   display: none;
 }
 
-.navbar-default {
+nav {
   background-color: #e8f8f9 !important;
 }
 

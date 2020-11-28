@@ -20,7 +20,7 @@ development:
   database: sechzehn_development
   pool: 5
   username: postgres
-  password: eGDwWh.VkdSn.68s
+  password:
 
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
@@ -57,4 +57,3 @@ production:
   pool: 5
   host: ec2-54-228-218-179.eu-west-1.compute.amazonaws.com
   port: 5432
-  adapter: postgresql

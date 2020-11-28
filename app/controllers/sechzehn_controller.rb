@@ -170,7 +170,11 @@ class SechzehnController < ApplicationController
     if Lock.find_by(lock: 2).nil?
       if Lock.find_by(lock: 1).nil?
         game_id = Game.maximum(:id)
-        time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
+        if game_id
+          time_left = 210 - (Time.now - Game.find_by(id: game_id).updated_at)
+        else
+          time_left = -1
+        end
         if time_left <= 0
           begin
             l = Lock.create
@@ -193,10 +197,10 @@ class SechzehnController < ApplicationController
         time_left = -1
       end
     else
-      render text: 'maintenance'
+      render inline: 'maintenance'
       return
     end
-    render text: time_left.to_s
+    render inline: time_left.to_s
   end
 
   def help
