@@ -25,3 +25,5 @@ config/secrets.yml
 
 # Ignore development config
 /config/environments/development.rb
+/db/migrate.bak/
+/getPassword.txt
