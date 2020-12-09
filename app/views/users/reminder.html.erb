@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="col-md-4">
+    <div class="sechzehn-color">
+      <canvas id="field" data-letters="RPOESECHZEHNDTEE" class="sechzehn-field" width="280" height="280"></canvas>
+    </div>
+  </div>
+  <% if @user.nil? %>
+    <div class="col-md-8">
+      <p class="lead">Der Link für das Zurücksetzen des Kennworts ist nicht mehr gültig. Er kann nur einmal pro Tag erzeugt werden, und er funktioniert nur für eine halbe Stunde.</p>
+    </div>
+  <% else %>
+    <div class="col-md-6">
+      <% flash.each do |key, value| %>
+        <div class="alert alert-danger"><%= render inline: (h value) %></div>
+      <% end %>
+      <h3>Hallo <%= @user.name %></h3>
+      <p>Wähle ein neues Kennwort, um wieder spielen zu können.</p>
+      <%= form_for @user, url: reminder_path, html: { id: 'form_signin' } do |f| %>
+        <%= hidden_field_tag 'recover', params.keys.first %>
+        <%= f.hidden_field :name %>
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon"><%= bootstrap_icon 'key' %></span></span>
+            <%= f.password_field :password, class: 'form-control', placeholder: t('activerecord.models.attributes.user.password') %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon"><%= bootstrap_icon 'key' %></span></span>
+            <%= f.password_field :password_confirmation, class: 'form-control', placeholder: t('activerecord.models.attributes.user.repeatpassword') %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.button 'Speichern', class: 'btn btn-primary', id: 'signup', name: 'signup', title: 'Kennwort speichern' %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>

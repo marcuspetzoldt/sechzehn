@@ -454,28 +454,3 @@ $(document).on('keyup', 'input[maxlength]', () ->
   $hint.text($(this).val().length + '/' + $(this).attr('maxLength'))
   $hint.css('margin-left', '-' + ($hint.width() + 15) + 'px')
 )
-
-# Facebook like
-((d, s, id) ->
-  fjs = d.getElementsByTagName(s)[0]
-  if d.getElementById(id)
-    return
-  js = d.createElement(s)
-  js.id = id
-  js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1"
-  fjs.parentNode.insertBefore(js, fjs))(document, 'script', 'facebook-jssdk')
-
-# google +1
-(() ->
-  po = document.createElement('script')
-  po.type = 'text/javascript'
-  po.async = true
-  po.src = 'https://apis.google.com/js/platform.js'
-  s = document.getElementsByTagName('script')[0]
-  s.parentNode.insertBefore(po, s))()
-
-$(document).on('mousedown', 'img#kostenlos-browsergame', () ->
-  if document.images
-    (new Image()).src='http://www.kostenlos-browsergame.de/in.php?id=222'
-  return true
-)

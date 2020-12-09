@@ -78,7 +78,7 @@
     </table>
     <% step = 100 %>
     <% if @highscore[:count] > step %>
-      <nav>
+      <div>
         <ul class="pagination">
           <% case @highscore[:interval] %>
           <% when 3 then link = highscore_daily_path(category: @highscore[:category], cutoff: @highscore[:cutoff]) %>
@@ -108,7 +108,7 @@
           <% end %>
 
         </ul>
-      </nav>
+      </div>
     <% end %>
   </div>
 </div>

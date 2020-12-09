@@ -1,0 +1,29 @@
+<div class="form-group">
+  <div class="input-group">
+    <span class="input-group-addon"><%= bootstrap_icon 'envelope' %></span></span>
+    <%= email_field_tag :email, nil, class: 'form-control', placeholder: t('activerecord.models.attributes.user.email'), value: params[:email] %>
+  </div>
+</div>
+<div class="form-group">
+  <div class="input-group">
+    <span class="input-group-addon"><%= bootstrap_icon 'key' %></span></span>
+    <%= password_field_tag :oldpassword, nil, class: 'form-control', placeholder: t('activerecord.models.attributes.user.oldpassword') %>
+  </div>
+</div>
+<div class="form-group">
+  <div class="input-group">
+    <span class="input-group-addon"><%= bootstrap_icon 'key' %></span></span>
+    <%= form.password_field :password, class: 'form-control', placeholder: t('activerecord.models.attributes.user.password') %>
+  </div>
+</div>
+<div class="form-group">
+  <div class="input-group">
+    <span class="input-group-addon"><%= bootstrap_icon 'key' %></span></span>
+    <%= form.password_field :password_confirmation, class: 'form-control', placeholder: t('activerecord.models.attributes.user.repeatpassword') %>
+  </div>
+</div>
+<div class="form-group">
+  <%= form.button 'Speichern', class: 'btn btn-primary btn-block', id: 'signup', name: 'signup', title: 'Geänderten Spielernamen und/oder geändertes Kennwort speichern' %>
+  <%= link_to 'Abbrechen', root_path, id: 'cancel', class: "btn btn-default btn-block", title: 'Zurück zum Spiel' %>
+</div>
+<p class="text-muted text-justify"><small><%= bootstrap_icon 'envelope' %> Die E-Mail Adresse braucht man nur anzugeben, wenn man später einmal sein Kennwort zurücksetzen können will. Sie wird nicht gespeichert.</small></p>

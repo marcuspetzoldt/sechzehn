@@ -24,6 +24,8 @@ Sechzehn::Application.routes.draw do
   get '/highscore/eternal', to: 'sechzehn#highscore_eternal'
   match '/signout', to: 'users#signout', via: 'delete'
   match '/signup', to: 'users#signup', via: 'get'
+  match '/reminder', to: 'users#reminder', via: 'get'
+  match '/reminder', to: 'users#recover', via: 'patch'
   get "sitemap.xml", to: 'sitemap#index', defaults: { format: 'xml' }
 
   # The priority is based upon order of creation: first created -> highest priority.

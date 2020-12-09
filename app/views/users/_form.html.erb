@@ -1,0 +1,28 @@
+<% flash.each do |key, value| %>
+  <% if (key == 'error') %>
+    <div class="alert alert-danger"><%= render inline: (h value) %></div>
+  <% end %>
+  <% if (key == 'success') %>
+    <div class="alert alert-success"><%= render inline: (h value) %></div>
+  <% end %>
+<% end %>
+<%= form_for @user, html: { class: @play ? 'displaynone' : 'displayinherit', id: 'form_signin' } do |f| %>
+  <div class="form-group">
+    <div class="input-group">
+      <span class="input-group-addon"><%= bootstrap_icon 'person' %></span>
+      <%= f.text_field :name, class: 'form-control', maxlength: '32', placeholder: t('activerecord.models.attributes.user.name') %>
+    </div>
+  </div>
+  <% if params[:form].nil? %>
+    <%= render partial: 'users/signin', object: @user, locals: {form: f} %>
+  <% end %>
+  <% if params[:form] == 'signup' %>
+    <%= render partial: 'users/signup', object: @user, locals: {form: f} %>
+  <% end %>
+  <% if params[:form] == 'edit' %>
+    <%= render partial: 'users/edit', object: @user, locals: {form: f} %>
+  <% end %>
+  <% if params[:form] == 'reminder' %>
+    <%= render partial: 'users/reminder', object: @user, locals: {form: f} %>
+  <% end %>
+<% end %>

@@ -27,7 +27,7 @@
           <% end %>
         <% else %>
           <div class="resizable-chat">
-            <p class="text-muted">Als registrieter Nutzer kannst Du mit den anderen Spielern chatten.</p>
+            <p class="text-muted">Als registrieter Spieler kannst Du mit den anderen Spielern chatten.</p>
           </div>
           <div class="input-group">
             <span class="input-group-addon">Chat&nbsp;&gt;</span>
@@ -100,47 +100,9 @@
       </table>
     </div>
     <% else %>
-      <% flash.each do |key, value| %>
-        <div class="alert alert-danger"><%= render inline: value %></div>
-      <% end %>
-      <%= form_for @user, html: { class: @play ? 'displaynone' : 'displayinherit', id: 'form_signin' } do |f| %>
-        <div class="form-group">
-          <%= f.label :name, t('activerecord.models.attributes.user.name')%>
-          <div class="input-group">
-            <span class="input-group-addon"><%= bootstrap_icon 'person-fill' %></span></span>
-            <%= f.text_field :name, class: 'form-control', maxlength: '32' %>
-          </div>
-        </div>
-        <% if params[:what] %>
-          <div class="form-group">
-            <%= f.label :password, t('activerecord.models.attributes.user.newpassword') %>
-            <div class="input-group">
-              <span class="input-group-addon"><%= bootstrap_icon 'lock-fill' %>></span></span>
-              <%= f.password_field :password, class: 'form-control' %>
-            </div>
-          </div>
-        <% end %>
-        <div class="form-group">
-          <%= label_tag :password, (params[:what] ? 'altes Kennwort' : 'Kennwort') %>
-          <div class="input-group">
-            <span class="input-group-addon"><%= bootstrap_icon 'lock-fill' %></span></span>
-            <%= password_field_tag :password, nil, class: 'form-control' %>
-          </div>
-        </div>
-        <div class="form-group">
-          <% if params[:what].nil? %>
-            <%= f.button 'Anmelden', class: 'btn btn-primary', id: 'signin', name: 'commit', title: 'Sechzehn als registrierter Spieler spielen' %>
-            <%= f.button raw('Spieler registrieren<sup>' + (bootstrap_icon 'star-fill', fill: 'red') + '</sup>'), class: 'btn btn-default', id: 'signup', name: 'signup', title: 'Einen neuen Spieler registrieren' %>
-            <%= f.button raw('Gast<sup>' + (bootstrap_icon 'star-fill', fill: 'red') + (bootstrap_icon 'star-fill', fill: 'red') + '</sup>'), class: 'btn btn-default', id: 'guest_signup', name: 'guest_signup', title: 'Sechzehn als Gast spielen' %>
-            <%= link_to 'Abbrechen', root_path, id: 'cancel', class: "btn btn-default", class: 'sechzehn-hidden', title: 'Zurück zum Spiel' %>
-            <p class="create-account"><sup><%= bootstrap_icon 'star-fill' %></sup> Das erste Mal dabei? Dann einfach einen Namen und ein beliebiges Kennwort eintippen, und einen neuen Spieler registrieren.</p>
-            <p class="create-account"><sup><%= bootstrap_icon 'star-fill' %><%= bootstrap_icon 'star-fill' %></sup> Als Gast kann man ohne Anmeldung mitspielen. Gast-Spiele werden nicht gewertet. Ideal zum trainieren.</p>
-          <% else %>
-            <%= f.button 'Speichern', class: 'btn btn-primary', id: 'signin', name: params['what'] == 'signup' ? 'signup' : 'signin', title: 'Geänderten Spielernamen und/oder geändertes Kennwort speichern' %>
-            <%= link_to 'Abbrechen', root_path, id: 'cancel', class: "btn btn-default", title: 'Zurück zum Spiel' %>
-          <% end %>
-        </div>
-      <% end %>
+      <div id="users_form_signin">
+        <%= render partial: 'users/form', object: @user %>
+      </div>
     <% end %>
   </div>
   <div class="col-md-4">
@@ -204,5 +166,4 @@
   <div class="sechzehn-hidden" itemprop="applicationSubCategory">Browserspiel</div>
   <div class="sechzehn-hidden" itemprop="browserRequirements">benötigt Javascript</div>
 </div>
-<%= render partial: 'layouts/footer', locals: { vote: false }%>
 <% end %>

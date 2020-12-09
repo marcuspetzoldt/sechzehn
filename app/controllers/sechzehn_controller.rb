@@ -38,7 +38,7 @@ class SechzehnController < ApplicationController
     @scores = []
     if signed_in?
       @user = current_user
-      if params[:what]
+      if params[:form]
         @play = false
         # Highscores of the month
         @highscore = {which: 1}
@@ -54,7 +54,7 @@ class SechzehnController < ApplicationController
         end
       end
     else
-      @user = User.new
+      @user = params[:name] ? User.new(name: params[:name]) : User.new
       @play = false
       @highscore = {which: 1}
       count, sql = highscore_sql(1, true, 1, 0, 1)
@@ -397,7 +397,7 @@ class SechzehnController < ApplicationController
     end
 
     def init_field
-      if session[:game_id]
+      if session[:game_id] and @play and !params[:form]
         Game.find_by(id: session[:game_id]).letters.upcase
       else
         'RPOESECHZEHNDTEE'

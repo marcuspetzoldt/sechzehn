@@ -1,0 +1,12 @@
+<div class="form-group">
+  <div class="input-group">
+    <span class="input-group-addon"><%= bootstrap_icon 'key' %></span>
+    <%= password_field_tag :password, nil, class: 'form-control', placeholder: 'Kennwort' %>
+  </div>
+</div>
+<div class="form-group">
+  <%= form.button raw('Spielen<sup>' + (bootstrap_icon 'star-fill') + '</sup>'), class: 'btn btn-primary btn-block', id: 'signin', name: 'commit', title: 'Sechzehn als registrierter Spieler spielen' %>
+  <%= button_tag 'Neuen Spieler registrieren', type: :button, 'data-link': users_path, 'data-action': 'signup', class: 'btn btn-default btn-block', id: 'signup', name: 'signup', title: 'Einen neuen Spieler registrieren' %>
+  <%= button_tag 'Kennwort zurücksetzen', type: :button, 'data-link': users_path, 'data-action': 'reminder', class: 'btn btn-default btn-block', id: 'reminder', name: 'reminder', title: 'Kennwort zurücksetzen' %>
+</div>
+<p class="text-muted text-justify"><sup><%= bootstrap_icon 'star-fill' %></sup><small> Wird kein Spielername und kein Kennwort angegeben, spielt man als Gast mit. Die Spiele werden nicht gewertet, und Gäste können nicht chatten.</small></p>

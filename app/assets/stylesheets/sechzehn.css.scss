@@ -22,6 +22,7 @@ nav {
 table {
   table-layout: fixed;
 }
+
 .pagination {
   > li {
     &.active > a {
@@ -137,24 +138,6 @@ nav {
   line-height: 16px;
   margin-bottom: -24px;
   margin-top: -4px
-}
-
-.fb-like {
-  vertical-align: top;
-}
-
-.browsergames-info {
-  width:87px;
-  height:27px;
-  display:inline-block;
-  margin: 2px 0 0 0;
-  font-family:Arial,sans-serif;
-  font-size:11px;
-  font-weight:bold;
-  letter-spacing:0;
-  color:#ffffff;
-  text-decoration:none;
-  text-align:center;
 }
 
 .letter {

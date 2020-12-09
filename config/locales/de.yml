@@ -3,15 +3,18 @@ de:
     models:
       attributes:
         user:
-          name: 'Name'
+          name: 'Spielername'
+          email: 'E-Mail'
           password: 'Kennwort'
-          newpassword: 'neues Kennwort'
+          oldpassword: 'altes Kennwort'
+          repeatpassword: 'Kennwort wiederholen'
     errors:
       models:
         user:
           attributes:
             password_confirmation:
               blank: 'Die Kennwortbestätigung darf nicht leer sein.'
+              confirmation: 'Die Kennwörter sind nicht gleich.'
             password:
               blank: 'Das Kennwort darf nicht leer sein.'
               too_short: 'Das Kennwort muss mindestens %{count} Zeichen lang sein.'
@@ -20,3 +23,5 @@ de:
               too_short: 'Der Name muss mindesten %{count} Zeichen lang sein.'
               too_long: 'Der Name darf höchsten %{count} Zeichen lang sein.'
               invalid: 'Der Name darf lediglich die Zeichen a-z und A-Z, sowie ., _ und - enthalten.'
+            email:
+              invalid: 'Die angegebene E-Mail Adresse ist ungültig.'
