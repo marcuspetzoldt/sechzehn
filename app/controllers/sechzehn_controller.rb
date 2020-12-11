@@ -397,7 +397,7 @@ class SechzehnController < ApplicationController
     end
 
     def init_field
-      if session[:game_id] and @play and !params[:form]
+      if session[:game_id]
         Game.find_by(id: session[:game_id]).letters.upcase
       else
         'RPOESECHZEHNDTEE'
