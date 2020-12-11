@@ -114,7 +114,7 @@ class UsersController < ApplicationController
       users.each do |u|
         if u.email_digest == email_digest
           this_reset_date = Time.now
-          last_reset_date = u.email_reset_date.nil? ? Time.new : u.email_reset_date
+          last_reset_date = u.email_reset_date.nil? ? Time.new(1970,1,1) : u.email_reset_date
           if (last_reset_date + 1.day) <= this_reset_date
             u.update_column('email_reset_date', this_reset_date)
             UserMailer.with(name: u.name, email: params[:email], remember_token: u.remember_token).reminder_mail.deliver_later
