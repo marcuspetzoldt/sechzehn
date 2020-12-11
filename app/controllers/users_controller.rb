@@ -149,7 +149,7 @@ class UsersController < ApplicationController
       end
     end
     flash[:error] = 'Name oder Kennwort falsch. Bitte Groß- und Kleinschreibung beachten.'
-    redirect_to root_path form: 'signup', name: params[:user][:name], email: params[:email]
+    redirect_to root_path form: "signin"
   end
 
   def register_user

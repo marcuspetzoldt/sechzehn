@@ -13,7 +13,7 @@
       <%= f.text_field :name, class: 'form-control', maxlength: '32', placeholder: t('activerecord.models.attributes.user.name') %>
     </div>
   </div>
-  <% if params[:form].nil? %>
+  <% if params[:form].nil? or params[:form] == 'signin' %>
     <%= render partial: 'users/signin', object: @user, locals: {form: f} %>
   <% end %>
   <% if params[:form] == 'signup' %>
