@@ -11,6 +11,8 @@ $(document).on('focus', 'form#form_signin input', () ->
 
 $(document).ready(() ->
   window.___gcfg = {lang: 'de'};
+  if $('canvas#field').length == 0
+    return
   showDice(true)
 
   myDataRef = new Firebase('https://luminous-inferno-1701.firebaseio.com/')
@@ -460,3 +462,4 @@ $(document).on('keyup', 'input[maxlength]', () ->
   $hint.text($(this).val().length + '/' + $(this).attr('maxLength'))
   $hint.css('margin-left', '-' + ($hint.width() + 15) + 'px')
 )
+

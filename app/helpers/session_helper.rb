@@ -5,7 +5,7 @@ module SessionHelper
       session[:remember_token] = user.id
     else
       remember_token = User.new_remember_token
-      cookies.permanent[:remember_token] = { same_site: 'Strict', value: remember_token, domain: :all }
+      cookies.permanent[:remember_token] = { same_site: 'Lax', value: remember_token, domain: :all }
       user.update_attribute(:remember_token, User.encrypt(remember_token))
     end
     self.current_user = user
