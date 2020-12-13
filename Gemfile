@@ -6,7 +6,9 @@ gem 'rails', '6.0.3.4'
 
 # Use postgresql as the database for Active Record
 gem 'pg'
-gem 'bootstrap-sass' #, '3.1.1.0'
+#gem 'bootstrap-sass' #, '3.1.1.0'
+gem 'bootstrap'
+gem 'popper_js'
 gem 'bootstrap-icons-helper'
 gem 'bcrypt-ruby' #, '3.0.1'
 gem 'i18n'
@@ -17,7 +19,6 @@ gem 'firebase'
 gem 'tzinfo-data'
 
 group :production do
-  gem 'rails_12factor'
   gem 'heroku-deflater'
 end
 

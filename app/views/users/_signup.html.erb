@@ -1,23 +1,23 @@
-<div class="form-group">
-  <div class="input-group">
-    <span class="input-group-addon"><%= bootstrap_icon 'envelope' %></span></span>
-    <%= email_field_tag :email, nil, class: 'form-control', placeholder: t('activerecord.models.attributes.user.email'), value: params[:email]%>
+<div class="input-group mb-1">
+  <div class="input-group-prepend">
+    <span class="input-group-text"><%= bootstrap_icon 'envelope' %></span></span>
   </div>
+  <%= email_field_tag :email, nil, class: 'form-control', placeholder: t('activerecord.models.attributes.user.email'), value: params[:email]%>
 </div>
-<div class="form-group">
-  <div class="input-group">
-    <span class="input-group-addon"><%= bootstrap_icon 'key' %></span></span>
-    <%= form.password_field :password, class: 'form-control', placeholder: t('activerecord.models.attributes.user.password') %>
+<div class="input-group mb-1">
+  <div class="input-group-prepend">
+    <span class="input-group-text"><%= bootstrap_icon 'key' %></span></span>
   </div>
+  <%= form.password_field :password, class: 'form-control', placeholder: t('activerecord.models.attributes.user.password') %>
 </div>
-<div class="form-group">
-  <div class="input-group">
-    <span class="input-group-addon"><%= bootstrap_icon 'key' %></span></span>
-    <%= form.password_field :password_confirmation, class: 'form-control', placeholder: t('activerecord.models.attributes.user.repeatpassword') %>
+<div class="input-group mb-1">
+  <div class="input-group-prepend">
+    <span class="input-group-text"><%= bootstrap_icon 'key' %></span></span>
   </div>
+  <%= form.password_field :password_confirmation, class: 'form-control', placeholder: t('activerecord.models.attributes.user.repeatpassword') %>
 </div>
 <div class="form-group">
   <%= form.button 'Speichern', class: 'btn btn-primary btn-block', id: 'signup', name: 'signup', title: 'Geänderten Spielernamen und/oder geändertes Kennwort speichern' %>
-  <%= link_to 'Abbrechen', root_path, id: 'cancel', class: "btn btn-default btn-block", title: 'Zurück zum Spiel' %>
+  <%= link_to 'Abbrechen', root_path, id: 'cancel', class: "btn btn-outline-secondary btn-block", title: 'Zurück zum Spiel' %>
 </div>
 <p class="text-muted text-justify"><small><%= bootstrap_icon 'envelope' %> Die E-Mail Adresse braucht man nur anzugeben, wenn man später einmal sein Kennwort zurücksetzen können will. Sie wird nicht gespeichert.</small></p>

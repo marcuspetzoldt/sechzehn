@@ -7,11 +7,11 @@
   <% end %>
 <% end %>
 <%= form_for @user, html: { class: @play ? 'displaynone' : 'displayinherit', id: 'form_signin' } do |f| %>
-  <div class="form-group">
-    <div class="input-group">
-      <span class="input-group-addon"><%= bootstrap_icon 'person' %></span>
-      <%= f.text_field :name, class: 'form-control', maxlength: '32', placeholder: t('activerecord.models.attributes.user.name') %>
+  <div class="input-group mb-1">
+    <div class="input-group-prepend">
+      <span class="input-group-text"><%= bootstrap_icon 'person' %></span>
     </div>
+    <%= f.text_field :name, class: 'form-control', maxlength: '32', placeholder: t('activerecord.models.attributes.user.name') %>
   </div>
   <% if params[:form].nil? or params[:form] == 'signin' %>
     <%= render partial: 'users/signin', object: @user, locals: {form: f} %>

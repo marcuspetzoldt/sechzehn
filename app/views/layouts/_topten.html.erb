@@ -1,4 +1,4 @@
-<table class="table table-condensed">
+<table class="table table-sm">
   <colgroup>
     <col class="counter"/>
     <col />
@@ -18,7 +18,7 @@
           Ewige Rangliste
         <% end %>
       </th>
-      <th class="right">
+      <th class="text-right">
         <% case highscore_type %>
         <% when 'ppoints' %>
           <span title="Durchschnittliche Punkte pro Spiel in Prozent">&Oslash;&nbsp;Punkte</span>
@@ -39,7 +39,7 @@
           <td>&nbsp;</td>
         <% end %>
         <td><div class="username"><%= score['name'] %></div></td>
-        <td class="right"><%= score['value'].to_f.round(1) %> %</td>
+        <td class="text-right"><%= score['value'].to_f.round(1) %> %</td>
       </tr>
     <% end %>
   </tbody>

@@ -5,18 +5,33 @@
 $muted-gray: #999999;
 $sechzehn-bkgnd: #e8f8f9;
 
-hr.row {
-  margin: 8px 0;
-  border-top: 1px solid #dddddd
+//hr.row {
+//  margin: 8px 0;
+//  border-top: 1px solid #dddddd
+//}
+
+.navbar {
+  background-color: $sechzehn-bkgnd;
 }
 
-form {
-  padding-top: 8px;
-  padding-bottom: 8px;
+.navbar-brand-table {
+  display: inline-block;
+  text-align: justify;
+  text-align-last: justify;
+  text-justify: inter-character;
 }
 
-nav {
-  text-align: center;
+.navbar-brand h1 {
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 10px;
+  margin-right: -10px;
+  margin-bottom: 0;
+}
+
+.navbar-brand h2 {
+  font-size: 14px;
+  margin-top: 0;
 }
 
 table {
@@ -37,10 +52,6 @@ table {
   width: 80px;
 }
 
-.wide-score {
-  width: 160px;
-}
-
 .counter {
   width: 24px;
 }
@@ -54,47 +65,12 @@ table {
   cursor: pointer;
 }
 
-.smallest-possible {
-  width: 1px;
-}
-
-.navbar-header h1 {
-  margin-top: 0;
-  display: table-row;
-  width: 1px;
-  letter-spacing: 10px;
-  font-size: 18px;
-  text-transform: uppercase;
-}
-
-.navbar-header h2 {
-  font-size: 66%;
-  text-align: justify;
-  height: 14px;
-  overflow: hidden;
-  margin: 0;
-}
-
-.subtitlewrapper {
-  display: table-cell;
-  width: 1px;
-  padding-right: 8px;
-}
-
-.clear {
-  clear: both;
-}
-
 .displayinherit {
   display: inherit;
 }
 
 .displaynone {
   display: none;
-}
-
-div#guess {
-  margin-top: 20px;
 }
 
 .sechzehn-color {
@@ -123,21 +99,9 @@ div#guess {
   display: none;
 }
 
-nav {
-  background-color: #e8f8f9 !important;
-}
-
 .sechzehn {
   letter-spacing: 4px;
   text-transform: uppercase;
-}
-.navbar-brand {
-  font-size: 150%;
-  color: $muted-gray;
-  display: table-cell;
-  line-height: 16px;
-  margin-bottom: -24px;
-  margin-top: -4px
 }
 
 .letter {
@@ -155,10 +119,6 @@ nav {
     weight: 600;
   }
   background-color: white;
-}
-
-.end {
-  clear: left;
 }
 
 .nw {
@@ -217,22 +177,14 @@ nav {
   cursor: pointer;
 }
 
-div#solutionhintdiv {
-  margin-bottom: 8px;
-  padding: 4px;
-}
-
 div#guesses, div#solution {
   margin-bottom: 2em;
   text-align: justify;
 }
 
 div#solutionheader {
+  margin: 0;
   text-align: center;
-}
-
-.right {
-  text-align: right;
 }
 
 .small-dice {
@@ -241,13 +193,6 @@ div#solutionheader {
   line-height: 30px;
   width: 30px;
   height: 30px;
-}
-
-.create-account {
-  margin-top: 2em;
-  font-size: 90%;
-  text-align: justify;
-  color: $muted-gray;
 }
 
 .highlight {
@@ -282,7 +227,7 @@ div#solutionheader {
 
 }
 
-.pointbadge { font-size: 80%;
+.pointbadge {
   background-color: $sechzehn-bkgnd;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
@@ -332,7 +277,7 @@ div#solutionheader {
 }
 
 .donate {
-  padding: 12px 8px 12px 8px;
+  padding: .33rem 0 0 1rem;
   &:hover {
     background-color: $sechzehn-bkgnd;
   }

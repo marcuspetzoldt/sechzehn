@@ -1,50 +1,52 @@
-<nav class="navbar navbar-expand-lg bg-light">
+<nav class="navbar navbar-expand-lg navbar-light">
   <div class="container">
-    <div class="navbar-header">
-      <%= link_to root_path, class: 'navbar-brand', title: 'Ein Denkspiel für alle, die Boggle und Scrabble mögen' do %>
+    <%= link_to root_path, class: 'navbar-brand', title: 'Ein Denkspiel für alle, die Boggle und Scrabble mögen' do %>
+      <div class="navbar-brand-table text-justify">
         <h1>Sechzehn</h1>
-        <div class="subtitlewrapper">
-          <h2>ein Wortspiel auf deutsch (Denkspiel)</h2>
-        </div>
-      <% end %>
-    </div>
-    <div class="collapse navbar-collapse" id="sechzehn-navbar">
-      <ul class="nav navbar-nav navbar-right">
+        <!-- div class="navbar-brand-sub"><h2>Ein Wortspiel auf deutsch</h2></div-->
+        <h2>Ein Wortspiel auf deutsch </h2>
+      </div>
+    <% end %>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sechzehn-navbar" aria-controls="sechzehn-navbar" aria-expanded="false" aria-label="Navigation umschalten">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="sechzehn-navbar">
+      <ul class="nav">
         <% if @help.nil? %>
           <% if registered_user? %>
-            <li>
-              <%= link_to edit_user_path(current_user), title: 'Kennwort und/oder Spielernamen ändern' do %>
+            <li class="nav-item">
+              <%= link_to edit_user_path(current_user), class: 'nav-link', title: 'Kennwort und/oder Spielernamen ändern' do %>
                 Nutzerdaten ändern
               <% end %>
             </li>
-            <li>
-              <%= link_to signout_path, title: 'Abmelden und Cookies löschen', method: 'delete' do %>
+            <li class="nav-item">
+              <%= link_to signout_path, class: 'nav-link', title: 'Abmelden und Cookies löschen', method: 'delete' do %>
                 Abmelden
               <% end %>
             </li>
           <% else %>
             <% if signed_in? %>
-              <li>
-                <%= link_to signout_path, title: 'Gaststatus aufgeben, und einen Spieler registrieren', method: 'delete' do %>
+              <li class="nav-item">
+                <%= link_to signout_path, class: 'nav-link', title: 'Gaststatus aufgeben, und einen Spieler registrieren', method: 'delete' do %>
                   Spieler registrieren
                 <% end %>
               </li>
             <% end %>
           <% end %>
-          <li>
-            <a href="http://blog.sechzehn.org" title="Der Blog von Sechzehn">Blog</a>
+          <li class="nav-item">
+            <a href="http://blog.sechzehn.org" class="nav-link" title="Der Blog von Sechzehn">Blog</a>
           </li>
-          <li>
-            <%= link_to highscore_daily_path, title: 'Tägliche, wöchentliche, monatliche und ewige Ranglisten' do %>
+          <li class="nav-item">
+            <%= link_to highscore_daily_path, class: 'nav-link', title: 'Tägliche, wöchentliche, monatliche und ewige Ranglisten' do %>
               Rangliste
             <% end %>
           </li>
-          <li>
-            <%= link_to help_path, title: 'Die Regeln und Bedienung kurz erklärt' do %>
+          <li class="nav-item">
+            <%= link_to help_path, class: 'nav-link', title: 'Die Regeln und Bedienung kurz erklärt' do %>
               Hilfe / Kontakt
             <% end %>
           </li>
-          <li>
+          <li class="nav-item">
             <form class="donate" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
               <input type="hidden" name="cmd" value="_s-xclick">
               <input type="hidden" name="hosted_button_id" value="W8E6WGUYY39LY">
@@ -53,8 +55,8 @@
             </form>
           </li>
         <% else %>
-          <li>
-            <%= link_to root_path, title: 'Zurück zum Spiel' do %>
+          <li class="nav-item">
+            <%= link_to root_path, class: 'nav-link', title: 'Zurück zum Spiel' do %>
               Spielen
             <% end %>
           </li>
@@ -63,5 +65,4 @@
     </div>
   </div>
 </nav>
-
 

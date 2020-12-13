@@ -1,10 +1,12 @@
 <div class="row">
-  <ul class="nav nav-tabs col-md-12">
-    <li class="<%= @highscore[:interval] == 3 ? 'active' : nil %>"><%= link_to 'Heute', highscore_daily_path(category: @highscore[:category]) %></li>
-    <li class="<%= @highscore[:interval] == 2 ? 'active' : nil %>"><%= link_to 'Diese Woche', highscore_weekly_path(category: @highscore[:category]) %></li>
-    <li class="<%= @highscore[:interval] == 1 ? 'active' : nil %>"><%= link_to 'Diesen Monat', highscore_monthly_path(category: @highscore[:category]) %></li>
-    <li class="<%= @highscore[:interval] == 0 ? 'active' : nil %>"><%= link_to 'Ewig', highscore_eternal_path(category: @highscore[:category]) %></li>
-  </ul>
+  <div class="col-lg-12">
+    <ul class="nav nav-tabs">
+      <li class="nav-item"><%= link_to 'Heute', highscore_daily_path(category: @highscore[:category]), class: "nav-link #{@highscore[:interval] == 3 ? 'active' : nil}" %></li>
+      <li class="nav-item"><%= link_to 'Diese Woche', highscore_weekly_path(category: @highscore[:category]), class: "nav-link #{@highscore[:interval] == 2 ? 'active' : nil}" %></li>
+      <li class="nav-item"><%= link_to 'Diesen Monat', highscore_monthly_path(category: @highscore[:category]), class: "nav-link #{@highscore[:interval] == 1 ? 'active' : nil}" %></li>
+      <li class="nav-item"><%= link_to 'Ewig', highscore_eternal_path(category: @highscore[:category]), class: "nav-link #{@highscore[:interval] == 0 ? 'active' : nil}" %></li>
+    </ul>
+  </div>
 </div>
 <div class="row">
   <div class="col-md-12">
@@ -25,7 +27,7 @@
         <strong>Wortperformance:</strong> Eine Kennzahl, in deren Berechnung die Schwierigkeit der absolvierten Spiele einfließt.
       <% end %>
     </p>
-    <table class="table">
+    <table class="table table-sm">
       <colgroup>
         <col class="wide-counter" />
         <col />
@@ -40,34 +42,28 @@
             <div class="dropdown pull-right">
               <% interval_urls = [highscore_eternal_url, highscore_monthly_url, highscore_weekly_url, highscore_daily_url] %>
               <% options = ['alle Spiele', 'mehr als 10 Spiele', 'mehr als 50 Spiele', 'mehr als 100 Spiele'] %>
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="false">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="false">
                 <%= options[@highscore[:cutoff]] %>
-                <span class="caret"></span>
               </button>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu2">
+              <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                 <% options.each_with_index() do |option, cutoff| %>
-                  <li role="presentation">
-                    <%= link_to option, interval_urls[@highscore[:interval]] + "?category=#{@highscore[:category]}&cutoff=#{cutoff}", role: 'menuitem', tabindex: '-1' %>
-                  </li>
+                  <%= link_to option, interval_urls[@highscore[:interval]] + "?category=#{@highscore[:category]}&cutoff=#{cutoff}", class: 'dropdown-item', tabindex: '-1' %>
                 <% end %>
-              </ul>
+              </div>
             </div>
           </th>
           <th id="option-button" class="text-right">
             <div class="dropdown pull-right">
               <% interval_urls = [highscore_eternal_url, highscore_monthly_url, highscore_weekly_url, highscore_daily_url] %>
               <% options = ['Punkte', 'Punkte %', 'Punktperformance', 'Wörter', 'Wörter %', 'Wortperformance'] %>
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="false">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="false">
                 <%= options[@highscore[:category]] %>
-                <span class="caret"></span>
               </button>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+              <div class="dropdown-menu" aria-labelledby="dropdownMenu1">
                 <% options.each_with_index() do |option, category| %>
-                  <li role="presentation">
-                    <%= link_to option, interval_urls[@highscore[:interval]] + "?category=#{category}", role: 'menuitem', tabindex: '-1' %>
-                  </li>
+                  <%= link_to option, interval_urls[@highscore[:interval]] + "?category=#{category}", class: 'dropdown-item', tabindex: '-1' %>
                 <% end %>
-              </ul>
+              </div>
             </div>
           </th>
         </tr>

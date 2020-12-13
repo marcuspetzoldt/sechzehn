@@ -1,13 +1,13 @@
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-lg-4">
     <div class="sechzehn-color">
       <canvas id="field" data-letters="<%= @letters %>" class="sechzehn-field" width="280" height="280"></canvas>
     </div>
     <% if @play %>
-      <div id="guess" class="form-group">
-        <div class="input-group">
-          <%= text_field_tag 'words', nil, id: 'words', class: 'form-control', autocomplete: 'off' %>
-          <span class="input-group-addon" id="timer">0:00</span>
+      <div id="guess" class="input-group mt-2 mb-2">
+        <%= text_field_tag 'words', nil, id: 'words', class: 'form-control', autocomplete: 'off' %>
+        <div class="input-group-append">
+          <span class="input-group-text" id="timer">0:00</span>
         </div>
       </div>
     <% end %>
@@ -21,7 +21,9 @@
               <%= render Chat.get_newest_messages %>
             </div>
             <div class="input-group">
-              <span class="input-group-addon">Chat&nbsp;&gt;</span>
+              <div class="input-group-prepend">
+                <span class="input-group-text">Chat&nbsp;&gt;</span>
+              </div>
               <%= form.text_field :chat, class: 'form-control' %>
             </div>
           <% end %>
@@ -37,10 +39,10 @@
       </div>
     <% end %>
   </div>
-  <div class="col-md-4">
+  <div class="col-lg-4">
     <% if @play %>
     <div id="guessesdiv">
-      <table class="table">
+      <table class="table table-sm">
         <colgroup>
           <col />
           <col class="score" />
@@ -49,15 +51,15 @@
         <thead>
           <tr>
             <th></th>
-            <th class="right">Wörter</th>
-            <th class="right">Punkte</th>
+            <th class="text-right">Wörter</th>
+            <th class="text-right">Punkte</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td id="username"><div class="username"><%= @user.name %></div></td>
-            <td id="cwords" class="right"><%= @cwords %></td>
-            <td id="cpoints" class="right"><%= @cpoints %></td>
+            <td id="cwords" class="text-right"><%= @cwords %></td>
+            <td id="cpoints" class="text-right"><%= @cpoints %></td>
           </tr>
           <tr>
             <td colspan="3">
@@ -76,15 +78,15 @@
       </table>
     </div>
     <div id="solutiondiv" class="sechzehn-hidden">
-      <div style="padding-top: 8px; padding-left: 8px"><strong>Lösung</strong></div>
+      <div><strong>Lösung</strong></div>
       <div id="solutionheader">
         <hr class="row"/>
-        <div id="solutionhintdiv" class="text-center"><small>Ein Klick auf Wörter und Spieler zeigt, wer was gefunden hat.</small></div>
-        <div><span class="noone">&nbsp;keiner&nbsp;</span> &bull; <span class="someone">&nbsp;gefunden&nbsp;</span> &bull; <span class="self">&nbsp;von&nbsp;Dir&nbsp;</span> &bull; <span class="onlyself">&nbsp;nur&nbsp;von&nbsp;Dir&nbsp;</span></div>
+        <div class="text-center"><small>Wörter und Spieler anklicken zeigt, wer was gefunden hat.</small></div>
+        <div><small><span class="noone">&nbsp;keiner&nbsp;</span> &bull; <span class="someone">&nbsp;gefunden&nbsp;</span> &bull; <span class="self">&nbsp;von&nbsp;Dir&nbsp;</span> &bull; <span class="onlyself">&nbsp;nur&nbsp;von&nbsp;Dir&nbsp;</span></small></div>
         <hr class="row"/>
       </div>
       <div id="solution"></div>
-      <table class="table">
+      <table class="table table-sm">
         <colgroup>
           <col />
           <col class="score" />
@@ -93,8 +95,8 @@
         <tbody>
         <tr>
           <td><strong>Gesamt</strong></td>
-          <td class="right">W: <strong id="cwords"></strong></td>
-          <td class="right">P: <strong id="cpoints"></strong></td>
+          <td class="text-right">W: <strong id="cwords"></strong></td>
+          <td class="text-right">P: <strong id="cpoints"></strong></td>
         </tr>
         </tbody>
       </table>
@@ -105,9 +107,9 @@
       </div>
     <% end %>
   </div>
-  <div class="col-md-4">
+  <div class="col-lg-4">
     <% if @play %>
-    <table class="table">
+    <table class="table table-sm">
       <colgroup>
         <col class="counter" />
         <col />
@@ -118,8 +120,8 @@
         <tr>
           <th></th>
           <th></th>
-          <th class="right">Wörter</th>
-          <th class="right">Punkte</th>
+          <th class="text-right">Wörter</th>
+          <th class="text-right">Punkte</th>
         </tr>
       </thead>
       <tbody id="score"></tbody>
@@ -130,13 +132,13 @@
   </div>
 </div>
 <% unless @play %>
-<div class="row" itemscope itemtype="http://schema.org/WebApplication">
-  <div class="col-md-4">
+<div class="row mt-4" itemscope itemtype="http://schema.org/WebApplication">
+  <div class="col-lg-4">
     <h3 itemprop="applicationCategory">Spiel</h3>
     <p class="text-justify">Das <span itemprop="keywords">online</span> <span itemprop="keywords">Multiplayer</span> <span itemprop="keywords">Wortspiel</span> <span itemprop="name">Sechzehn</span> wurde durch <span itemprop="keywords">Boggle</span> inspiriert. <span itemprop="description">Finde innerhalb von drei Minuten mehr <span itemprop="keywords">deutsch</span>e Wörter in einem Quadrat mit sechzehn zufällig erzeugten Buchstaben als deine Mitspieler.</span></p>
     <p class="text-justify">Lege als Gast sofort mit der Wortsuche los, oder kämpfe als registrierter Spieler in täglichen, wöchentlichen, monatlichen und einer ewigen <%= link_to 'Rangliste', highscore_eternal_path, title: 'tägliche, wöchentliche, monatliche und ewige Ranglisten' %> um die besten Plätze.</p>
   </div>
-  <div class="col-md-4">
+  <div class="col-lg-4">
     <h3>Regeln</h3>
     <p class="text-justify">Die Buchstaben müssen eine Kette bilden. Ein Wort muss mindestens drei Buchstaben lang sein. Und in einem Wort darf kein Buchstabenfeld mehrfach genutzt werden. Es gelten alle Wörter außer:</p>
     <ul>
@@ -146,7 +148,7 @@
     </ul>
     <p>Ausführlichere Erklärung der Regeln und der Bedienung von Sechzehn gibt es auf der <%= link_to 'Hilfeseite', help_path, title: 'Regeln und Bedienung kurz erklärt' %>.</p>
   </div>
-  <div class="col-md-4">
+  <div class="col-lg-4">
     <h3>Features</h3>
     <ul>
       <li itemprop="featurelist">deutsch, über 1.1 Mio. Wörter</li>

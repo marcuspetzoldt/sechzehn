@@ -64,6 +64,12 @@ $(document).on('mouseup touchend', 'span.guess', () ->
 $(document).on('submit', 'form#chat_form', (event) ->
   $('input#chat_chat').val('')
 )
+
+$(document).on('scroll', 'canvas#field', () ->
+    event.preventDefault()
+    return false
+)
+
 $(document).on('mousedown touchstart', 'canvas#field', (event) ->
   event.preventDefault()
   if $('input#words').length > 0 and $('input#words:disabled').length == 0
