@@ -74,7 +74,7 @@
     </table>
     <% step = 100 %>
     <% if @highscore[:count] > step %>
-      <div>
+      <nav aria-label="Pagination">
         <ul class="pagination">
           <% case @highscore[:interval] %>
           <% when 3 then link = highscore_daily_path(category: @highscore[:category], cutoff: @highscore[:cutoff]) %>
@@ -85,26 +85,26 @@
             <% link = highscore_eternal_path(category: @highscore[:category], cutoff: @highscore[:cutoff]) %>
           <% end %>
 
-          <% if @highscore[:offset] >= step %>
-            <li class="active"><%= link_to link + "&offset=#{@highscore[:offset]-step}" do %>&laquo;<% end %></li>
-          <% else %>
-            <li class="disabled"><a>&laquo;</a></li>
-          <% end %>
+          <%if @highscore[:offset] >= step %>
+            <li class="page-item active"><%= link_to link + "&offset=#{@highscore[:offset]-step}", class: 'page-link' do %>&laquo;<% end %></li>
+          <%else %>
+            <li class="page-item disabled"><a class="page-link" aria-disabled="true">&laquo;</a></li>
+          <%end %>
           <% 0.upto(@highscore[:count]/step - 1 + (@highscore[:count].modulo(step) == 0 ? 0 : 1)) do |i| %>
             <% if i*step != @highscore[:offset] %>
-              <li class="active"><%= link_to((i+1).to_s, link + "&offset=#{i*step}") %></li>
+              <li class="page-item active"><%= link_to (i+1).to_s, link + "&offset=#{i*step}", class: 'page-link' %></li>
             <% else %>
-              <li class="disabled"><a><%= (i+1).to_s %></a></li>
+              <li class="page-item disabled"><a class="page-link" aria-disabled="true"><%= (i+1).to_s %></a></li>
             <% end %>
           <% end %>
           <% if @highscore[:offset] < @highscore[:count]-step %>
-            <li class="active"><%= link_to link + "&offset=#{@highscore[:offset]+step}" do %>&raquo;<% end %></li>
+            <li class="page-item active"><%= link_to link + "&offset=#{@highscore[:offset]+step}", class: 'page-link' do %>&raquo;<% end %></li>
           <% else %>
-            <li class="disabled"><a>&raquo;</a></li>
+            <li class="page-item disabled"><a class="page-link" aria-disabled="true">&raquo;</a></li>
           <% end %>
 
         </ul>
-      </div>
+      </nav>
     <% end %>
   </div>
 </div>
