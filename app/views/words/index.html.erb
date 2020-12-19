@@ -1,0 +1,23 @@
+<div class="container">
+  <% if @words.empty? %>
+    <p>Es wurden noch keine Wörter gemeldet.</p>
+  <% else %>
+    <table class="table table-sm">
+      <colgroup>
+        <col width="20%"/>
+        <col width="20%"/>
+        <col/>
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Wort</th>
+          <th>Aktion</th>
+          <th>Kommentar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: 'word', collection: @words %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
