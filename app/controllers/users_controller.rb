@@ -31,11 +31,11 @@ class UsersController < ApplicationController
 
   def update
     @user = current_user
-    if (params[:email])
+    if (params[:danger])
       begin
         mail_address = Mail::Address.new(params[:email])
       rescue
-        flash[:error] = 'Die E-Mail Adresse ist nicht gültig.'
+        flash[:danger] = 'Die E-Mail Adresse ist nicht gültig.'
         redirect_to root_path form: 'edit', name: @user.name, email: params[:email]
         return
       end
@@ -43,12 +43,12 @@ class UsersController < ApplicationController
     if @user.authenticate(params[:oldpassword])
       params[:user][:email_digest] = User.encrypt(params[:email])
       unless @user.update(user_params)
-        flash[:error] = @user.errors.messages.values.join('<br />')
+        flash[:danger] = @user.errors.messages.values.join('<br />')
         redirect_to root_path form: 'edit', name: @user.name, email: params[:email]
         return
       end
     else
-      flash[:error] = "Das alte Kennwort ist falsch."
+      flash[:danger] = "Das alte Kennwort ist falsch."
       redirect_to root_path form: 'edit', name: @user.name, email: params[:email]
       return
     end
@@ -79,7 +79,7 @@ class UsersController < ApplicationController
     Rails.logger.error(params)
     if @user = User.find_by(remember_token: params['recover'])
       unless @user.update(user_params)
-        flash[:error] = @user.errors.messages.values.join('<br />')
+        flash[:danger] = @user.errors.messages.values.join('<br />')
         redirect_back fallback_location: root_path
         return
       end
@@ -107,7 +107,7 @@ class UsersController < ApplicationController
 
   def send_reminder
     if params[:user][:name] == ''
-      flash[:error] = 'Es muss ein Spielername angegeben werden'
+      flash[:danger] = 'Es muss ein Spielername angegeben werden'
     else
       users = User.where(name: params[:user][:name])
       email_digest = User.encrypt(params[:email])
@@ -120,13 +120,13 @@ class UsersController < ApplicationController
             UserMailer.with(name: u.name, email: params[:email], remember_token: u.remember_token).reminder_mail.deliver_later
             flash[:success] = "Es wurde eine Nachricht an #{params[:email]} gesandt."
           else
-            flash[:error] = "Die E-Mail mit der Kennworterinnerung kann nur einmal pro Tag verschickt werden."
+            flash[:danger] = "Die E-Mail mit der Kennworterinnerung kann nur einmal pro Tag verschickt werden."
           end
           redirect_to root_path
           return
         end
       end
-      flash[:error] = 'Es muss die E-Mail Adresse angegeben werden, die beim Anlegen des Spielers verwendet wurde.'
+      flash[:danger] = 'Es muss die E-Mail Adresse angegeben werden, die beim Anlegen des Spielers verwendet wurde.'
     end
     redirect_to root_path form: 'reminder', name: params[:user][:name], email: params[:email]
   end
@@ -148,7 +148,7 @@ class UsersController < ApplicationController
         return
       end
     end
-    flash[:error] = 'Name oder Kennwort falsch. Bitte Groß- und Kleinschreibung beachten.'
+    flash[:danger] = 'Name oder Kennwort falsch. Bitte Groß- und Kleinschreibung beachten.'
     redirect_to root_path form: "signin"
   end
 
@@ -160,7 +160,7 @@ class UsersController < ApplicationController
       redirect_to root_path
       return
     else
-      flash[:error] = @user.errors.messages.values.join('<br />')
+      flash[:danger] = @user.errors.messages.values.join('<br />')
     end
     redirect_to root_path form: 'signup', name: params[:user][:name], email: params[:email]
   end

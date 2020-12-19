@@ -28,6 +28,7 @@ class SechzehnController < ApplicationController
   end
 
   def show
+    @word = Word.new
     @canonical = 'http://spiele.sechzehn.org/'
     @description = 'Sechzehn ist ein Wortspiel wie Boggle. Finde innerhalb von 3 Minuten die meisten deutschen Wörter in einem Quadrat mit 16 zufälligen Buchstaben.'
     @subtitle = 'ein Wortspiel auf deutsch'

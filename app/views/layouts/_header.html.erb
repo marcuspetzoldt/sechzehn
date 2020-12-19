@@ -11,12 +11,12 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="sechzehn-navbar">
-      <ul class="nav">
+      <ul class="navbar-nav">
         <% if @help.nil? %>
           <% if registered_user? %>
             <li class="nav-item">
-              <%= link_to edit_user_path(current_user), class: 'nav-link', title: 'Kennwort und/oder Spielernamen ändern' do %>
-                Nutzerdaten ändern
+              <%= link_to edit_user_path(current_user), class: 'nav-link', style: "display: table-cell", title: 'Kennwort und/oder Spielernamen ändern' do %>
+                Nutzerdaten&nbsp;ändern
               <% end %>
             </li>
             <li class="nav-item">
@@ -28,7 +28,7 @@
             <% if signed_in? %>
               <li class="nav-item">
                 <%= link_to signout_path, class: 'nav-link', title: 'Gaststatus aufgeben, und einen Spieler registrieren', method: 'delete' do %>
-                  Spieler registrieren
+                  Spieler&nbsp;registrieren
                 <% end %>
               </li>
             <% end %>
@@ -41,9 +41,25 @@
               Rangliste
             <% end %>
           </li>
+          <% if registered_user? %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle", role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Regelwiedrige, oder fehlende Wörter melden" href="#">
+                Wort&nbsp;melden
+              </a>
+              <div class="dropdown-menu p-2 m-4 bg-light" aria-labelledby="woertermeldendropdown">
+                <%= form_for @word do |f| %>
+                  <%= f.text_field :word, class: 'form-control mb-2', placeholder: t('activerecord.models.attributes.word.word') %>
+                  <button class="btn btn-primary btn-block" type="submit" name="delete">Bitte um Löschung</button>
+                  <button class="btn btn-primary btn-block" type="submit" name="insert">Bitte um Aufnahme</button>
+                  <%= link_to words_path, class: "btn btn-outline-secondary btn-block", title: "Gemeldete Wörter und was aus ihnen geworden ist" do %>Liste der gemeldeten Wörter<% end %>
+                  <button class="btn btn-outline-secondary btn-block" data-toggle="dropdown" type="button">Abbrechen</button>
+                <% end %>
+              </div>
+            </li>
+          <% end %>
           <li class="nav-item">
             <%= link_to help_path, class: 'nav-link', title: 'Die Regeln und Bedienung kurz erklärt' do %>
-              Hilfe<sup></up><span class="badge badge-warning">Neu</span></sup> / Kontakt
+              Hilfe<sup><span class="badge badge-warning">Neu</span></sup>/Kontakt
             <% end %>
           </li>
           <li class="nav-item">
@@ -65,4 +81,13 @@
     </div>
   </div>
 </nav>
-
+<% flash.each do |key, value| %>
+  <div class="container mt-2">
+    <div class="alert alert-<%= h key %> alert-dismissible fade show">
+      <%= render inline: (h value) %>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+<% end %>

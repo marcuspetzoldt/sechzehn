@@ -5,13 +5,12 @@
 $muted-gray: #999999;
 $sechzehn-bkgnd: #e8f8f9;
 
-//hr.row {
-//  margin: 8px 0;
-//  border-top: 1px solid #dddddd
-//}
-
 .navbar {
   background-color: $sechzehn-bkgnd;
+}
+
+.dropdown-menu {
+  width: 20rem;
 }
 
 .navbar-brand-table {
@@ -200,10 +199,9 @@ div#solutionheader {
 }
 
 .length-hint {
-  position: relative;
-  display: inline-block;
+  display: table-cell;
   z-index: 3;
-  margin-top: -22px;
+  margin-top: -12px;
   background-color: white;
   height: 16px;
   padding: 2px 3px;

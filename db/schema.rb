@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_05_090612) do
+ActiveRecord::Schema.define(version: 2020_12_19_095242) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -85,6 +85,11 @@ ActiveRecord::Schema.define(version: 2020_12_05_090612) do
 
   create_table "words", id: :serial, force: :cascade do |t|
     t.string "word", limit: 255
+    t.integer "flag", default: 0
+    t.string "comment"
+    t.datetime "created_at", precision: 6, default: "1970-01-01 00:00:00", null: false
+    t.datetime "updated_at", precision: 6, default: "1970-01-01 00:00:00", null: false
+    t.index ["updated_at"], name: "index_words_on_updated_at"
     t.index ["word"], name: "index_words_on_word", unique: true
     t.index ["word"], name: "index_words_on_word_wordlength"
   end

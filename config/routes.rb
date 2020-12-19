@@ -1,4 +1,5 @@
 Sechzehn::Application.routes.draw do
+  get 'words/show'
   get "errors/file_not_found"
   get "errors/unprocessable"
   get "errors/internal_server_error"
@@ -9,6 +10,7 @@ Sechzehn::Application.routes.draw do
   match '/please_enable_cookies', to: 'errors#please_enable_cookies', via: :all
   match '/maintenance', to: 'errors#maintenance', via: :all
   resources :users
+  resources :words
   post '/guess', to: 'sechzehn#guess'
   get '/solution', to: 'sechzehn#solution'
   get '/leaderboard', to: 'sechzehn#leaderboard'

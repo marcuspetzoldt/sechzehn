@@ -8,6 +8,8 @@ de:
           password: 'Kennwort'
           oldpassword: 'altes Kennwort'
           repeatpassword: 'Kennwort wiederholen'
+        word:
+          word: 'Wort'
     errors:
       models:
         user:

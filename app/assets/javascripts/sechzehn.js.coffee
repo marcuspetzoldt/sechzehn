@@ -450,7 +450,7 @@ disableGame = () ->
 $(document).on('focus', 'input[maxlength]', () ->
   $(this).after('<span class="length-hint">' + $(this).val().length + '/' + $(this).attr('maxLength') + '</span>')
   $hint = $(this).next()
-  $hint.css('margin-left', '-' + ($hint.width() + 15) + 'px')
+  $hint.css('margin-left', '-' + ($hint.width() + 6) + 'px')
 )
 
 $(document).on('blur', 'input[maxlength]', () ->

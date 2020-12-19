@@ -1,0 +1,26 @@
+<tr>
+  <td><%= h word[:word] %></td>
+  <td>
+    <%=
+      case word[:flag]
+        when -2
+          'Wird nicht aufgenommen'
+        when -1
+          'Bitte um Aufnahme'
+        when 0
+          "In die Wortliste aufgenommen am #{word[:updated_at].strftime('%d.%m.%Y')}"
+        when 1
+          "Bitte um Löschung"
+        else
+          ""
+      end
+    %>
+  </td>
+  <td>
+    <% if word[:comment].blank? %>
+      Befindet sich noch in der Prüfung
+    <% else %>
+      <%= h word[:comment] %>
+    <% end %>
+  </td>
+</tr>
