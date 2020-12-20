@@ -1,4 +1,5 @@
 <div class="container">
+  <p>Die Vorschläge werden auf Gültigkeit überprüft, und der Wortliste hinzugefügt, oder aus ihr entfernt. Aber bitte nicht böse sein, wenn der eigene Vorschlag abgelehnt wird. Der Ablehnungsgrund steht in der Tabelle. Solltet ihr ganz sicher sein, dass euer Wort doch gültig ist, dann schickt bitte eine E-Mail mit der Begründung an <%= mail_to 'wortspiel@sechzehn.org', 'wortspiel@sechzehn.org', subject: 'Sechzehn: Begründung für die Löschung/Aufnahme eines Wortes.'%>.</p>
   <% if @words.empty? %>
     <p>Es wurden noch keine Wörter gemeldet.</p>
   <% else %>
