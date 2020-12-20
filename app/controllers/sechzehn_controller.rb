@@ -365,7 +365,7 @@ class SechzehnController < ApplicationController
       # all time
       select = "SELECT u.id, u.name, #{category_s} as value, s.count as count"
       join = '  FROM users u' +
-          '  JOIN scores s' +
+          '  RIGHT JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:all_time].to_s
       where = " WHERE #{category_s} > 0" +
@@ -373,7 +373,7 @@ class SechzehnController < ApplicationController
       group = ''
 
     end
-    result = ActiveRecord::Base.connection.execute('SELECT COUNT(DISTINCT u.id) AS count ' + join + where)
+    result = ActiveRecord::Base.connection.execute('SELECT COUNT(DISTINCT u.id) AS count ' + join + where + ' LIMIT 20')
     if result.count == 1
       count = result[0]['count'].to_i
     else
@@ -384,6 +384,7 @@ class SechzehnController < ApplicationController
     else
       sql = select + join + where + group + ' ORDER BY value DESC ' + ' LIMIT 100 OFFSET ' + offset.to_s
     end
+    count = 50
     [count, sql]
   end
 
