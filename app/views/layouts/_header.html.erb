@@ -44,7 +44,7 @@
           <% if registered_user? %>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle", role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Regelwiedrige, oder fehlende Wörter melden" href="#">
-                Wort&nbsp;melden
+                Wort&nbsp;melden<sup><span class="badge badge-warning">Neu</span></sup>
               </a>
               <div class="dropdown-menu p-2 m-4 bg-light" aria-labelledby="woertermeldendropdown">
                 <%= form_for @word do |f| %>
@@ -59,7 +59,7 @@
           <% end %>
           <li class="nav-item">
             <%= link_to help_path, class: 'nav-link', title: 'Die Regeln und Bedienung kurz erklärt' do %>
-              Hilfe<sup><span class="badge badge-warning">Neu</span></sup>/Kontakt
+              Hilfe/Kontakt<sup><span class="badge badge-warning">Neu</span></sup>
             <% end %>
           </li>
           <li class="nav-item">
