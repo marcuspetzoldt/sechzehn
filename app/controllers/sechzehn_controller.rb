@@ -365,7 +365,7 @@ class SechzehnController < ApplicationController
       # all time
       select = "SELECT u.id, u.name, #{category_s} as value, s.count as count"
       join = '  FROM users u' +
-          '  RIGHT JOIN scores s' +
+          '  JOIN scores s' +
           '    ON u.id = s.user_id' +
           '   AND s.score_type = ' + Score.score_types[:all_time].to_s
       where = " WHERE #{category_s} > 0" +
@@ -384,7 +384,6 @@ class SechzehnController < ApplicationController
     else
       sql = select + join + where + group + ' ORDER BY value DESC ' + ' LIMIT 100 OFFSET ' + offset.to_s
     end
-    count = 50
     [count, sql]
   end
 
