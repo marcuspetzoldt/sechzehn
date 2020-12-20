@@ -12,7 +12,7 @@
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="sechzehn-navbar">
       <ul class="navbar-nav">
-        <% if @help.nil? %>
+        <% if @reduced_navbar.nil? %>
           <% if registered_user? %>
             <li class="nav-item">
               <%= link_to edit_user_path(current_user), class: 'nav-link', style: "display: table-cell", title: 'Kennwort und/oder Spielernamen ändern' do %>

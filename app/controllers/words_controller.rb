@@ -3,7 +3,7 @@ class WordsController < ApplicationController
     start_date = DateTime.now - 30.days
     @words = Word.where("updated_at >= '#{start_date}'").order(:word)
     # with @help set, a different header with reduced navbar-nav will be shown
-    @help = 1
+    @reduced_navbar = true
   end
 
   def create

@@ -205,7 +205,7 @@ class SechzehnController < ApplicationController
   end
 
   def help
-    @help = true
+    @reduced_navbar = true
     @subtitle = 'Hilfe'
     @description = 'Hier findest Du die die Regeln von Sechzehn, sowie eine Erklärung der Bedienung von Sechzehn, und das Impressum.'
   end
@@ -227,7 +227,7 @@ class SechzehnController < ApplicationController
   end
 
   def highscore(interval)
-    @help = true
+    @reduced_navbar = true
     @canonical = 'http://spiele.sechzehn.org/highscore/points/percent'
     @description = 'Sechzehn ist ein Wortspiel wie Boggle. Finde innerhalb von 3 Minuten mehr deutsche Wörter in einem Quadrat mit 16 zufälligen Buchstaben als deine Mitspieler.'
     @description = 'Als registrierter Spieler von Sechzehn, kannst Du in diesen täglichen, wöchentlichen und monatlichen, sowie in einer ewigen Rangliste um Plätze kämpfen.'
@@ -388,6 +388,8 @@ class SechzehnController < ApplicationController
   end
 
   def maintenance
+    @reduced_navbar = true
+    Rails.logger.error("Maintenance and @help=#{@reduced_navbar}")
     render 'maintenance'
   end
 
